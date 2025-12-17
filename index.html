@@ -625,9 +625,19 @@
             border-left: 3px solid #ffc861;
         }
 
+        .warning-note {
+            margin: 0;
+            font-size: 14px;
+            color: #8b4513;
+            background-color: #fff3e0;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid #ff9800;
+        }
+
         .chart-container {
             width: 100%;
-            max-width: 780px;
+            max-width: 100%;
             margin: var(--space-4) auto;
             padding: var(--space-4);
             border: 1px solid #e0e0e0;
@@ -637,11 +647,12 @@
             display: flex;
             flex-direction: column;
             gap: var(--space-2);
+            min-height: 400px;
         }
 
         #overallChart {
-            width: 100%;
-            max-height: none;
+            width: 100% !important;
+            height: auto !important;
         }
 
         .sr-only {
@@ -889,6 +900,27 @@
                         <p>For cost metrics (CPM, CPC, etc.), lower is better. We multiply their Z-scores by -1 so higher scores always mean better performance.</p>
                     </div>
                 </details>
+
+                <details>
+                    <summary>Understanding sample size and standard deviation</summary>
+                    <div>
+                        <p><strong>Sample size matters:</strong></p>
+                        <ul>
+                            <li><strong>Small samples (n&lt;10):</strong> Results can be unstable. One unusual value has outsized impact.</li>
+                            <li><strong>Medium samples (10-30):</strong> Z-scores become more reliable but still sensitive to outliers.</li>
+                            <li><strong>Large samples (30+):</strong> Z-scores are statistically robust and meaningful.</li>
+                        </ul>
+                        
+                        <p><strong>Standard deviation shows spread:</strong></p>
+                        <ul>
+                            <li><strong>Small std dev:</strong> Values are clustered together. Rankings may exaggerate minor differences.</li>
+                            <li><strong>Large std dev:</strong> Values vary widely. Clear differentiation between performers.</li>
+                            <li><strong>Zero std dev:</strong> All values identical (we set it to 1 to avoid errors).</li>
+                        </ul>
+                        
+                        <p><strong>Rule of thumb:</strong> If the z-score spread is less than 1.0, most entities are performing similarly.</p>
+                    </div>
+                </details>
             </section>
 
             <nav class="progress-indicator" aria-label="Progress through steps">
@@ -1052,8 +1084,7 @@ Spain	1.10	0.45</textarea>
             <div id="overallResults" class="results" aria-live="polite"></div>
 
             <div class="chart-container" role="img" aria-label="Overall Z-score chart">
-                <h3 id="chartTitle" style="text-align:center; margin:0;">Aggregated Performance Index</h3>
-                <canvas id="overallChart"></canvas>
+                <canvas id="overallChart" role="img" aria-label="Horizontal bar chart showing overall z-scores"></canvas>
             </div>
 
             <div class="button-row" id="exportButtons">
@@ -1559,7 +1590,7 @@ Spain\t1.10\t0.45\t11.30`;
             performanceZScores.sort((a, b) => b.totalZScore - a.totalZScore);
 
             document.getElementById('performanceFeedback').innerHTML = '';
-            displayResults('performanceResults', headers, performanceZScores, 'Performance');
+            displayResults('performanceResults', headers, performanceZScores, 'Performance', entities.length);
 
             setStepState(2);
         }
@@ -1588,7 +1619,7 @@ Spain\t1.10\t0.45\t11.30`;
             costZScores.sort((a, b) => b.totalZScore - a.totalZScore);
 
             document.getElementById('costFeedback').innerHTML = '';
-            displayResults('costResults', headers, costZScores, 'Cost');
+            displayResults('costResults', headers, costZScores, 'Cost', entities.length);
 
             setStepState(3);
         }
@@ -1604,7 +1635,7 @@ Spain\t1.10\t0.45\t11.30`;
             return { icon: '↓↓', label: 'Weak', description: 'Well below average' };
         }
 
-        function displayResults(elementId, headers, scores, type) {
+        function displayResults(elementId, headers, scores, type, sampleSize) {
             const container = document.getElementById(elementId);
             if (!container) return;
 
@@ -1617,16 +1648,40 @@ Spain\t1.10\t0.45\t11.30`;
             const maxZ = Math.max(...zScores);
             const minZ = Math.min(...zScores);
             const spread = maxZ - minZ;
+            const stats = calculateMeanAndStd(zScores);
 
             const label = type === 'Performance' ? 'Performance Z-score' : 'Cost Z-score';
 
+            // Sample size assessment
+            let sampleSizeNote = '';
+            let sampleSizeClass = 'info-note';
+            if (sampleSize < 10) {
+                sampleSizeNote = `⚠️ Small sample (n=${sampleSize}): Results are more sensitive to individual values and outliers.`;
+                sampleSizeClass = 'warning-note';
+            } else if (sampleSize >= 30) {
+                sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Results are statistically robust.`;
+            } else {
+                sampleSizeNote = `Sample size: n=${sampleSize} (moderate - reasonably reliable)`;
+            }
+
+            // Spread assessment
+            let spreadNote = '';
+            if (spread < 1.0) {
+                spreadNote = 'Tight clustering: Entities perform very similarly overall.';
+            } else if (spread > 3.0) {
+                spreadNote = 'Wide spread: Clear performance differences exist between entities.';
+            }
+
             let html = `
                 <h3>${type} results (sorted by Z-score)</h3>
+                <div class="${sampleSizeClass}">${sampleSizeNote}</div>
                 <div class="interpretation-guide">
-                    <p><strong>Reading the scores:</strong></p>
+                    <p><strong>Statistical context:</strong></p>
                     <ul>
                         <li>Higher Z-scores = Better ${type.toLowerCase()}</li>
-                        <li>Range: ${minZ.toFixed(2)} to ${maxZ.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
+                        <li>Score range: ${minZ.toFixed(2)} to ${maxZ.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
+                        <li>Standard deviation of scores: ${stats.std.toFixed(2)}</li>
+                        ${spreadNote ? `<li>${spreadNote}</li>` : ''}
                         <li>Entries within 0.5 of each other are very close</li>
                     </ul>
                 </div>
@@ -1705,6 +1760,8 @@ Spain\t1.10\t0.45\t11.30`;
             const maxOverall = Math.max(...overallValues);
             const minOverall = Math.min(...overallValues);
             const spread = maxOverall - minOverall;
+            const stats = calculateMeanAndStd(overallValues);
+            const sampleSize = combinedScores.length;
 
             let adjustment = 0;
             if (removeNegatives && minOverall < 0) {
@@ -1716,14 +1773,37 @@ Spain\t1.10\t0.45\t11.30`;
                 displayOverallZ: score.overallZ + adjustment
             }));
 
+            // Sample size assessment
+            let sampleSizeNote = '';
+            let sampleSizeClass = 'info-note';
+            if (sampleSize < 10) {
+                sampleSizeNote = `⚠️ Small sample (n=${sampleSize}): Rankings are more sensitive to individual data points.`;
+                sampleSizeClass = 'warning-note';
+            } else if (sampleSize >= 30) {
+                sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Rankings are statistically robust.`;
+            } else {
+                sampleSizeNote = `Sample size: n=${sampleSize} (moderate reliability)`;
+            }
+
+            // Spread assessment
+            let spreadNote = '';
+            if (spread < 1.0) {
+                spreadNote = 'Tight clustering: Most entities perform similarly overall.';
+            } else if (spread > 3.0) {
+                spreadNote = 'Wide spread: Clear differentiation in overall performance.';
+            }
+
             let html = `
                 <h3>Overall ranking</h3>
+                <div class="${sampleSizeClass}">${sampleSizeNote}</div>
                 <div class="interpretation-guide">
-                    <p><strong>Reading the scores:</strong></p>
+                    <p><strong>Statistical context:</strong></p>
                     <ul>
                         <li>Overall Z-score = performance + cost</li>
                         <li>Higher is better</li>
-                        <li>Range: ${minOverall.toFixed(2)} to ${maxOverall.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
+                        <li>Score range: ${minOverall.toFixed(2)} to ${maxOverall.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
+                        <li>Standard deviation: ${stats.std.toFixed(2)}</li>
+                        ${spreadNote ? `<li>${spreadNote}</li>` : ''}
                     </ul>
                 </div>
             `;
@@ -1798,16 +1878,27 @@ Spain\t1.10\t0.45\t11.30`;
             }
 
             const canvas = document.getElementById('overallChart');
-            const desiredHeight = Math.max(320, scores.length * 56);
-            canvas.style.height = desiredHeight + 'px';
+            if (!canvas) return;
 
-            const ctx = canvas.getContext('2d');
-            const labels = scores.map(item => item.entity);
-            const data = scores.map(item => item.displayOverallZ);
-
+            // Destroy existing chart
             if (window.overallChartInstance) {
                 window.overallChartInstance.destroy();
+                window.overallChartInstance = null;
             }
+
+            const ctx = canvas.getContext('2d');
+            
+            // Calculate dynamic height based on number of items
+            const barHeight = 48;
+            const chartPadding = 120;
+            const desiredHeight = Math.max(320, (scores.length * barHeight) + chartPadding);
+            
+            // Set canvas size properly
+            canvas.style.height = desiredHeight + 'px';
+            canvas.height = desiredHeight;
+
+            const labels = scores.map(item => item.entity);
+            const data = scores.map(item => item.displayOverallZ);
 
             window.overallChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -1818,24 +1909,31 @@ Spain\t1.10\t0.45\t11.30`;
                         data,
                         backgroundColor: chartColor,
                         borderColor: chartColor,
-                        borderWidth: 1
+                        borderWidth: 0,
+                        borderRadius: 4
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
+                    indexAxis: 'y', // This makes it horizontal
                     responsive: true,
                     maintainAspectRatio: false,
+                    backgroundColor: backgroundColor,
                     scales: {
                         x: {
                             beginAtZero: true,
                             grid: {
-                                color: '#e1e1e1'
+                                color: 'rgba(0, 0, 0, 0.08)',
+                                drawBorder: false
                             },
                             ticks: {
                                 color: axesColor,
                                 font: {
-                                    size: 12
+                                    size: 13,
+                                    family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
                                 }
+                            },
+                            border: {
+                                display: false
                             }
                         },
                         y: {
@@ -1845,8 +1943,14 @@ Spain\t1.10\t0.45\t11.30`;
                             ticks: {
                                 color: axesColor,
                                 font: {
-                                    size: 12
-                                }
+                                    size: 13,
+                                    weight: '500',
+                                    family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                                },
+                                padding: 8
+                            },
+                            border: {
+                                display: false
                             }
                         }
                     },
@@ -1855,36 +1959,42 @@ Spain\t1.10\t0.45\t11.30`;
                             display: false
                         },
                         tooltip: {
-                            callbacks: {
-                                label: context => `Overall score: ${context.parsed.x.toFixed(3)}`
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Aggregated performance index',
-                            color: axesColor,
-                            font: {
-                                size: 16,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            cornerRadius: 6,
+                            titleFont: {
+                                size: 14,
                                 weight: '600'
                             },
-                            padding: {
-                                bottom: 16
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: context => `Overall score: ${context.parsed.x.toFixed(3)}`
                             }
                         }
                     },
                     layout: {
                         padding: {
-                            top: 12,
-                            right: 18,
-                            bottom: 12,
-                            left: 12
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 10
                         }
                     }
-                }
+                },
+                plugins: [{
+                    id: 'customCanvasBackgroundColor',
+                    beforeDraw: (chart) => {
+                        const ctx = chart.canvas.getContext('2d');
+                        ctx.save();
+                        ctx.globalCompositeOperation = 'destination-over';
+                        ctx.fillStyle = backgroundColor;
+                        ctx.fillRect(0, 0, chart.width, chart.height);
+                        ctx.restore();
+                    }
+                }]
             });
-
-            ctx.canvas.style.backgroundColor = backgroundColor;
-            ctx.canvas.title = 'Overall Z-score chart';
         }
 
         function updateChartColor(type) {
