@@ -635,6 +635,7 @@
             border-left: 3px solid #ff9800;
         }
 
+        /* UPDATED: Flexbox added to center content */
         .chart-container {
             width: 100%;
             max-width: 100%;
@@ -646,13 +647,17 @@
             box-shadow: var(--shadow-card);
             display: flex;
             flex-direction: column;
+            justify-content: center; /* Centers chart vertically */
+            align-items: center;    /* Centers chart horizontally */
             gap: var(--space-2);
             min-height: 400px;
         }
 
+        /* UPDATED: Removed !important from height */
         #overallChart {
             width: 100% !important;
-            height: auto !important;
+            height: auto;
+            max-height: 100%;
         }
 
         .sr-only {
@@ -1894,8 +1899,8 @@ Spain\t1.10\t0.45\t11.30`;
             const desiredHeight = Math.max(320, (scores.length * barHeight) + chartPadding);
             
             // Set canvas size properly
-            canvas.style.height = desiredHeight + 'px';
             canvas.height = desiredHeight;
+            canvas.style.height = desiredHeight + 'px';
 
             const labels = scores.map(item => item.entity);
             const data = scores.map(item => item.displayOverallZ);
@@ -2091,6 +2096,4 @@ Spain\t1.10\t0.45\t11.30`;
             URL.revokeObjectURL(url);
         }
     </script>
-
-
 </body></html>
