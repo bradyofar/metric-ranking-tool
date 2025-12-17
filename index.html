@@ -1,4 +1,4 @@
-<html lang="en"><head>
+<html lang="en-GB"><head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,21 +68,6 @@
             line-height: 1.6;
             color: #4a4a4a;
             font-size: 18px;
-        }
-
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 16px;
-            padding: var(--space-2) var(--space-3);
-            background-color: #333;
-            color: #fff;
-            border-radius: var(--radius-sm);
-            z-index: 1000;
-        }
-
-        .skip-link:focus {
-            top: 16px;
         }
 
         .info-box {
@@ -551,7 +536,10 @@
         }
 
         .interpretation-icon {
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 24px;
+            text-align: center;
         }
 
         .checkbox-label {
@@ -849,8 +837,7 @@
             .input-section,
             .progress-indicator,
             .info-box button,
-            .checkbox-label,
-            .skip-link {
+            .checkbox-label {
                 display: none !important;
             }
 
@@ -863,32 +850,28 @@
     </style>
 </head>
 <body>
-    <a href="#mainContent" class="skip-link">Skip to main content</a>
-
-    <main id="mainContent" role="main">
+    <main role="main">
         <div class="container">
             <h1>Z-Score Ranking Index</h1>
             <p class="intro-text">
-                Compare performance and cost metrics on a level playing field. Paste your spreadsheet data, apply custom weights,
-                then get an aggregated ranking backed by statistics, all with a chart you can download in one click.
+                Compare performance and cost metrics directly. Paste your spreadsheet data, set weights for each metric, and get a combined ranking with a downloadable chart.
             </p>
 
             <section class="info-box" aria-labelledby="how-it-works">
-                <h2 id="how-it-works"> How this tool works</h2>
+                <h2 id="how-it-works">How this works</h2>
                 <p>
-                    <strong>TL;DR:</strong> We convert each metric into a <em>Z-score</em> (a standardized score). This lets you combine metrics
-                    that use different units—like percentages and currency—into one comparable index.
+                    We convert each metric into a Z-score (a standardised value). This lets you combine different units like percentages and currency into one comparable index.
                 </p>
 
                 <details>
                     <summary>What's a Z-score?</summary>
                     <div>
-                        <p>A Z-score measures how far a value is from the average in terms of standard deviations.</p>
+                        <p>A Z-score shows how far a value is from the average, measured in standard deviations.</p>
                         <ul>
-                            <li><strong>Z = 0</strong>: exactly average</li>
-                            <li><strong>Z = +1</strong>: one standard deviation above average (better than ~84% of entries)</li>
-                            <li><strong>Z = -1</strong>: one standard deviation below average</li>
-                            <li><em>Formula:</em> <code>Z = (value − mean) / standard deviation</code></li>
+                            <li><strong>Z = 0</strong> means exactly average</li>
+                            <li><strong>Z = +1</strong> means one standard deviation above average (better than roughly 84% of entries)</li>
+                            <li><strong>Z = -1</strong> means one standard deviation below average</li>
+                            <li>Formula: Z = (value - mean) / standard deviation</li>
                         </ul>
                     </div>
                 </details>
@@ -896,14 +879,14 @@
                 <details>
                     <summary>About weights</summary>
                     <div>
-                        <p>Enter any positive numbers to express relative importance (e.g., 1, 2, 3). We automatically normalise them so they always add up to 100%, keeping the math stable.</p>
+                        <p>Use any positive numbers to show importance (like 1, 2, 3). We normalise them to percentages automatically, so they always add up to 100%.</p>
                     </div>
                 </details>
 
                 <details>
                     <summary>Why costs are inverted</summary>
                     <div>
-                        <p>For cost metrics (CPM, CPC, etc.), lower values are better. We multiply their Z-scores by -1 so that "better = higher score" stays consistent across both performance and cost.</p>
+                        <p>For cost metrics (CPM, CPC, etc.), lower is better. We multiply their Z-scores by -1 so higher scores always mean better performance.</p>
                     </div>
                 </details>
             </section>
@@ -935,17 +918,17 @@
             <section class="input-section" role="region" aria-labelledby="performance-heading">
                 <h2 id="performance-heading">Step 1: Input your performance data</h2>
                 <p class="instruction-text" id="performance-instructions">
-                    Paste your performance metrics below or upload a CSV/TSV file. Include a header row (e.g., Country, CTR, Engagement Rate).
+                    Paste your data below or upload a CSV/TSV file. Include a header row (like Country, CTR, Engagement Rate).
                 </p>
 
                 <div class="input-options">
                     <button type="button" class="secondary-button" onclick="triggerFileInput('performanceFileInput')">
-                        📄 Upload CSV / TSV
+                        <span class="btn-text">Upload CSV / TSV</span>
                     </button>
                     <span class="input-divider" aria-hidden="true">or</span>
                 </div>
 
-                <p class="mobile-upload-hint">Tip: On mobile, uploading a file is often easier than pasting tabular data.</p>
+                <p class="mobile-upload-hint">Tip: On mobile, uploading a file is easier than pasting data.</p>
 
                 <label for="performanceData" class="sr-only">Performance data input area</label>
                 <textarea id="performanceData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CTR[TAB]Engagement Rate" spellcheck="false" aria-describedby="performance-instructions">Country	CTR	Engagement Rate
@@ -977,17 +960,17 @@ Spain	2.2%	41.5%</textarea>
             <section class="input-section" role="region" aria-labelledby="cost-heading">
                 <h2 id="cost-heading">Step 2: Input your cost data</h2>
                 <p class="instruction-text" id="cost-instructions">
-                    Paste your cost metrics below or upload a CSV/TSV file. Include a header row (e.g., Country, CPM, CPC).
+                    Paste your data below or upload a CSV/TSV file. Include a header row (like Country, CPM, CPC).
                 </p>
 
                 <div class="input-options">
                     <button type="button" class="secondary-button" onclick="triggerFileInput('costFileInput')">
-                        📄 Upload CSV / TSV
+                        <span class="btn-text">Upload CSV / TSV</span>
                     </button>
                     <span class="input-divider" aria-hidden="true">or</span>
                 </div>
 
-                <p class="mobile-upload-hint">Tip: On mobile, uploading a file is often easier than pasting tabular data.</p>
+                <p class="mobile-upload-hint">Tip: On mobile, uploading a file is easier than pasting data.</p>
 
                 <label for="costData" class="sr-only">Cost data input area</label>
                 <textarea id="costData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CPM[TAB]CPC" spellcheck="false" aria-describedby="cost-instructions">Country	CPM	CPC
@@ -1030,7 +1013,7 @@ Spain	1.10	0.45</textarea>
                     <h2 id="overall-heading" style="color:#f1623c; margin-bottom:6px; width: 100%; text-align: center;">Step 3: Generate your overall ranking</h2>
                 </div>
                 <p style="max-width: 720px; text-align: center; margin: 0 auto var(--space-2);">
-                    Combine performance and cost Z-scores into a single index. Higher values indicate stronger results achieved more efficiently.
+                    Combine performance and cost scores into one index. Higher values mean better results at lower cost.
                 </p>
                 <div class="button-row">
                     <button type="button" id="calcOverallBtn" onclick="handleCalculateOverall()">
@@ -1042,7 +1025,7 @@ Spain	1.10	0.45</textarea>
 
             <section class="color-picker-container" aria-label="Chart appearance options">
                 <div class="color-picker">
-                    <label for="barColor">Bar color:</label>
+                    <label for="barColor">Bar colour:</label>
                     <input type="color" id="barColorPicker" value="#f1623c" onchange="syncHexInput('barColorPicker', 'barColor'); updateChartColor('bar');">
                     <input type="text" class="color-input" id="barColor" value="#f1623c" oninput="syncColorPicker('barColor', 'barColorPicker'); updateChartColor('bar');">
                 </div>
@@ -1052,7 +1035,7 @@ Spain	1.10	0.45</textarea>
                     <input type="text" class="color-input" id="bgColor" value="#ffffff" oninput="syncColorPicker('bgColor', 'bgColorPicker'); updateChartColor('background');">
                 </div>
                 <div class="color-picker">
-                    <label for="axesColor">Axes &amp; labels:</label>
+                    <label for="axesColor">Axes and labels:</label>
                     <input type="color" id="axesColorPicker" value="#333333" onchange="syncHexInput('axesColorPicker', 'axesColor'); updateChartColor('axes');">
                     <input type="text" class="color-input" id="axesColor" value="#333333" oninput="syncColorPicker('axesColor', 'axesColorPicker'); updateChartColor('axes');">
                 </div>
@@ -1062,7 +1045,7 @@ Spain	1.10	0.45</textarea>
                 <label class="checkbox-label">
                     <input type="checkbox" id="removeNegativesCheckbox" onchange="handleCalculateOverall()">
                     Remove negative values from overall scores
-                    <span class="tooltip-icon" title="Shifts all overall scores upward so the lowest becomes zero. Rankings stay the same—this is purely for easier presentation.">ⓘ</span>
+                    <span class="tooltip-icon" title="Shifts all scores up so the lowest becomes zero. Rankings stay the same, this just makes presentation easier.">i</span>
                 </label>
             </div>
 
@@ -1327,7 +1310,7 @@ Spain\t1.10\t0.45\t11.30`;
 
             const headers = rows[0].split(/\t| {2,}|,/).map(cell => cell.trim()).filter(Boolean);
             if (headers.length < 2) {
-                showInlineError(elementId, 'Need at least one metric column in addition to the entity column.');
+                showInlineError(elementId, 'Need at least one metric column plus the entity column.');
                 return { headers: [], entities: [], metrics: [] };
             }
 
@@ -1362,7 +1345,7 @@ Spain\t1.10\t0.45\t11.30`;
             });
 
             if (invalidCells.length > 0) {
-                showInlineError(elementId, `Invalid entries detected at ${invalidCells.join(', ')}. Ensure metric columns contain numeric values only.`);
+                showInlineError(elementId, `Invalid entries at ${invalidCells.join(', ')}. Make sure metric columns only have numbers.`);
                 return { headers: [], entities: [], metrics: [] };
             }
 
@@ -1401,7 +1384,7 @@ Spain\t1.10\t0.45\t11.30`;
             const metricHeaders = headers.slice(1);
 
             if (metricHeaders.length === 0) {
-                container.innerHTML = '<p class="inline-error">No metric columns detected. Add at least one numeric metric.</p>';
+                container.innerHTML = '<p class="inline-error">No metric columns found. Add at least one numeric metric.</p>';
                 return;
             }
 
@@ -1478,9 +1461,9 @@ Spain\t1.10\t0.45\t11.30`;
             const explanation = document.createElement('div');
             explanation.className = 'weight-explanation';
             explanation.innerHTML = `
-                <p><strong>Your current weights:</strong> ${rawParts.join(' • ')} (total = ${totalRaw.toFixed(2)})</p>
-                <p><strong>Normalized importance:</strong> ${normalizedParts.join(' • ')}</p>
-                <p style="font-style:italic; color:#31507a;">Tip: Only the relative ratios matter—1, 2, 3 behaves the same as 10, 20, 30.</p>
+                <p><strong>Your weights:</strong> ${rawParts.join(' • ')} (total = ${totalRaw.toFixed(2)})</p>
+                <p><strong>Normalised:</strong> ${normalizedParts.join(' • ')}</p>
+                <p style="font-style:italic; color:#31507a;">Tip: Only ratios matter. Using 1, 2, 3 gives the same result as 10, 20, 30.</p>
             `;
 
             container.appendChild(explanation);
@@ -1557,12 +1540,12 @@ Spain\t1.10\t0.45\t11.30`;
 
             if (!headers.length) return;
             if (!metrics.length || !metrics[0] || metrics[0].length === 0) {
-                document.getElementById('performanceFeedback').innerHTML = '<p class="inline-error">No numeric performance metrics found. Please add at least one metric column.</p>';
+                document.getElementById('performanceFeedback').innerHTML = '<p class="inline-error">No numeric performance metrics found. Add at least one metric column.</p>';
                 return;
             }
 
             if (performanceWeights.length !== headers.slice(1).length) {
-                document.getElementById('performanceFeedback').innerHTML = '<p class="inline-error">Please set up weights for your performance metrics before calculating.</p>';
+                document.getElementById('performanceFeedback').innerHTML = '<p class="inline-error">Set up weights for your performance metrics first.</p>';
                 return;
             }
 
@@ -1586,12 +1569,12 @@ Spain\t1.10\t0.45\t11.30`;
 
             if (!headers.length) return;
             if (!metrics.length || !metrics[0] || metrics[0].length === 0) {
-                document.getElementById('costFeedback').innerHTML = '<p class="inline-error">No numeric cost metrics found. Please add at least one metric column.</p>';
+                document.getElementById('costFeedback').innerHTML = '<p class="inline-error">No numeric cost metrics found. Add at least one metric column.</p>';
                 return;
             }
 
             if (costWeights.length !== headers.slice(1).length) {
-                document.getElementById('costFeedback').innerHTML = '<p class="inline-error">Please set up weights for your cost metrics before calculating.</p>';
+                document.getElementById('costFeedback').innerHTML = '<p class="inline-error">Set up weights for your cost metrics first.</p>';
                 return;
             }
 
@@ -1611,14 +1594,14 @@ Spain\t1.10\t0.45\t11.30`;
         }
 
         function interpretZScore(zScore, index, total) {
-            if (index === 0) return { icon: '🏆', label: 'Top performer', description: 'Highest score' };
-            if (index === total - 1) return { icon: '⚠️', label: 'Lowest performer', description: 'Needs improvement' };
+            if (index === 0) return { icon: '★', label: 'Top performer', description: 'Highest score' };
+            if (index === total - 1) return { icon: '▼', label: 'Lowest performer', description: 'Needs work' };
 
-            if (zScore >= 1.0) return { icon: '🚀', label: 'Excellent', description: 'Well above average' };
-            if (zScore >= 0.5) return { icon: '✅', label: 'Strong', description: 'Above average' };
-            if (zScore > -0.5) return { icon: '➖', label: 'Average', description: 'Near average' };
-            if (zScore > -1.0) return { icon: '⬇️', label: 'Below average', description: 'Below average' };
-            return { icon: '🔻', label: 'Weak', description: 'Well below average' };
+            if (zScore >= 1.0) return { icon: '↑↑', label: 'Excellent', description: 'Well above average' };
+            if (zScore >= 0.5) return { icon: '↑', label: 'Strong', description: 'Above average' };
+            if (zScore > -0.5) return { icon: '—', label: 'Average', description: 'Near average' };
+            if (zScore > -1.0) return { icon: '↓', label: 'Below average', description: 'Below average' };
+            return { icon: '↓↓', label: 'Weak', description: 'Well below average' };
         }
 
         function displayResults(elementId, headers, scores, type) {
@@ -1640,11 +1623,11 @@ Spain\t1.10\t0.45\t11.30`;
             let html = `
                 <h3>${type} results (sorted by Z-score)</h3>
                 <div class="interpretation-guide">
-                    <p><strong>How to read this:</strong></p>
+                    <p><strong>Reading the scores:</strong></p>
                     <ul>
                         <li>Higher Z-scores = Better ${type.toLowerCase()}</li>
                         <li>Range: ${minZ.toFixed(2)} to ${maxZ.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
-                        <li>Entries within 0.5 of each other perform very similarly</li>
+                        <li>Entries within 0.5 of each other are very close</li>
                     </ul>
                 </div>
                 <div class="table-wrapper" tabindex="0">
@@ -1682,19 +1665,19 @@ Spain\t1.10\t0.45\t11.30`;
         }
 
         function interpretOverallScore(zScore, index, total) {
-            if (index === 0) return { icon: '🏆', label: 'Best overall', description: 'Best balance of performance and cost' };
-            if (index === total - 1) return { icon: '⚠️', label: 'Weak overall', description: 'Lowest efficiency score' };
+            if (index === 0) return { icon: '★', label: 'Best overall', description: 'Best balance' };
+            if (index === total - 1) return { icon: '▼', label: 'Weak overall', description: 'Lowest score' };
 
-            if (zScore >= 1.0) return { icon: '🚀', label: 'Excellent', description: 'Strongly outperforming peers' };
-            if (zScore >= 0.5) return { icon: '✅', label: 'Solid', description: 'Above-average efficiency' };
-            if (zScore > -0.5) return { icon: '➖', label: 'Average', description: 'Typical performance' };
-            if (zScore > -1.0) return { icon: '⬇️', label: 'Underperforming', description: 'Needs attention' };
-            return { icon: '🔻', label: 'Poor', description: 'Significant opportunity to improve' };
+            if (zScore >= 1.0) return { icon: '↑↑', label: 'Excellent', description: 'Much better than average' };
+            if (zScore >= 0.5) return { icon: '↑', label: 'Good', description: 'Above average' };
+            if (zScore > -0.5) return { icon: '—', label: 'Average', description: 'Typical' };
+            if (zScore > -1.0) return { icon: '↓', label: 'Below par', description: 'Room for improvement' };
+            return { icon: '↓↓', label: 'Poor', description: 'Needs work' };
         }
 
         function calculateOverallRanking() {
             if (!performanceZScores.length && !costZScores.length) {
-                document.getElementById('overallResults').innerHTML = '<p class="inline-error">Calculate performance and/or cost Z-scores first.</p>';
+                document.getElementById('overallResults').innerHTML = '<p class="inline-error">Calculate performance or cost Z-scores first.</p>';
                 return;
             }
 
@@ -1734,19 +1717,19 @@ Spain\t1.10\t0.45\t11.30`;
             }));
 
             let html = `
-                <h3>Overall performance ranking</h3>
+                <h3>Overall ranking</h3>
                 <div class="interpretation-guide">
-                    <p><strong>How to read this:</strong></p>
+                    <p><strong>Reading the scores:</strong></p>
                     <ul>
-                        <li>Overall Z-score = performance contribution + cost contribution</li>
-                        <li>Higher values indicate stronger results achieved more efficiently</li>
+                        <li>Overall Z-score = performance + cost</li>
+                        <li>Higher is better</li>
                         <li>Range: ${minOverall.toFixed(2)} to ${maxOverall.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
                     </ul>
                 </div>
             `;
 
             if (removeNegatives && adjustment > 0) {
-                html += `<p class="info-note">Overall scores shifted up by ${adjustment.toFixed(3)} to remove negative numbers for presentation. Ranking order is unchanged.</p>`;
+                html += `<p class="info-note">Scores shifted up by ${adjustment.toFixed(3)} to remove negatives. Ranking order unchanged.</p>`;
             }
 
             const missingPerformance = overallScores.filter(item => !performanceZScores.find(p => p.entity === item.entity));
@@ -1755,12 +1738,12 @@ Spain\t1.10\t0.45\t11.30`;
             if (missingPerformance.length || missingCost.length) {
                 const notes = [];
                 if (missingPerformance.length) {
-                    notes.push(`No performance metrics for: ${missingPerformance.map(item => item.entity).join(', ')}`);
+                    notes.push(`No performance data for: ${missingPerformance.map(item => item.entity).join(', ')}`);
                 }
                 if (missingCost.length) {
-                    notes.push(`No cost metrics for: ${missingCost.map(item => item.entity).join(', ')}`);
+                    notes.push(`No cost data for: ${missingCost.map(item => item.entity).join(', ')}`);
                 }
-                html += `<p class="info-note">Heads up: ${notes.join(' • ')}. Missing dimensions are treated as 0.</p>`;
+                html += `<p class="info-note">${notes.join(' • ')}. Missing values treated as 0.</p>`;
             }
 
             html += `
@@ -1769,9 +1752,9 @@ Spain\t1.10\t0.45\t11.30`;
                     <thead>
                         <tr>
                             <th scope="col">Entity</th>
-                            <th scope="col">Performance score</th>
-                            <th scope="col">Cost score</th>
-                            <th scope="col">Overall score</th>
+                            <th scope="col">Performance</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Overall</th>
                             <th scope="col">Interpretation</th>
                         </tr>
                     </thead>
@@ -1784,9 +1767,9 @@ Spain\t1.10\t0.45\t11.30`;
                 html += `
                     <tr>
                         <td data-label="Entity">${item.entity}</td>
-                        <td data-label="Performance score">${item.performanceZ.toFixed(3)}</td>
-                        <td data-label="Cost score">${item.costZ.toFixed(3)}</td>
-                        <td data-label="Overall score">${item.displayOverallZ.toFixed(3)}</td>
+                        <td data-label="Performance">${item.performanceZ.toFixed(3)}</td>
+                        <td data-label="Cost">${item.costZ.toFixed(3)}</td>
+                        <td data-label="Overall">${item.displayOverallZ.toFixed(3)}</td>
                         <td data-label="Interpretation">
                             <span class="interpretation-cell">
                                 <span class="interpretation-icon" aria-hidden="true">${interpretation.icon}</span>
@@ -1912,7 +1895,7 @@ Spain\t1.10\t0.45\t11.30`;
                 if (hexRegex.test(value)) {
                     chartColor = value;
                 } else {
-                    alert('Please enter a valid hex color for the bars (e.g., #f1623c).');
+                    alert('Please enter a valid hex colour (like #f1623c).');
                     return;
                 }
             }
@@ -1922,7 +1905,7 @@ Spain\t1.10\t0.45\t11.30`;
                 if (hexRegex.test(value)) {
                     backgroundColor = value;
                 } else {
-                    alert('Please enter a valid hex color for the background (e.g., #ffffff).');
+                    alert('Please enter a valid hex colour (like #ffffff).');
                     return;
                 }
             }
@@ -1932,7 +1915,7 @@ Spain\t1.10\t0.45\t11.30`;
                 if (hexRegex.test(value)) {
                     axesColor = value;
                 } else {
-                    alert('Please enter a valid hex color for the axes (e.g., #333333).');
+                    alert('Please enter a valid hex colour (like #333333).');
                     return;
                 }
             }
@@ -1956,7 +1939,7 @@ Spain\t1.10\t0.45\t11.30`;
 
         function downloadChartAsImage() {
             if (!window.overallChartInstance) {
-                alert('Generate the chart first, then try downloading again.');
+                alert('Generate the chart first.');
                 return;
             }
 
@@ -1968,7 +1951,7 @@ Spain\t1.10\t0.45\t11.30`;
 
         function exportResultsAsCSV() {
             if (!overallScores.length) {
-                alert('Calculate overall results first, then try exporting.');
+                alert('Calculate results first.');
                 return;
             }
 
