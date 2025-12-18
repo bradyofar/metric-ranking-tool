@@ -635,8 +635,8 @@
             border-left: 3px solid #ff9800;
         }
 
- .chart-container {
-width: 100%;
+.chart-container {
+width: min(100%, 820px);
 margin: var(--space-4) auto;
 padding: var(--space-4);
 border: 1px solid #e0e0e0;
@@ -646,19 +646,17 @@ box-shadow: var(--shadow-card);
 display: flex;
 flex-direction: column;
 justify-content: center;
-align-items: center;
 gap: var(--space-2);
 min-height: 400px;
 }
 
 #overallChart {
-width: min(100%, 780px) !important;
+width: 100% !important;
 display: block;
 margin: 0 auto;
 height: auto;
 max-height: 100%;
 }
-
         .sr-only {
             position: absolute;
             width: 1px;
