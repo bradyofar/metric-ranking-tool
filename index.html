@@ -1607,7 +1607,7 @@ Spain	1.10	0.45</textarea>
             let sampleSizeNote = '';
             let sampleSizeClass = 'info-note';
             if (sampleSize < 10) {
-                sampleSizeNote = `⚠️ Small sample (n=${sampleSize}): Results are more sensitive to individual values and outliers.`;
+                sampleSizeNote = `Small sample (n=${sampleSize}): Results are more sensitive to individual values and outliers.`;
                 sampleSizeClass = 'warning-note';
             } else if (sampleSize >= 30) {
                 sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Results are statistically robust.`;
