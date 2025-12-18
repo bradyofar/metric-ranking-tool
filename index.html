@@ -635,30 +635,29 @@
             border-left: 3px solid #ff9800;
         }
 
-        /* UPDATED: Flexbox added to center content */
-        .chart-container {
-            width: 100%;
-            max-width: 100%;
-            margin: var(--space-4) auto;
-            padding: var(--space-4);
-            border: 1px solid #e0e0e0;
-            border-radius: var(--radius-lg);
-            background-color: #fff;
-            box-shadow: var(--shadow-card);
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centers chart vertically */
-            align-items: center;    /* Centers chart horizontally */
-            gap: var(--space-2);
-            min-height: 400px;
-        }
+ .chart-container {
+width: 100%;
+margin: var(--space-4) auto;
+padding: var(--space-4);
+border: 1px solid #e0e0e0;
+border-radius: var(--radius-lg);
+background-color: #fff;
+box-shadow: var(--shadow-card);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: var(--space-2);
+min-height: 400px;
+}
 
-        /* UPDATED: Removed !important from height */
-        #overallChart {
-            width: 100% !important;
-            height: auto;
-            max-height: 100%;
-        }
+#overallChart {
+width: min(100%, 780px) !important;
+display: block;
+margin: 0 auto;
+height: auto;
+max-height: 100%;
+}
 
         .sr-only {
             position: absolute;
@@ -945,13 +944,6 @@
                 </div>
             </nav>
 
-            <div class="button-row">
-                <button type="button" class="secondary-button" onclick="loadSampleData()">
-                    <span class="btn-text">Load sample dataset</span>
-                    <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Loading…</span>
-                </button>
-            </div>
-
             <section class="input-section" role="region" aria-labelledby="performance-heading">
                 <h2 id="performance-heading">Step 1: Input your performance data</h2>
                 <p class="instruction-text" id="performance-instructions">
@@ -1221,52 +1213,6 @@ Spain	1.10	0.45</textarea>
             };
 
             reader.readAsText(file);
-        }
-
-        function resetAnalysis() {
-            performanceZScores = [];
-            costZScores = [];
-            overallScores = [];
-            performanceWeights = [];
-            costWeights = [];
-
-            document.getElementById('performanceResults').innerHTML = '';
-            document.getElementById('costResults').innerHTML = '';
-            document.getElementById('performanceFeedback').innerHTML = '';
-            document.getElementById('costFeedback').innerHTML = '';
-            document.getElementById('overallResults').innerHTML = '';
-            document.getElementById('performanceWeightsContainer').innerHTML = '';
-            document.getElementById('costWeightsContainer').innerHTML = '';
-            document.getElementById('removeNegativesCheckbox').checked = false;
-
-            if (window.overallChartInstance) {
-                window.overallChartInstance.destroy();
-                window.overallChartInstance = null;
-            }
-
-            setStepState(1);
-        }
-
-        function loadSampleData() {
-            resetAnalysis();
-
-            const performanceSample = `Country\tCTR\tEngagement Rate\tConversion Rate
-France\t2.5%\t45.2%\t3.8%
-Germany\t1.8%\t52.1%\t4.2%
-Italy\t3.1%\t38.9%\t2.9%
-Spain\t2.2%\t41.5%\t3.5%`;
-
-            const costSample = `Country\tCPM\tCPC\tCPA
-France\t1.20\t0.48\t12.50
-Germany\t1.50\t0.62\t15.80
-Italy\t0.95\t0.35\t9.20
-Spain\t1.10\t0.45\t11.30`;
-
-            document.getElementById('performanceData').value = performanceSample;
-            document.getElementById('costData').value = costSample;
-            document.getElementById('performanceData').focus();
-
-            alert('Sample data loaded. Next, click "Set up performance weights" to begin.');
         }
 
         function setStepState(currentStep) {
@@ -1782,7 +1728,7 @@ Spain\t1.10\t0.45\t11.30`;
             let sampleSizeNote = '';
             let sampleSizeClass = 'info-note';
             if (sampleSize < 10) {
-                sampleSizeNote = `⚠️ Small sample (n=${sampleSize}): Rankings are more sensitive to individual data points.`;
+                sampleSizeNote = `Small sample (n=${sampleSize}): Rankings are more sensitive to individual data points.`;
                 sampleSizeClass = 'warning-note';
             } else if (sampleSize >= 30) {
                 sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Rankings are statistically robust.`;
