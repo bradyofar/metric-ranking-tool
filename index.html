@@ -635,28 +635,29 @@
             border-left: 3px solid #ff9800;
         }
 
-.chart-container {
-width: min(100%, 820px);
-margin: var(--space-4) auto;
-padding: var(--space-4);
-border: 1px solid #e0e0e0;
-border-radius: var(--radius-lg);
-background-color: #fff;
-box-shadow: var(--shadow-card);
-display: flex;
-flex-direction: column;
-justify-content: center;
-gap: var(--space-2);
-min-height: 400px;
-}
+        .chart-container {
+            width: min(100%, 820px);
+            margin: var(--space-4) auto;
+            padding: var(--space-4);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--radius-lg);
+            background-color: #fff;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: var(--space-2);
+            min-height: 400px;
+        }
 
-#overallChart {
-width: 100% !important;
-display: block;
-margin: 0 auto;
-height: auto;
-max-height: 100%;
-}
+        #overallChart {
+            width: 100% !important;
+            display: block;
+            margin: 0 auto;
+            height: auto;
+            max-height: 100%;
+        }
+
         .sr-only {
             position: absolute;
             width: 1px;
@@ -906,21 +907,21 @@ max-height: 100%;
                 <details>
                     <summary>Understanding sample size and standard deviation</summary>
                     <div>
-                        <p><strong>Sample size matters:</strong></p>
+                        <p><strong>Sample size context:</strong></p>
                         <ul>
-                            <li><strong>Small samples (n&lt;10):</strong> Results can be unstable. One unusual value has outsized impact.</li>
-                            <li><strong>Medium samples (10-30):</strong> Z-scores become more reliable but still sensitive to outliers.</li>
-                            <li><strong>Large samples (30+):</strong> Z-scores are statistically robust and meaningful.</li>
+                            <li><strong>Small samples (n&lt;10):</strong> Z-scores work well for comparison. One strong/weak performer can notably influence the scale.</li>
+                            <li><strong>Medium samples (10-30):</strong> Z-scores provide reliable differentiation with stable rankings.</li>
+                            <li><strong>Large samples (30+):</strong> Z-scores deliver robust rankings with minimal sensitivity to outliers.</li>
                         </ul>
                         
-                        <p><strong>Standard deviation shows spread:</strong></p>
+                        <p><strong>Standard deviation matters for interpretation:</strong></p>
                         <ul>
-                            <li><strong>Small std dev:</strong> Values are clustered together. Rankings may exaggerate minor differences.</li>
-                            <li><strong>Large std dev:</strong> Values vary widely. Clear differentiation between performers.</li>
-                            <li><strong>Zero std dev:</strong> All values identical (we set it to 1 to avoid errors).</li>
+                            <li><strong>Low std dev (values tightly clustered):</strong> A z-score of 2.0 might only represent a 2% actual difference. Rankings are accurate, but gaps may look larger than they are in practice.</li>
+                            <li><strong>High std dev (values widely spread):</strong> A z-score of 0.5 might represent a 20% actual difference. Even "average" scores can reflect substantial real-world gaps.</li>
+                            <li><strong>Always check both:</strong> Z-score tells you relative position; std dev tells you if that position represents a meaningful practical difference.</li>
                         </ul>
                         
-                        <p><strong>Rule of thumb:</strong> If the z-score spread is less than 1.0, most entities are performing similarly.</p>
+                        <p><strong>Rule of thumb:</strong> If z-score range is less than 1.0 AND standard deviation is small, most entities are performing very similarly—rankings are technically correct but differences may not be actionable.</p>
                     </div>
                 </details>
             </section>
@@ -1605,7 +1606,7 @@ Spain	1.10	0.45</textarea>
             let sampleSizeNote = '';
             let sampleSizeClass = 'info-note';
             if (sampleSize < 10) {
-                sampleSizeNote = `Small sample (n=${sampleSize}): Results are more sensitive to individual values and outliers.`;
+                sampleSizeNote = `Small sample (n=${sampleSize}): Z-scores work well for comparison. Be aware that one strong/weak performer can notably influence the scale.`;
                 sampleSizeClass = 'warning-note';
             } else if (sampleSize >= 30) {
                 sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Results are statistically robust.`;
@@ -1616,9 +1617,17 @@ Spain	1.10	0.45</textarea>
             // Spread assessment
             let spreadNote = '';
             if (spread < 1.0) {
-                spreadNote = 'Tight clustering: Entities perform very similarly overall.';
+                spreadNote = '<li>Tight clustering: Entities perform very similarly overall.</li>';
             } else if (spread > 3.0) {
-                spreadNote = 'Wide spread: Clear performance differences exist between entities.';
+                spreadNote = '<li>Wide spread: Clear performance differences exist between entities.</li>';
+            }
+
+            // Std dev interpretation
+            let stdDevNote = '';
+            if (stats.std < 0.5) {
+                stdDevNote = `<li><strong>Note on std dev:</strong> Low standard deviation (${stats.std.toFixed(2)}) means values are tightly clustered. Ranking differences reflect small actual variations—z-scores may look larger than practical differences.</li>`;
+            } else if (stats.std > 2.0) {
+                stdDevNote = `<li><strong>Note on std dev:</strong> High standard deviation (${stats.std.toFixed(2)}) means substantial variation exists. Even modest z-scores can represent meaningful real-world differences.</li>`;
             }
 
             let html = `
@@ -1630,7 +1639,8 @@ Spain	1.10	0.45</textarea>
                         <li>Higher Z-scores = Better ${type.toLowerCase()}</li>
                         <li>Score range: ${minZ.toFixed(2)} to ${maxZ.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
                         <li>Standard deviation of scores: ${stats.std.toFixed(2)}</li>
-                        ${spreadNote ? `<li>${spreadNote}</li>` : ''}
+                        ${spreadNote}
+                        ${stdDevNote}
                         <li>Entries within 0.5 of each other are very close</li>
                     </ul>
                 </div>
@@ -1726,7 +1736,7 @@ Spain	1.10	0.45</textarea>
             let sampleSizeNote = '';
             let sampleSizeClass = 'info-note';
             if (sampleSize < 10) {
-                sampleSizeNote = `Small sample (n=${sampleSize}): Rankings are more sensitive to individual data points.`;
+                sampleSizeNote = `Small sample (n=${sampleSize}): Rankings work well for comparison. Be aware they're more sensitive to individual data points.`;
                 sampleSizeClass = 'warning-note';
             } else if (sampleSize >= 30) {
                 sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Rankings are statistically robust.`;
@@ -1737,9 +1747,17 @@ Spain	1.10	0.45</textarea>
             // Spread assessment
             let spreadNote = '';
             if (spread < 1.0) {
-                spreadNote = 'Tight clustering: Most entities perform similarly overall.';
+                spreadNote = '<li>Tight clustering: Most entities perform similarly overall.</li>';
             } else if (spread > 3.0) {
-                spreadNote = 'Wide spread: Clear differentiation in overall performance.';
+                spreadNote = '<li>Wide spread: Clear differentiation in overall performance.</li>';
+            }
+
+            // Std dev interpretation
+            let stdDevNote = '';
+            if (stats.std < 0.5) {
+                stdDevNote = `<li><strong>Note on std dev:</strong> Low standard deviation (${stats.std.toFixed(2)}) means scores are tightly clustered. Rankings are accurate but practical differences may be smaller than z-scores suggest.</li>`;
+            } else if (stats.std > 2.0) {
+                stdDevNote = `<li><strong>Note on std dev:</strong> High standard deviation (${stats.std.toFixed(2)}) indicates substantial variation. Even moderate z-scores reflect meaningful performance gaps.</li>`;
             }
 
             let html = `
@@ -1752,7 +1770,8 @@ Spain	1.10	0.45</textarea>
                         <li>Higher is better</li>
                         <li>Score range: ${minOverall.toFixed(2)} to ${maxOverall.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
                         <li>Standard deviation: ${stats.std.toFixed(2)}</li>
-                        ${spreadNote ? `<li>${spreadNote}</li>` : ''}
+                        ${spreadNote}
+                        ${stdDevNote}
                     </ul>
                 </div>
             `;
