@@ -1,4 +1,6 @@
-<html lang="en-GB"><head>
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -145,14 +147,8 @@
         }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .progress-indicator {
@@ -270,13 +266,8 @@
             box-shadow: none;
         }
 
-        button[aria-busy="true"] .btn-text {
-            display: none;
-        }
-
-        button[aria-busy="true"] .btn-loader {
-            display: inline-flex;
-        }
+        button[aria-busy="true"] .btn-text { display: none; }
+        button[aria-busy="true"] .btn-loader { display: inline-flex; }
 
         .btn-loader {
             display: none;
@@ -300,11 +291,7 @@
             border-top-color: #f1623c;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .input-section {
             display: flex;
@@ -428,9 +415,7 @@
             line-height: 1.5;
         }
 
-        .weight-explanation p {
-            margin: 0;
-        }
+        .weight-explanation p { margin: 0; }
 
         .results-container {
             display: grid;
@@ -473,18 +458,9 @@
             gap: var(--space-1);
         }
 
-        .interpretation-guide p {
-            margin: 0;
-        }
-
-        .interpretation-guide ul {
-            margin: var(--space-1) 0 0 20px;
-            padding: 0;
-        }
-
-        .interpretation-guide li {
-            margin: var(--space-1) 0;
-        }
+        .interpretation-guide p { margin: 0; }
+        .interpretation-guide ul { margin: var(--space-1) 0 0 20px; padding: 0; }
+        .interpretation-guide li { margin: var(--space-1) 0; }
 
         .table-wrapper {
             overflow-x: auto;
@@ -508,29 +484,24 @@
             color: #c94c14;
             border-bottom: 1px solid #eaeaea;
             padding: var(--space-2) var(--space-3);
-            text-align: center;
+            text-align: centre;
         }
 
         tbody td {
             border-bottom: 1px solid #eaeaea;
             padding: var(--space-2) var(--space-3);
-            text-align: center;
+            text-align: centre;
             font-size: 15px;
             color: #383838;
         }
 
-        tbody tr:nth-child(even) td {
-            background-color: #fbfbfb;
-        }
-
-        tbody tr:hover td {
-            background-color: #fef1ec;
-        }
+        tbody tr:nth-child(even) td { background-color: #fbfbfb; }
+        tbody tr:hover td { background-color: #fef1ec; }
 
         .interpretation-cell {
             display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            align-items: centre;
+            justify-content: centre;
             gap: var(--space-1);
             text-align: left;
         }
@@ -539,12 +510,12 @@
             font-size: 16px;
             font-weight: 700;
             min-width: 24px;
-            text-align: center;
+            text-align: centre;
         }
 
         .checkbox-label {
             display: inline-flex;
-            align-items: center;
+            align-items: centre;
             gap: var(--space-1);
             color: #3b3b3b;
             font-size: 15px;
@@ -560,15 +531,13 @@
             font-size: 12px;
             font-weight: 600;
             display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            align-items: centre;
+            justify-content: centre;
             cursor: help;
             transition: background-color 0.2s ease;
         }
 
-        .tooltip-icon:hover {
-            background-color: #d94d1a;
-        }
+        .tooltip-icon:hover { background-color: #d94d1a; }
 
         .color-picker-container {
             display: grid;
@@ -582,7 +551,7 @@
 
         .color-picker {
             display: flex;
-            align-items: center;
+            align-items: centre;
             gap: var(--space-2);
         }
 
@@ -645,7 +614,7 @@
             box-shadow: var(--shadow-card);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: centre;
             gap: var(--space-2);
             min-height: 400px;
         }
@@ -675,115 +644,39 @@
             border-radius: 4px;
         }
 
-        /* Responsive tweaks */
-
         @media (max-width: 1024px) {
-            body {
-                padding: var(--space-5) var(--space-3);
-            }
-
-            .container {
-                padding: var(--space-4) var(--space-5);
-            }
+            body { padding: var(--space-5) var(--space-3); }
+            .container { padding: var(--space-4) var(--space-5); }
         }
 
         @media (max-width: 900px) {
-            .progress-indicator {
-                flex-direction: column;
-                gap: var(--space-3);
-            }
-
-            .progress-line {
-                display: none;
-            }
-
-            .step {
-                flex-direction: row;
-                justify-content: flex-start;
-                gap: var(--space-2);
-                width: 100%;
-            }
-
-            .step-label {
-                text-align: left;
-            }
+            .progress-indicator { flex-direction: column; gap: var(--space-3); }
+            .progress-line { display: none; }
+            .step { flex-direction: row; justify-content: flex-start; gap: var(--space-2); width: 100%; }
+            .step-label { text-align: left; }
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: var(--space-4) var(--space-2);
-            }
-
-            .container {
-                padding: var(--space-4) var(--space-3);
-                gap: var(--space-3);
-            }
-
-            textarea.spreadsheet-input {
-                min-height: 200px;
-                font-size: 16px;
-            }
-
-            .mobile-upload-hint {
-                display: block;
-            }
-
-            .button-row {
-                justify-content: stretch;
-            }
-
-            .input-section {
-                padding: var(--space-3);
-            }
-
-            .color-picker-container {
-                grid-template-columns: 1fr;
-            }
-
-            .result-box {
-                padding: var(--space-2);
-            }
-
-            .weights-container {
-                grid-template-columns: 1fr;
-            }
-
-            .weight-input {
-                justify-content: space-between;
-            }
-
-            .table-wrapper {
-                box-shadow: none;
-            }
+            body { padding: var(--space-4) var(--space-2); }
+            .container { padding: var(--space-4) var(--space-3); gap: var(--space-3); }
+            textarea.spreadsheet-input { min-height: 200px; font-size: 16px; }
+            .mobile-upload-hint { display: block; }
+            .button-row { justify-content: stretch; }
+            .input-section { padding: var(--space-3); }
+            .color-picker-container { grid-template-columns: 1fr; }
+            .result-box { padding: var(--space-2); }
+            .weights-container { grid-template-columns: 1fr; }
+            .weight-input { justify-content: space-between; }
+            .table-wrapper { box-shadow: none; }
         }
 
         @media (max-width: 640px) {
-            body {
-                padding: var(--space-3) var(--space-2);
-            }
+            body { padding: var(--space-3) var(--space-2); }
+            .container { padding: var(--space-3) var(--space-2); }
 
-            .container {
-                padding: var(--space-3) var(--space-2);
-            }
-
-            table,
-            thead,
-            tbody,
-            th,
-            td,
-            tr {
-                display: block;
-            }
-
-            thead tr {
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
-            }
-
-            table {
-                min-width: unset;
-            }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            table { min-width: unset; }
 
             tbody tr {
                 margin-bottom: var(--space-2);
@@ -800,9 +693,7 @@
                 background-color: #fff;
             }
 
-            tbody td:last-child {
-                border-bottom: none;
-            }
+            tbody td:last-child { border-bottom: none; }
 
             tbody td::before {
                 content: attr(data-label);
@@ -810,56 +701,24 @@
                 left: var(--space-2);
                 top: var(--space-2);
                 font-weight: 600;
-                color: #444;
+                colour: #444;
                 text-align: left;
             }
 
-            .interpretation-cell {
-                justify-content: flex-end;
-            }
+            .interpretation-cell { justify-content: flex-end; }
         }
 
         @media (max-width: 480px) {
-            .chart-container {
-                padding: var(--space-3);
-            }
-
-            h1 {
-                font-size: 28px;
-            }
-
-            .intro-text {
-                font-size: 16px;
-            }
+            .chart-container { padding: var(--space-3); }
+            h1 { font-size: 28px; }
+            .intro-text { font-size: 16px; }
         }
 
         @media print {
-            body {
-                background: #fff;
-                padding: 0;
-            }
-
-            .container {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .button-row,
-            .color-picker-container,
-            .input-section,
-            .progress-indicator,
-            .info-box button,
-            .checkbox-label {
-                display: none !important;
-            }
-
-            .chart-container {
-                page-break-inside: avoid;
-                border: none;
-                box-shadow: none;
-            }
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; border: none; padding: 0; margin: 0; }
+            .button-row, .color-picker-container, .input-section, .progress-indicator, .info-box button, .checkbox-label { display: none !important; }
+            .chart-container { page-break-inside: avoid; border: none; box-shadow: none; }
         }
     </style>
 </head>
@@ -913,14 +772,14 @@
                             <li><strong>Medium samples (10-30):</strong> Z-scores provide reliable differentiation with stable rankings.</li>
                             <li><strong>Large samples (30+):</strong> Z-scores deliver robust rankings with minimal sensitivity to outliers.</li>
                         </ul>
-                        
+
                         <p><strong>Standard deviation matters for interpretation:</strong></p>
                         <ul>
                             <li><strong>Low std dev (values tightly clustered):</strong> A z-score of 2.0 might only represent a 2% actual difference. Rankings are accurate, but gaps may look larger than they are in practice.</li>
                             <li><strong>High std dev (values widely spread):</strong> A z-score of 0.5 might represent a 20% actual difference. Even "average" scores can reflect substantial real-world gaps.</li>
                             <li><strong>Always check both:</strong> Z-score tells you relative position; std dev tells you if that position represents a meaningful practical difference.</li>
                         </ul>
-                        
+
                         <p><strong>Rule of thumb:</strong> If z-score range is less than 1.0 AND standard deviation is small, most entities are performing very similarly—rankings are technically correct but differences may not be actionable.</p>
                     </div>
                 </details>
@@ -959,11 +818,11 @@
                 <p class="mobile-upload-hint">Tip: On mobile, uploading a file is easier than pasting data.</p>
 
                 <label for="performanceData" class="sr-only">Performance data input area</label>
-                <textarea id="performanceData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CTR[TAB]Engagement Rate" spellcheck="false" aria-describedby="performance-instructions">Country	CTR	Engagement Rate
-France	2.5%	45.2%
-Germany	1.8%	52.1%
-Italy	3.1%	38.9%
-Spain	2.2%	41.5%</textarea>
+                <textarea id="performanceData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CTR[TAB]Engagement Rate" spellcheck="false" aria-describedby="performance-instructions">Country    CTR    Engagement Rate
+France    2.5%    45.2%
+Germany    1.8%    52.1%
+Italy    3.1%    38.9%
+Spain    2.2%    41.5%</textarea>
 
                 <input type="file" id="performanceFileInput" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" class="sr-only" onchange="handleFileUpload(event, 'performanceData')" aria-label="Upload performance data file">
 
@@ -1001,11 +860,11 @@ Spain	2.2%	41.5%</textarea>
                 <p class="mobile-upload-hint">Tip: On mobile, uploading a file is easier than pasting data.</p>
 
                 <label for="costData" class="sr-only">Cost data input area</label>
-                <textarea id="costData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CPM[TAB]CPC" spellcheck="false" aria-describedby="cost-instructions">Country	CPM	CPC
-France	1.20	0.48
-Germany	1.50	0.62
-Italy	0.95	0.35
-Spain	1.10	0.45</textarea>
+                <textarea id="costData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CPM[TAB]CPC" spellcheck="false" aria-describedby="cost-instructions">Country    CPM    CPC
+France    1.20    0.48
+Germany    1.50    0.62
+Italy    0.95    0.35
+Spain    1.10    0.45</textarea>
 
                 <input type="file" id="costFileInput" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" class="sr-only" onchange="handleFileUpload(event, 'costData')" aria-label="Upload cost data file">
 
@@ -1067,6 +926,21 @@ Spain	1.10	0.45</textarea>
                     <input type="color" id="axesColorPicker" value="#333333" onchange="syncHexInput('axesColorPicker', 'axesColor'); updateChartColor('axes');">
                     <input type="text" class="color-input" id="axesColor" value="#333333" oninput="syncColorPicker('axesColor', 'axesColorPicker'); updateChartColor('axes');">
                 </div>
+
+                <p class="info-note" style="grid-column:1/-1;">
+                    Metric colours are editable below. The bar colour picker applies when there is only one metric.
+                </p>
+            </section>
+
+            <!-- NEW: Editable metric colours -->
+            <section class="color-picker-container" aria-label="Metric colours" id="metricColorSection">
+                <p class="info-note" style="grid-column:1/-1;">
+                    Metric colours are assigned automatically when you generate the overall chart. You can edit them here and the chart will update instantly.
+                </p>
+                <div class="button-row" style="grid-column:1/-1; justify-content: flex-start;">
+                    <button type="button" class="secondary-button" onclick="resetMetricColours()">Reset metric colours</button>
+                </div>
+                <div id="metricColorContainer" style="grid-column:1/-1; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-2);"></div>
             </section>
 
             <div class="button-row">
@@ -1097,7 +971,7 @@ Spain	1.10	0.45</textarea>
     </main>
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 
     <script>
         let performanceZScores = [];
@@ -1108,9 +982,15 @@ Spain	1.10	0.45</textarea>
         let performanceHeaders = [];
         let costHeaders = [];
 
+        const METRIC_COLORS = ['#f1623c','#235fc0','#2ca02c','#9467bd','#ff9800','#00bcd4','#e91e63','#795548','#607d8b','#ffc107','#3f51b5','#8bc34a'];
+
         let chartColor = '#f1623c';
         let backgroundColor = '#ffffff';
         let axesColor = '#333333';
+
+        // NEW: Metric colour state (editable)
+        let metricColours = {};
+        const METRIC_COLOUR_STORAGE_KEY = 'zscore_metric_colours_v1';
 
         const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB
         const ACCEPTED_MIME_TYPES = new Set([
@@ -1123,7 +1003,9 @@ Spain	1.10	0.45</textarea>
         ]);
 
         document.addEventListener('DOMContentLoaded', () => {
+            loadMetricColoursFromStorage();
             setStepState(1);
+            renderMetricColourPickers(); // renders empty until metrics exist
         });
 
         document.addEventListener('keydown', event => {
@@ -1530,11 +1412,22 @@ Spain	1.10	0.45</textarea>
                 return;
             }
 
+            const metricHeaders = headers.slice(1);
+            const normalized = normalizeWeights(performanceWeights);
             const zScoresByMetric = calculateWeightedZScores(metrics, performanceWeights);
 
             performanceZScores = entities.map((entity, rowIndex) => {
-                const totalZScore = zScoresByMetric.reduce((sum, colZScores) => sum + colZScores[rowIndex], 0);
-                return { entity, totalZScore };
+                const contributions = {};
+                metricHeaders.forEach((mh, colIndex) => {
+                    contributions[mh] = {
+                        contribution: zScoresByMetric[colIndex][rowIndex],
+                        rawValue: metrics[rowIndex][colIndex],
+                        weight: normalized[colIndex] * 100
+                    };
+                });
+
+                const totalZScore = metricHeaders.reduce((sum, mh) => sum + contributions[mh].contribution, 0);
+                return { entity, totalZScore, contributions };
             });
 
             performanceZScores.sort((a, b) => b.totalZScore - a.totalZScore);
@@ -1559,11 +1452,22 @@ Spain	1.10	0.45</textarea>
                 return;
             }
 
+            const metricHeaders = headers.slice(1);
+            const normalized = normalizeWeights(costWeights);
             const zScoresByMetric = calculateWeightedZScores(metrics, costWeights, true);
 
             costZScores = entities.map((entity, rowIndex) => {
-                const totalZScore = zScoresByMetric.reduce((sum, colZScores) => sum + colZScores[rowIndex], 0);
-                return { entity, totalZScore };
+                const contributions = {};
+                metricHeaders.forEach((mh, colIndex) => {
+                    contributions[mh] = {
+                        contribution: zScoresByMetric[colIndex][rowIndex],
+                        rawValue: metrics[rowIndex][colIndex],
+                        weight: normalized[colIndex] * 100
+                    };
+                });
+
+                const totalZScore = metricHeaders.reduce((sum, mh) => sum + contributions[mh].contribution, 0);
+                return { entity, totalZScore, contributions };
             });
 
             costZScores.sort((a, b) => b.totalZScore - a.totalZScore);
@@ -1602,7 +1506,6 @@ Spain	1.10	0.45</textarea>
 
             const label = type === 'Performance' ? 'Performance Z-score' : 'Cost Z-score';
 
-            // Sample size assessment
             let sampleSizeNote = '';
             let sampleSizeClass = 'info-note';
             if (sampleSize < 10) {
@@ -1614,7 +1517,6 @@ Spain	1.10	0.45</textarea>
                 sampleSizeNote = `Sample size: n=${sampleSize} (moderate - reasonably reliable)`;
             }
 
-            // Spread assessment
             let spreadNote = '';
             if (spread < 1.0) {
                 spreadNote = '<li>Tight clustering: Entities perform very similarly overall.</li>';
@@ -1622,7 +1524,6 @@ Spain	1.10	0.45</textarea>
                 spreadNote = '<li>Wide spread: Clear performance differences exist between entities.</li>';
             }
 
-            // Std dev interpretation
             let stdDevNote = '';
             if (stats.std < 0.5) {
                 stdDevNote = `<li><strong>Note on std dev:</strong> Low standard deviation (${stats.std.toFixed(2)}) means values are tightly clustered. Ranking differences reflect small actual variations—z-scores may look larger than practical differences.</li>`;
@@ -1704,11 +1605,24 @@ Spain	1.10	0.45</textarea>
                 const performance = performanceZScores.find(item => item.entity === entity);
                 const cost = costZScores.find(item => item.entity === entity);
 
+                const contributions = {};
+                if (performance && performance.contributions) {
+                    Object.keys(performance.contributions).forEach(k => {
+                        contributions[k] = { ...performance.contributions[k] };
+                    });
+                }
+                if (cost && cost.contributions) {
+                    Object.keys(cost.contributions).forEach(k => {
+                        contributions[k] = { ...cost.contributions[k] };
+                    });
+                }
+
                 return {
                     entity,
                     performanceZ: performance ? performance.totalZScore : 0,
                     costZ: cost ? cost.totalZScore : 0,
-                    overallZ: (performance ? performance.totalZScore : 0) + (cost ? cost.totalZScore : 0)
+                    overallZ: (performance ? performance.totalZScore : 0) + (cost ? cost.totalZScore : 0),
+                    contributions
                 };
             });
 
@@ -1732,7 +1646,6 @@ Spain	1.10	0.45</textarea>
                 displayOverallZ: score.overallZ + adjustment
             }));
 
-            // Sample size assessment
             let sampleSizeNote = '';
             let sampleSizeClass = 'info-note';
             if (sampleSize < 10) {
@@ -1744,7 +1657,6 @@ Spain	1.10	0.45</textarea>
                 sampleSizeNote = `Sample size: n=${sampleSize} (moderate reliability)`;
             }
 
-            // Spread assessment
             let spreadNote = '';
             if (spread < 1.0) {
                 spreadNote = '<li>Tight clustering: Most entities perform similarly overall.</li>';
@@ -1752,7 +1664,6 @@ Spain	1.10	0.45</textarea>
                 spreadNote = '<li>Wide spread: Clear differentiation in overall performance.</li>';
             }
 
-            // Std dev interpretation
             let stdDevNote = '';
             if (stats.std < 0.5) {
                 stdDevNote = `<li><strong>Note on std dev:</strong> Low standard deviation (${stats.std.toFixed(2)}) means scores are tightly clustered. Rankings are accurate but practical differences may be smaller than z-scores suggest.</li>`;
@@ -1777,21 +1688,7 @@ Spain	1.10	0.45</textarea>
             `;
 
             if (removeNegatives && adjustment > 0) {
-                html += `<p class="info-note">Scores shifted up by ${adjustment.toFixed(3)} to remove negatives. Ranking order unchanged.</p>`;
-            }
-
-            const missingPerformance = overallScores.filter(item => !performanceZScores.find(p => p.entity === item.entity));
-            const missingCost = overallScores.filter(item => !costZScores.find(c => c.entity === item.entity));
-
-            if (missingPerformance.length || missingCost.length) {
-                const notes = [];
-                if (missingPerformance.length) {
-                    notes.push(`No performance data for: ${missingPerformance.map(item => item.entity).join(', ')}`);
-                }
-                if (missingCost.length) {
-                    notes.push(`No cost data for: ${missingCost.map(item => item.entity).join(', ')}`);
-                }
-                html += `<p class="info-note">${notes.join(' • ')}. Missing values treated as 0.</p>`;
+                html += `<p class="info-note">Scores shifted up by ${adjustment.toFixed(3)} to remove negatives. Ranking order unchanged. Chart shows unshifted contributions for analytical clarity.</p>`;
             }
 
             html += `
@@ -1832,7 +1729,6 @@ Spain	1.10	0.45</textarea>
             document.getElementById('overallResults').innerHTML = html;
 
             renderOverallChart(overallScores);
-
             setStepState(4);
         }
 
@@ -1848,112 +1744,132 @@ Spain	1.10	0.45</textarea>
             const canvas = document.getElementById('overallChart');
             if (!canvas) return;
 
-            // Destroy existing chart
             if (window.overallChartInstance) {
                 window.overallChartInstance.destroy();
                 window.overallChartInstance = null;
             }
 
             const ctx = canvas.getContext('2d');
-            
-            // Calculate dynamic height based on number of items
+
+            // Collect all unique metric keys across all entities (in insertion order)
+            const allMetrics = [];
+            scores.forEach(score => {
+                Object.keys(score.contributions || {}).forEach(key => {
+                    if (!allMetrics.includes(key)) allMetrics.push(key);
+                });
+            });
+
+            // Ensure colours exist for these metrics, then render pickers
+            initialiseMetricColours(allMetrics);
+            renderMetricColourPickers();
+
+            // Dynamic canvas height
             const barHeight = 48;
-            const chartPadding = 120;
-            const desiredHeight = Math.max(320, (scores.length * barHeight) + chartPadding);
-            
-            // Set canvas size properly
+            const chartPadding = 160;
+            const desiredHeight = Math.max(360, (scores.length * barHeight) + chartPadding);
             canvas.height = desiredHeight;
             canvas.style.height = desiredHeight + 'px';
 
             const labels = scores.map(item => item.entity);
-            const data = scores.map(item => item.displayOverallZ);
+            const useSingleMetric = allMetrics.length === 1;
+
+            const datasets = allMetrics.map((metric, idx) => {
+                const fallback = METRIC_COLORS[idx % METRIC_COLORS.length];
+                const colour = useSingleMetric ? chartColor : (metricColours[metric] || fallback);
+
+                return {
+                    label: metric,
+                    data: scores.map(score => {
+                        const c = (score.contributions || {})[metric];
+                        return c ? c.contribution : 0;
+                    }),
+                    backgroundColor: colour,
+                    borderColor: colour,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    stack: 'combined',
+                    _metricName: metric
+                };
+            });
 
             window.overallChartInstance = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Overall Z-score',
-                        data,
-                        backgroundColor: chartColor,
-                        borderColor: chartColor,
-                        borderWidth: 0,
-                        borderRadius: 4
-                    }]
-                },
+                data: { labels, datasets },
                 options: {
-                    indexAxis: 'y', // This makes it horizontal
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    backgroundColor: backgroundColor,
                     scales: {
                         x: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.08)',
-                                drawBorder: false
-                            },
+                            stacked: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.08)', drawBorder: false },
                             ticks: {
                                 color: axesColor,
-                                font: {
-                                    size: 13,
-                                    family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-                                }
+                                font: { size: 13, family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }
                             },
-                            border: {
-                                display: false
-                            }
+                            border: { display: false }
                         },
                         y: {
-                            grid: {
-                                display: false
-                            },
+                            stacked: true,
+                            grid: { display: false },
                             ticks: {
                                 color: axesColor,
-                                font: {
-                                    size: 13,
-                                    weight: '500',
-                                    family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-                                },
+                                font: { size: 13, weight: '500', family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" },
                                 padding: 8
                             },
-                            border: {
-                                display: false
-                            }
+                            border: { display: false }
                         }
                     },
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rectRounded',
+                                padding: 16,
+                                font: { size: 13, family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }
+                            }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            cornerRadius: 6,
-                            titleFont: {
-                                size: 14,
-                                weight: '600'
-                            },
-                            bodyFont: {
-                                size: 13
-                            },
+                            mode: 'nearest',
+                            intersect: true,
+                            backgroundColor: 'rgba(0, 0, 0, 0.88)',
+                            padding: 14,
+                            cornerRadius: 8,
+                            titleFont: { size: 14, weight: '600' },
+                            bodyFont: { size: 13 },
+                            footerFont: { size: 12, weight: '400', style: 'italic' },
                             callbacks: {
-                                label: context => `Overall score: ${context.parsed.x.toFixed(3)}`
+                                title: function(items) {
+                                    if (!items.length) return '';
+                                    return scores[items[0].dataIndex].entity;
+                                },
+                                label: function(item) {
+                                    const metricName = item.dataset._metricName;
+                                    const score = scores[item.dataIndex];
+                                    const contrib = (score.contributions || {})[metricName];
+                                    if (!contrib || Math.abs(contrib.contribution) < 0.0005) return null;
+
+                                    const sign = contrib.contribution >= 0 ? '+' : '';
+                                    return [
+                                        `${metricName}: ${sign}${contrib.contribution.toFixed(3)}`,
+                                        `  Raw value: ${contrib.rawValue}`,
+                                        `  Weight: ${contrib.weight.toFixed(1)}%`
+                                    ];
+                                },
+                                footer: function(items) {
+                                    if (!items.length) return '';
+                                    return 'Overall: ' + scores[items[0].dataIndex].displayOverallZ.toFixed(3);
+                                }
                             }
                         }
                     },
-                    layout: {
-                        padding: {
-                            top: 20,
-                            right: 20,
-                            bottom: 20,
-                            left: 10
-                        }
-                    }
+                    layout: { padding: { top: 20, right: 20, bottom: 20, left: 10 } }
                 },
                 plugins: [{
                     id: 'customCanvasBackgroundColor',
-                    beforeDraw: (chart) => {
+                    beforeDraw: function(chart) {
                         const ctx = chart.canvas.getContext('2d');
                         ctx.save();
                         ctx.globalCompositeOperation = 'destination-over';
@@ -1999,6 +1915,15 @@ Spain	1.10	0.45</textarea>
             }
 
             if (!overallScores.length || !window.overallChartInstance) return;
+
+            // If only one metric dataset exists, update dataset colour directly
+            if (type === 'bar' && window.overallChartInstance.data.datasets && window.overallChartInstance.data.datasets.length === 1) {
+                window.overallChartInstance.data.datasets[0].backgroundColor = chartColor;
+                window.overallChartInstance.data.datasets[0].borderColor = chartColor;
+                window.overallChartInstance.update();
+                return;
+            }
+
             renderOverallChart(overallScores);
         }
 
@@ -2033,20 +1958,39 @@ Spain	1.10	0.45</textarea>
                 return;
             }
 
+            // Collect all unique metric names across all entities
+            const allMetrics = [];
+            overallScores.forEach(score => {
+                Object.keys(score.contributions || {}).forEach(key => {
+                    if (!allMetrics.includes(key)) allMetrics.push(key);
+                });
+            });
+
             const csvRows = [];
-            csvRows.push(['Entity', 'Performance Z-Score', 'Cost Z-Score', 'Overall Z-Score', 'Adjusted Overall Score']);
+            const header = ['Entity', 'Performance Z-Score', 'Cost Z-Score', 'Overall Z-Score', 'Adjusted Overall Score'];
+            allMetrics.forEach(m => header.push(m + ' Contribution'));
+            csvRows.push(header);
 
             overallScores.forEach(item => {
-                csvRows.push([
+                const row = [
                     item.entity,
                     item.performanceZ.toFixed(3),
                     item.costZ.toFixed(3),
                     item.overallZ.toFixed(3),
                     item.displayOverallZ.toFixed(3)
-                ]);
+                ];
+
+                allMetrics.forEach(m => {
+                    const c = (item.contributions || {})[m];
+                    row.push(c ? c.contribution.toFixed(3) : '0.000');
+                });
+
+                csvRows.push(row);
             });
 
-            const csvContent = csvRows.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(',')).join('\n');
+            const csvContent = csvRows
+                .map(row => row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','))
+                .join('\n');
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
@@ -2058,5 +2002,105 @@ Spain	1.10	0.45</textarea>
 
             URL.revokeObjectURL(url);
         }
+
+        /* ================================================================
+           NEW: METRIC COLOUR EDITOR (editable stacked colours)
+           ================================================================ */
+
+        function loadMetricColoursFromStorage() {
+            try {
+                const raw = localStorage.getItem(METRIC_COLOUR_STORAGE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object') {
+                    metricColours = parsed;
+                }
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        function saveMetricColoursToStorage() {
+            try {
+                localStorage.setItem(METRIC_COLOUR_STORAGE_KEY, JSON.stringify(metricColours));
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        function initialiseMetricColours(metricHeaders) {
+            if (!Array.isArray(metricHeaders) || metricHeaders.length === 0) return;
+
+            metricHeaders.forEach((metric, idx) => {
+                if (!metricColours[metric]) {
+                    metricColours[metric] = METRIC_COLORS[idx % METRIC_COLORS.length];
+                }
+            });
+
+            saveMetricColoursToStorage();
+        }
+
+        function renderMetricColourPickers() {
+            const container = document.getElementById('metricColorContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            const keys = Object.keys(metricColours);
+            if (!keys.length) {
+                container.innerHTML = '<p class="info-note" style="grid-column:1/-1;">Generate the overall chart to populate metric colours.</p>';
+                return;
+            }
+
+            keys.forEach(metric => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'color-picker';
+
+                const safeId = 'metric_' + metric.replace(/[^a-z0-9]+/gi, '_');
+
+                wrapper.innerHTML = `
+                    <label for="${safeId}_hex">${metric}:</label>
+                    <input type="color" value="${metricColours[metric]}" aria-label="${metric} colour picker"
+                        onchange="updateMetricColour('${escapeForAttr(metric)}', this.value)">
+                    <input type="text" class="color-input" id="${safeId}_hex" value="${metricColours[metric]}" aria-label="${metric} hex colour"
+                        oninput="updateMetricColour('${escapeForAttr(metric)}', this.value)">
+                `;
+
+                container.appendChild(wrapper);
+            });
+        }
+
+        function updateMetricColour(metric, value) {
+            const realMetric = unescapeFromAttr(metric);
+            const hexRegex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+            const cleaned = String(value || '').trim();
+
+            if (!hexRegex.test(cleaned)) return;
+
+            metricColours[realMetric] = cleaned;
+            saveMetricColoursToStorage();
+
+            if (overallScores.length) {
+                renderOverallChart(overallScores);
+            } else {
+                renderMetricColourPickers();
+            }
+        }
+
+        function resetMetricColours() {
+            metricColours = {};
+            saveMetricColoursToStorage();
+            renderMetricColourPickers();
+            if (overallScores.length) renderOverallChart(overallScores);
+        }
+
+        // Tiny helpers so metric names with quotes don't break inline handlers
+        function escapeForAttr(str) {
+            return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        }
+        function unescapeFromAttr(str) {
+            return String(str).replace(/\\'/g, "'").replace(/\\\\/g, "\\");
+        }
     </script>
-</body></html>
+</body>
+</html>
