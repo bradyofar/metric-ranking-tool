@@ -1,2106 +1,1092 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Z-Score Ranking Calculator</title>
-
-    <style>
-        :root {
-            color-scheme: light;
-            --space-1: 8px;
-            --space-2: 16px;
-            --space-3: 24px;
-            --space-4: 32px;
-            --space-5: 40px;
-            --space-6: 48px;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.08);
-            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 3px 12px rgba(0, 0, 0, 0.10);
-            --shadow-hover: 0 6px 18px rgba(217, 77, 26, 0.32);
-            --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-code: 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
-        }
-
-        * {
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 200ms;
-            transition-property: background, color, border, transform, box-shadow, opacity;
-        }
-
-        body {
-            font-family: var(--font-base);
-            margin: 0;
-            padding: var(--space-5) var(--space-2) var(--space-6);
-            background-color: #f1623c;
-            color: #333;
-        }
-
-        main {
-            display: block;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .container {
-            background-color: #fff;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-soft);
-            padding: var(--space-5) var(--space-6);
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-4);
-        }
-
-        h1 {
-            text-align: center;
-            color: #f1623c;
-            margin: 0;
-            font-size: 36px;
-            line-height: 1.2;
-        }
-
-        .intro-text {
-            text-align: center;
-            margin: 0 auto;
-            max-width: 780px;
-            line-height: 1.6;
-            color: #4a4a4a;
-            font-size: 18px;
-        }
-
-        .info-box {
-            background-color: #fff9f5;
-            border-left: 4px solid #f1623c;
-            padding: var(--space-3);
-            border-radius: var(--radius-md);
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-2);
-        }
-
-        .info-box h2 {
-            margin: 0;
-            color: #d94d1a;
-            font-size: 22px;
-        }
-
-        .info-box p {
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        details {
-            border: 1px solid #f1d4cc;
-            border-radius: var(--radius-sm);
-            padding: var(--space-2) var(--space-3);
-            background: #fff;
-            transition: background 0.2s ease;
-        }
-
-        details[open] {
-            background: #fff4ec;
-        }
-
-        summary {
-            cursor: pointer;
-            font-weight: 600;
-            color: #e35626;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: var(--space-1);
-            outline: none;
-        }
-
-        summary::-webkit-details-marker {
-            display: none;
-        }
-
-        summary::before {
-            content: '▶';
-            font-size: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        details[open] summary::before {
-            transform: rotate(90deg);
-        }
-
-        details > div {
-            margin-top: var(--space-2);
-            padding-top: var(--space-2);
-            border-top: 1px solid #f1d4cc;
-            animation: slideDown 0.2s ease;
-        }
-
-        details ul {
-            margin: var(--space-1) 0 0 20px;
-            padding: 0;
-        }
-
-        details li {
-            margin: var(--space-1) 0;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .progress-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0;
-            margin-top: var(--space-2);
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--space-1);
-            min-width: 140px;
-            text-align: center;
-        }
-
-        .step-label {
-            font-size: 14px;
-            color: #3b3b3b;
-            line-height: 1.4;
-        }
-
-        .step-circle {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #d4d4d4;
-            color: #2f2f2f;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 18px;
-            transition-property: transform, box-shadow, background, color;
-        }
-
-        .progress-line {
-            flex: 1;
-            height: 3px;
-            background: #e0e0e0;
-            margin: 0 -24px 32px;
-            transition: background 0.3s ease;
-        }
-
-        .step.active .step-circle {
-            background: #f1623c;
-            color: #fff;
-            box-shadow: 0 0 0 4px rgba(241, 98, 60, 0.18);
-        }
-
-        .step.completed .step-circle {
-            background: #4caf50;
-            color: #fff;
-        }
-
-        .progress-line.completed {
-            background: #4caf50;
-        }
-
-        .button-row {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-2);
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        button {
-            padding: var(--space-2) var(--space-3);
-            border: none;
-            border-radius: var(--radius-sm);
-            background: #f1623c;
-            color: #fff;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-            box-shadow: var(--shadow-soft);
-            min-height: 46px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-1);
-            transition-property: background, box-shadow, transform, color;
-        }
-
-        button.secondary-button {
-            background: #fff;
-            color: #f1623c;
-            border: 1px solid #f1623c;
-            box-shadow: none;
-        }
-
-        button:hover:not(:disabled) {
-            background: #d94d1a;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        button.secondary-button:hover:not(:disabled) {
-            background: rgba(241, 98, 60, 0.08);
-        }
-
-        button:active:not(:disabled) {
-            transform: translateY(0);
-            box-shadow: 0 3px 12px rgba(217, 77, 26, 0.3);
-        }
-
-        button:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-            box-shadow: none;
-        }
-
-        button[aria-busy="true"] .btn-text { display: none; }
-        button[aria-busy="true"] .btn-loader { display: inline-flex; }
-
-        .btn-loader {
-            display: none;
-            align-items: center;
-            gap: var(--space-1);
-            font-size: 15px;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.35);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-
-        button.secondary-button .spinner {
-            border-color: rgba(241, 98, 60, 0.3);
-            border-top-color: #f1623c;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .input-section {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-            padding: var(--space-4);
-            border: 1px solid #e2e2e2;
-            border-radius: var(--radius-lg);
-            background-color: #fdfdfd;
-            box-shadow: var(--shadow-card);
-        }
-
-        .input-section h2 {
-            margin: 0;
-            color: #f1623c;
-            font-size: 24px;
-        }
-
-        .instruction-text {
-            margin: 0;
-            font-size: 16px;
-            color: #3b3b3b;
-            text-align: center;
-        }
-
-        .input-options {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-2);
-            flex-wrap: wrap;
-        }
-
-        .input-divider {
-            color: #767676;
-            font-size: 14px;
-        }
-
-        .mobile-upload-hint {
-            display: none;
-            font-size: 14px;
-            color: #494949;
-            background-color: #fff9eb;
-            padding: var(--space-2) var(--space-3);
-            border-radius: var(--radius-sm);
-            border-left: 3px solid #ffc861;
-            margin: 0;
-        }
-
-        textarea.spreadsheet-input {
-            width: 100%;
-            max-width: 960px;
-            min-height: 180px;
-            border: 1px solid #d6d6d6;
-            border-radius: var(--radius-md);
-            padding: var(--space-3);
-            font-family: var(--font-code);
-            background-color: #fafafa;
-            caret-color: #f1623c;
-            outline: none;
-            line-height: 1.6;
-            font-size: 15px;
-            margin: 0 auto;
-            resize: vertical;
-            white-space: pre;
-        }
-
-        textarea.spreadsheet-input:focus-visible {
-            border-color: #f1623c;
-            box-shadow: 0 0 0 3px rgba(241, 98, 60, 0.2);
-        }
-
-        .weights-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: var(--space-2);
-            margin-top: var(--space-1);
-        }
-
-        .weight-input {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: var(--space-1);
-            background-color: #fff;
-            padding: var(--space-2);
-            border: 1px solid #e4e4e4;
-            border-radius: var(--radius-sm);
-        }
-
-        .weight-input label {
-            font-size: 14px;
-            white-space: nowrap;
-            color: #353535;
-        }
-
-        .weight-input input {
-            width: 72px;
-            padding: var(--space-1);
-            border-radius: 6px;
-            border: 1px solid #d0d0d0;
-            outline: none;
-        }
-
-        .weight-input input:focus-visible {
-            border-color: #f1623c;
-            box-shadow: 0 0 0 2px rgba(241, 98, 60, 0.18);
-        }
-
-        .weight-explanation {
-            background-color: #f7faff;
-            border-left: 3px solid #235fc0;
-            padding: var(--space-2) var(--space-3);
-            border-radius: var(--radius-sm);
-            margin-top: var(--space-2);
-            font-size: 14px;
-            color: #203e66;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-1);
-            line-height: 1.5;
-        }
-
-        .weight-explanation p { margin: 0; }
-
-        .results-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: var(--space-3);
-        }
-
-        .result-box {
-            border: 1px solid #e2e2e2;
-            border-radius: var(--radius-lg);
-            padding: var(--space-3);
-            background-color: #fafafa;
-            box-shadow: var(--shadow-card);
-            display: flex;
-            min-height: 200px;
-        }
-
-        .results {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-        }
-
-        .results h3 {
-            margin: 0;
-            font-size: 20px;
-            color: #f1623c;
-        }
-
-        .interpretation-guide {
-            background-color: #f0f8ff;
-            border-left: 3px solid #1d62a1;
-            padding: var(--space-2) var(--space-3);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            color: #1d4f7a;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-1);
-        }
-
-        .interpretation-guide p { margin: 0; }
-        .interpretation-guide ul { margin: var(--space-1) 0 0 20px; padding: 0; }
-        .interpretation-guide li { margin: var(--space-1) 0; }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: var(--radius-md);
-            background-color: #fff;
-            box-shadow: inset -12px 0 12px -12px rgba(0, 0, 0, 0.08);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            min-width: 540px;
-        }
-
-        thead th {
-            position: sticky;
-            top: 0;
-            background-color: #f7f4f0;
-            font-weight: 600;
-            color: #c94c14;
-            border-bottom: 1px solid #eaeaea;
-            padding: var(--space-2) var(--space-3);
-            text-align: centre;
-        }
-
-        tbody td {
-            border-bottom: 1px solid #eaeaea;
-            padding: var(--space-2) var(--space-3);
-            text-align: centre;
-            font-size: 15px;
-            color: #383838;
-        }
-
-        tbody tr:nth-child(even) td { background-color: #fbfbfb; }
-        tbody tr:hover td { background-color: #fef1ec; }
-
-        .interpretation-cell {
-            display: inline-flex;
-            align-items: centre;
-            justify-content: centre;
-            gap: var(--space-1);
-            text-align: left;
-        }
-
-        .interpretation-icon {
-            font-size: 16px;
-            font-weight: 700;
-            min-width: 24px;
-            text-align: centre;
-        }
-
-        .checkbox-label {
-            display: inline-flex;
-            align-items: centre;
-            gap: var(--space-1);
-            color: #3b3b3b;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .tooltip-icon {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background-color: #f1623c;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: centre;
-            justify-content: centre;
-            cursor: help;
-            transition: background-color 0.2s ease;
-        }
-
-        .tooltip-icon:hover { background-color: #d94d1a; }
-
-        .color-picker-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: var(--space-2);
-            padding: var(--space-3);
-            background-color: #f7f7f7;
-            border: 1px solid #e4e4e4;
-            border-radius: var(--radius-lg);
-        }
-
-        .color-picker {
-            display: flex;
-            align-items: centre;
-            gap: var(--space-2);
-        }
-
-        .color-picker label {
-            font-weight: 600;
-            color: #3b3b3b;
-        }
-
-        .color-picker input[type="color"] {
-            width: 42px;
-            height: 32px;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            background: transparent;
-        }
-
-        .color-input {
-            padding: var(--space-1) var(--space-2);
-            width: 110px;
-            border: 1px solid #ccc;
-            border-radius: var(--radius-sm);
-            font-family: var(--font-code);
-            font-size: 14px;
-        }
-
-        .inline-error {
-            color: #c03817;
-            font-size: 14px;
-            margin: var(--space-2) 0 0 0;
-        }
-
-        .info-note {
-            margin: 0;
-            font-size: 14px;
-            color: #504a34;
-            background-color: #fff9eb;
-            padding: var(--space-2) var(--space-3);
-            border-radius: var(--radius-sm);
-            border-left: 3px solid #ffc861;
-        }
-
-        .warning-note {
-            margin: 0;
-            font-size: 14px;
-            color: #8b4513;
-            background-color: #fff3e0;
-            padding: var(--space-2) var(--space-3);
-            border-radius: var(--radius-sm);
-            border-left: 3px solid #ff9800;
-        }
-
-        .chart-container {
-            width: min(100%, 820px);
-            margin: var(--space-4) auto;
-            padding: var(--space-4);
-            border: 1px solid #e0e0e0;
-            border-radius: var(--radius-lg);
-            background-color: #fff;
-            box-shadow: var(--shadow-card);
-            display: flex;
-            flex-direction: column;
-            justify-content: centre;
-            gap: var(--space-2);
-            min-height: 400px;
-        }
-
-        #overallChart {
-            width: 100% !important;
-            display: block;
-            margin: 0 auto;
-            height: auto;
-            max-height: 100%;
-        }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
-
-        :focus-visible {
-            outline: 3px solid #f1623c;
-            outline-offset: 2px;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 1024px) {
-            body { padding: var(--space-5) var(--space-3); }
-            .container { padding: var(--space-4) var(--space-5); }
-        }
-
-        @media (max-width: 900px) {
-            .progress-indicator { flex-direction: column; gap: var(--space-3); }
-            .progress-line { display: none; }
-            .step { flex-direction: row; justify-content: flex-start; gap: var(--space-2); width: 100%; }
-            .step-label { text-align: left; }
-        }
-
-        @media (max-width: 768px) {
-            body { padding: var(--space-4) var(--space-2); }
-            .container { padding: var(--space-4) var(--space-3); gap: var(--space-3); }
-            textarea.spreadsheet-input { min-height: 200px; font-size: 16px; }
-            .mobile-upload-hint { display: block; }
-            .button-row { justify-content: stretch; }
-            .input-section { padding: var(--space-3); }
-            .color-picker-container { grid-template-columns: 1fr; }
-            .result-box { padding: var(--space-2); }
-            .weights-container { grid-template-columns: 1fr; }
-            .weight-input { justify-content: space-between; }
-            .table-wrapper { box-shadow: none; }
-        }
-
-        @media (max-width: 640px) {
-            body { padding: var(--space-3) var(--space-2); }
-            .container { padding: var(--space-3) var(--space-2); }
-
-            table, thead, tbody, th, td, tr { display: block; }
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
-            table { min-width: unset; }
-
-            tbody tr {
-                margin-bottom: var(--space-2);
-                border: 1px solid #eee;
-                border-radius: var(--radius-md);
-                overflow: hidden;
-            }
-
-            tbody td {
-                border-bottom: 1px solid #eee;
-                padding: var(--space-2) var(--space-3) var(--space-2) 50%;
-                text-align: right;
-                position: relative;
-                background-color: #fff;
-            }
-
-            tbody td:last-child { border-bottom: none; }
-
-            tbody td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: var(--space-2);
-                top: var(--space-2);
-                font-weight: 600;
-                colour: #444;
-                text-align: left;
-            }
-
-            .interpretation-cell { justify-content: flex-end; }
-        }
-
-        @media (max-width: 480px) {
-            .chart-container { padding: var(--space-3); }
-            h1 { font-size: 28px; }
-            .intro-text { font-size: 16px; }
-        }
-
-        @media print {
-            body { background: #fff; padding: 0; }
-            .container { box-shadow: none; border: none; padding: 0; margin: 0; }
-            .button-row, .color-picker-container, .input-section, .progress-indicator, .info-box button, .checkbox-label { display: none !important; }
-            .chart-container { page-break-inside: avoid; border: none; box-shadow: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Ranking Tool</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #b8f53a;
+    --accent-dim: rgba(184,245,58,.12);
+    --accent-dim2: rgba(184,245,58,.06);
+    --accent-text: #8cc22a;
+    --text-primary: #f0f0f0;
+    --text-secondary: #909090;
+    --text-muted: #555;
+    --border: #222;
+    --border-strong: #333;
+    --bg: #0a0a0a;
+    --bg-card: #111;
+    --bg-input: #0e0e0e;
+    --bg-hover: #161616;
+    --danger: #ff5e5e;
+    --danger-bg: rgba(255,94,94,.1);
+    --info: #5b9cf6;
+    --info-bg: rgba(91,156,246,.1);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+    --transition: 160ms cubic-bezier(.4,0,.2,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .page-shell { max-width: 840px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* HERO */
+  .hero { padding: 60px 0 44px; text-align: center; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 100px; margin-bottom: 22px;
+    border: 1px solid rgba(184,245,58,.2);
+  }
+  .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .hero h1 {
+    font-size: clamp(26px, 5vw, 42px); font-weight: 600; letter-spacing: -.03em;
+    line-height: 1.1; color: var(--text-primary); margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    font-size: 15px; color: var(--text-secondary); max-width: 500px;
+    margin: 0 auto; line-height: 1.75;
+  }
+
+  /* STEP TRACKER */
+  .step-track {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 36px; padding: 0 4px;
+  }
+  .step-node { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; }
+  .step-dot {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--bg-card); border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 12px; color: var(--text-muted);
+    transition: all var(--transition); position: relative; z-index: 1;
+    font-family: var(--mono);
+  }
+  .step-dot svg { display: none; }
+  .step-lbl { font-size: 11px; font-weight: 500; color: var(--text-muted); text-align: center; letter-spacing: .02em; white-space: nowrap; }
+  .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 -2px; margin-bottom: 24px; transition: background var(--transition); }
+  .step-node.active .step-dot { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .step-node.active .step-lbl { color: var(--accent); font-weight: 600; }
+  .step-node.done .step-dot { border-color: var(--accent); background: var(--accent); color: #000; }
+  .step-node.done .step-dot span { display: none; }
+  .step-node.done .step-dot svg { display: block; }
+  .step-node.done .step-lbl { color: var(--text-secondary); }
+  .step-line.done { background: var(--accent); }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-xl); padding: 28px 32px;
+    margin-bottom: 16px; transition: border-color var(--transition);
+  }
+  .card-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 22px; }
+  .card-icon {
+    width: 38px; height: 38px; border-radius: var(--radius-sm);
+    background: var(--accent-dim); border: 1px solid rgba(184,245,58,.15);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .card-icon svg { width: 18px; height: 18px; color: var(--accent); }
+  .card-step { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+  .card-title { font-size: 17px; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; color: var(--text-primary); }
+  .card-desc { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+
+  /* EXPLAINER */
+  .explainer {
+    background: var(--accent-dim2); border-radius: var(--radius-lg);
+    padding: 18px 22px; margin-bottom: 16px;
+    border: 1px solid rgba(184,245,58,.12);
+  }
+  .explainer h3 { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 5px; letter-spacing: .01em; }
+  .explainer p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+  .explainer-toggle {
+    font-size: 12px; color: var(--text-muted); cursor: pointer; border: none;
+    background: none; font-family: inherit; padding: 0; margin-top: 8px;
+    font-weight: 500; letter-spacing: .02em; text-decoration: underline; text-underline-offset: 3px;
+  }
+  .explainer-toggle:hover { color: var(--text-secondary); }
+  .explainer-more { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(184,245,58,.1); }
+  .explainer-more.open { display: block; }
+  .explainer-more p { margin-bottom: 8px; font-size: 13px; color: var(--text-secondary); }
+  .explainer-more ul { padding-left: 18px; }
+  .explainer-more li { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; line-height: 1.6; }
+  .explainer-more li strong { color: var(--text-primary); font-weight: 600; }
+
+  /* TEXTAREA */
+  .data-label {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: .07em; text-transform: uppercase; display: block; margin-bottom: 8px;
+  }
+  textarea {
+    width: 100%; border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 13px 15px;
+    font-family: var(--mono); font-size: 12.5px;
+    background: var(--bg-input); color: var(--text-primary);
+    resize: vertical; min-height: 155px; line-height: 1.75;
+    outline: none; transition: border-color var(--transition);
+  }
+  textarea:focus { border-color: rgba(184,245,58,.4); box-shadow: 0 0 0 3px rgba(184,245,58,.06); }
+  textarea::placeholder { color: var(--text-muted); }
+
+  /* UPLOAD */
+  .upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .btn-upload {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px; border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm); background: transparent;
+    color: var(--text-muted); font-family: inherit; font-size: 12px;
+    font-weight: 500; cursor: pointer; transition: all var(--transition);
+    letter-spacing: .01em;
+  }
+  .btn-upload:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim2); }
+  .or-divider { font-size: 12px; color: var(--text-muted); }
+
+  /* WEIGHTS */
+  .weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-top: 14px; }
+  .weight-item {
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 11px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .weight-item label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+  .weight-item input[type=number] {
+    width: 66px; padding: 5px 9px;
+    border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+    font-family: var(--mono); font-size: 12px;
+    background: var(--bg); color: var(--text-primary);
+    outline: none; text-align: right; transition: border-color var(--transition);
+  }
+  .weight-item input[type=number]:focus { border-color: rgba(184,245,58,.4); }
+  .weight-summary { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .weight-chip {
+    font-size: 11px; background: var(--bg-input); border: 1px solid var(--border-strong);
+    border-radius: 100px; padding: 3px 10px;
+    display: flex; gap: 5px; align-items: center; color: var(--text-secondary);
+  }
+  .weight-chip strong { color: var(--accent); font-family: var(--mono); }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 11px 22px; border-radius: var(--radius-md);
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none; transition: all var(--transition);
+    letter-spacing: .01em; white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #0a0a0a; }
+  .btn-primary:hover:not(:disabled) { background: #c8ff48; transform: translateY(-1px); }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-strong); }
+  .btn-ghost:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-dim2); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .btn-full { width: 100%; }
+  .btn .spinner-ring { display: none; }
+  .btn.loading .btn-text { display: none; }
+  .btn.loading .spinner-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,.2); border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; }
+  .btn-ghost.loading .spinner-ring { border-color: rgba(184,245,58,.2); border-top-color: var(--accent); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* NOTICES */
+  .notice {
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    font-size: 12.5px; display: flex; gap: 9px; align-items: flex-start;
+    margin-top: 12px; line-height: 1.6;
+  }
+  .notice-icon { flex-shrink: 0; margin-top: 1px; }
+  .notice-info { background: var(--info-bg); color: var(--info); border: 1px solid rgba(91,156,246,.2); }
+  .notice-warn { background: rgba(255,180,50,.08); color: #e0a832; border: 1px solid rgba(255,180,50,.18); }
+  .notice-error { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(255,94,94,.2); }
+  .notice-accent { background: var(--accent-dim2); color: var(--accent); border: 1px solid rgba(184,245,58,.15); }
+
+  /* RESULT TABLE */
+  .result-section { margin-top: 24px; }
+  .result-section h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text-secondary); letter-spacing: .04em; text-transform: uppercase; }
+  .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: var(--bg-input); padding: 9px 14px; text-align: left;
+    font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-primary); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--bg-hover); }
+  .rank-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 5px;
+    font-size: 10px; font-weight: 700; font-family: var(--mono);
+  }
+  .rank-1 { background: rgba(184,245,58,.15); color: var(--accent); border: 1px solid rgba(184,245,58,.3); }
+  .rank-2 { background: rgba(255,255,255,.06); color: var(--text-secondary); border: 1px solid var(--border-strong); }
+  .rank-3 { background: rgba(255,255,255,.04); color: var(--text-muted); border: 1px solid var(--border); }
+  .rank-other { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .score-bar-wrap { display: flex; align-items: center; gap: 9px; }
+  .score-bar { height: 4px; border-radius: 2px; background: var(--accent); transition: width .3s ease; min-width: 2px; }
+  .score-bar-neg { background: var(--danger); opacity: .6; }
+  .score-val { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 500; font-family: var(--mono); letter-spacing: .02em; }
+  .tag-top { background: rgba(184,245,58,.12); color: var(--accent); border: 1px solid rgba(184,245,58,.25); }
+  .tag-up { background: rgba(184,245,58,.07); color: #8cc22a; border: 1px solid rgba(184,245,58,.15); }
+  .tag-avg { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .tag-down { background: rgba(255,94,94,.08); color: #ff7c7c; border: 1px solid rgba(255,94,94,.18); }
+
+  /* CHART */
+  .chart-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-xl); padding: 28px 32px; margin-bottom: 16px;
+  }
+  .chart-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+  .chart-title { font-size: 16px; font-weight: 600; letter-spacing: -.01em; color: var(--text-primary); }
+  .chart-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  #overallChart { width: 100% !important; display: block; }
+
+  /* COLOUR CONTROLS */
+  .colors-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .colors-label { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .color-controls { display: flex; flex-wrap: wrap; gap: 10px; }
+  .color-item { display: flex; align-items: center; gap: 8px; }
+  .color-item label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+  .color-swatch { width: 26px; height: 26px; border-radius: 5px; border: 1px solid var(--border-strong); cursor: pointer; background: transparent; padding: 0; }
+  .color-hex { font-family: var(--mono); font-size: 11px; width: 80px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; color: var(--text-primary); background: var(--bg-input); }
+  .color-hex:focus { border-color: rgba(184,245,58,.4); }
+  .metric-colors { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+  /* CHECKBOX */
+  .check-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+  .check-label input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); }
+
+  /* STAT CHIPS */
+  .stat-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .stat-chip {
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 5px 11px;
+    font-size: 11px; color: var(--text-muted); font-family: var(--mono);
+  }
+  .stat-chip strong { color: var(--text-secondary); }
+  .stat-chip-warn { background: rgba(255,180,50,.06); border-color: rgba(255,180,50,.2); color: #e0a832; }
+  .stat-chip-info { background: var(--info-bg); border-color: rgba(91,156,246,.2); color: var(--info); }
+
+  /* DIVIDER */
+  .rule { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+  input[type=file] { display: none; }
+
+  /* EXPORT ROW */
+  .export-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    .card, .chart-card { padding: 20px; border-radius: var(--radius-lg); }
+    .hero { padding: 40px 0 32px; }
+    .btn-row { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+    .chart-header { flex-direction: column; }
+    .export-btns { width: 100%; }
+    .export-btns .btn { flex: 1; }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; }
+    .no-print { display: none !important; }
+  }
+</style>
 </head>
 <body>
-    <main role="main">
-        <div class="container">
-            <h1>Z-Score Ranking Index</h1>
-            <p class="intro-text">
-                Compare performance and cost metrics directly. Paste your spreadsheet data, set weights for each metric, and get a combined ranking with a downloadable chart.
-            </p>
 
-            <section class="info-box" aria-labelledby="how-it-works">
-                <h2 id="how-it-works">How this works</h2>
-                <p>
-                    We convert each metric into a Z-score (a standardised value). This lets you combine different units like percentages and currency into one comparable index.
-                </p>
+<div class="page-shell">
 
-                <details>
-                    <summary>What's a Z-score?</summary>
-                    <div>
-                        <p>A Z-score shows how far a value is from the average, measured in standard deviations.</p>
-                        <ul>
-                            <li><strong>Z = 0</strong> means exactly average</li>
-                            <li><strong>Z = +1</strong> means one standard deviation above average (better than roughly 84% of entries)</li>
-                            <li><strong>Z = -1</strong> means one standard deviation below average</li>
-                            <li>Formula: Z = (value - mean) / standard deviation</li>
-                        </ul>
-                    </div>
-                </details>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Performance Ranking Tool
+    </div>
+    <h1>Find your <span>best performers</span> at a glance</h1>
+    <p class="hero-sub">Paste your data, set what matters most, and get a clear ranking that combines performance and cost.</p>
+  </div>
 
-                <details>
-                    <summary>About weights</summary>
-                    <div>
-                        <p>Use any positive numbers to show importance (like 1, 2, 3). We normalise them to percentages automatically, so they always add up to 100%.</p>
-                    </div>
-                </details>
+  <!-- STEP TRACKER -->
+  <div class="step-track" id="stepTrack">
+    <div class="step-node active" data-step="1">
+      <div class="step-dot">
+        <span>1</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="step-lbl">Performance</div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-node" data-step="2">
+      <div class="step-dot">
+        <span>2</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="step-lbl">Cost</div>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-node" data-step="3">
+      <div class="step-dot">
+        <span>3</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="step-lbl">Final Ranking</div>
+    </div>
+  </div>
 
-                <details>
-                    <summary>Why costs are inverted</summary>
-                    <div>
-                        <p>For cost metrics (CPM, CPC, etc.), lower is better. We multiply their Z-scores by -1 so higher scores always mean better performance.</p>
-                    </div>
-                </details>
+  <!-- EXPLAINER -->
+  <div class="explainer">
+    <h3>How this works</h3>
+    <p>This tool scores your data fairly, even when different metrics use different units — like percentages and currency. It combines them into one clear ranking. Lower costs automatically score higher, so the final number always means the same thing: higher is better.</p>
+    <button class="explainer-toggle" onclick="toggleExplainer()">Show methodology details</button>
+    <div class="explainer-more" id="explainerMore">
+      <p>Each metric is standardised by comparing it against the group average. The distance from the average — measured in standard deviations — is the score.</p>
+      <ul>
+        <li><strong>Score above 0</strong> — above average for that metric</li>
+        <li><strong>Score below 0</strong> — below average, room for improvement</li>
+        <li><strong>Weights</strong> control how much each metric contributes to the total. Only the ratios matter — 1:2:3 gives the same result as 10:20:30.</li>
+        <li><strong>Cost metrics are inverted</strong> — a lower cost becomes a higher score automatically</li>
+        <li>The final score is the sum of all weighted metric scores</li>
+      </ul>
+    </div>
+  </div>
 
-                <details>
-                    <summary>Understanding sample size and standard deviation</summary>
-                    <div>
-                        <p><strong>Sample size context:</strong></p>
-                        <ul>
-                            <li><strong>Small samples (n&lt;10):</strong> Z-scores work well for comparison. One strong/weak performer can notably influence the scale.</li>
-                            <li><strong>Medium samples (10-30):</strong> Z-scores provide reliable differentiation with stable rankings.</li>
-                            <li><strong>Large samples (30+):</strong> Z-scores deliver robust rankings with minimal sensitivity to outliers.</li>
-                        </ul>
+  <!-- STEP 1: PERFORMANCE -->
+  <div class="card" id="perfCard">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <div>
+        <div class="card-step">Step 1</div>
+        <div class="card-title">Performance metrics</div>
+        <div class="card-desc">Metrics you want to be high — click-through rate, engagement, conversions</div>
+      </div>
+    </div>
 
-                        <p><strong>Standard deviation matters for interpretation:</strong></p>
-                        <ul>
-                            <li><strong>Low std dev (values tightly clustered):</strong> A z-score of 2.0 might only represent a 2% actual difference. Rankings are accurate, but gaps may look larger than they are in practice.</li>
-                            <li><strong>High std dev (values widely spread):</strong> A z-score of 0.5 might represent a 20% actual difference. Even "average" scores can reflect substantial real-world gaps.</li>
-                            <li><strong>Always check both:</strong> Z-score tells you relative position; std dev tells you if that position represents a meaningful practical difference.</li>
-                        </ul>
+    <div class="upload-row no-print">
+      <button class="btn-upload" onclick="document.getElementById('perfFile').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload CSV / TSV
+      </button>
+      <span class="or-divider">or paste below</span>
+    </div>
+    <input type="file" id="perfFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'perfData')">
 
-                        <p><strong>Rule of thumb:</strong> If z-score range is less than 1.0 AND standard deviation is small, most entities are performing very similarly—rankings are technically correct but differences may not be actionable.</p>
-                    </div>
-                </details>
-            </section>
+    <label class="data-label" for="perfData">Data</label>
+    <textarea id="perfData">Country	CTR	Engagement Rate
+France	2.5%	45.2%
+Germany	1.8%	52.1%
+Italy	3.1%	38.9%
+Spain	2.2%	41.5%</textarea>
 
-            <nav class="progress-indicator" aria-label="Progress through steps">
-                <div class="step" data-step="1">
-                    <div class="step-circle" aria-hidden="true">1</div>
-                    <span class="step-label">Performance metrics</span>
-                </div>
-                <div class="progress-line" data-before-step="1" aria-hidden="true"></div>
-                <div class="step" data-step="2">
-                    <div class="step-circle" aria-hidden="true">2</div>
-                    <span class="step-label">Cost metrics</span>
-                </div>
-                <div class="progress-line" data-before-step="2" aria-hidden="true"></div>
-                <div class="step" data-step="3">
-                    <div class="step-circle" aria-hidden="true">3</div>
-                    <span class="step-label">Overall ranking</span>
-                </div>
-            </nav>
+    <div id="perfWeightsArea" class="hidden">
+      <div class="notice notice-accent" style="margin-top:14px;">
+        <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Set the relative importance of each metric. Equal weights are a reasonable default.</span>
+      </div>
+      <div class="weights-grid" id="perfWeightsGrid"></div>
+      <div class="weight-summary" id="perfWeightSummary"></div>
+    </div>
 
-            <section class="input-section" role="region" aria-labelledby="performance-heading">
-                <h2 id="performance-heading">Step 1: Input your performance data</h2>
-                <p class="instruction-text" id="performance-instructions">
-                    Paste your data below or upload a CSV/TSV file. Include a header row (like Country, CTR, Engagement Rate).
-                </p>
+    <div class="btn-row">
+      <button class="btn btn-ghost no-print" onclick="setupWeights('perf')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        Set weights
+      </button>
+      <button class="btn btn-primary" id="calcPerfBtn" onclick="calcPerf()">
+        <span class="btn-text">Calculate performance scores</span>
+        <span class="spinner-ring"></span>
+      </button>
+    </div>
 
-                <div class="input-options">
-                    <button type="button" class="secondary-button" onclick="triggerFileInput('performanceFileInput')">
-                        <span class="btn-text">Upload CSV / TSV</span>
-                    </button>
-                    <span class="input-divider" aria-hidden="true">or</span>
-                </div>
+    <div id="perfError"></div>
+    <div id="perfResults"></div>
+  </div>
 
-                <p class="mobile-upload-hint">Tip: On mobile, uploading a file is easier than pasting data.</p>
+  <!-- STEP 2: COST -->
+  <div class="card" id="costCard">
+    <div class="card-header">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div>
+        <div class="card-step">Step 2</div>
+        <div class="card-title">Cost metrics</div>
+        <div class="card-desc">Metrics you want to be low — CPM, CPC, cost per acquisition. Lower cost = higher score, automatically.</div>
+      </div>
+    </div>
 
-                <label for="performanceData" class="sr-only">Performance data input area</label>
-                <textarea id="performanceData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CTR[TAB]Engagement Rate" spellcheck="false" aria-describedby="performance-instructions">Country    CTR    Engagement Rate
-France    2.5%    45.2%
-Germany    1.8%    52.1%
-Italy    3.1%    38.9%
-Spain    2.2%    41.5%</textarea>
+    <div class="upload-row no-print">
+      <button class="btn-upload" onclick="document.getElementById('costFile').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload CSV / TSV
+      </button>
+      <span class="or-divider">or paste below</span>
+    </div>
+    <input type="file" id="costFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'costData')">
 
-                <input type="file" id="performanceFileInput" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" class="sr-only" onchange="handleFileUpload(event, 'performanceData')" aria-label="Upload performance data file">
+    <label class="data-label" for="costData">Data</label>
+    <textarea id="costData">Country	CPM	CPC
+France	1.20	0.48
+Germany	1.50	0.62
+Italy	0.95	0.35
+Spain	1.10	0.45</textarea>
 
-                <div class="button-row">
-                    <button type="button" class="secondary-button" onclick="setupPerformanceWeights()">
-                        <span class="btn-text">Set up performance weights</span>
-                        <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Preparing…</span>
-                    </button>
-                </div>
+    <div id="costWeightsArea" class="hidden">
+      <div class="notice notice-accent" style="margin-top:14px;">
+        <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Set the relative importance of each cost metric.</span>
+      </div>
+      <div class="weights-grid" id="costWeightsGrid"></div>
+      <div class="weight-summary" id="costWeightSummary"></div>
+    </div>
 
-                <div class="weights-container" id="performanceWeightsContainer" aria-live="polite"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost no-print" onclick="setupWeights('cost')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        Set weights
+      </button>
+      <button class="btn btn-primary" id="calcCostBtn" onclick="calcCost()">
+        <span class="btn-text">Calculate cost scores</span>
+        <span class="spinner-ring"></span>
+      </button>
+    </div>
 
-                <div class="button-row">
-                    <button type="button" id="calcPerfBtn" onclick="handleCalculatePerformance()">
-                        <span class="btn-text">Calculate performance Z-scores</span>
-                        <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Calculating…</span>
-                    </button>
-                </div>
-                <div id="performanceFeedback" class="results" aria-live="polite"></div>
-            </section>
+    <div id="costError"></div>
+    <div id="costResults"></div>
+  </div>
 
-            <section class="input-section" role="region" aria-labelledby="cost-heading">
-                <h2 id="cost-heading">Step 2: Input your cost data</h2>
-                <p class="instruction-text" id="cost-instructions">
-                    Paste your data below or upload a CSV/TSV file. Include a header row (like Country, CPM, CPC).
-                </p>
+  <!-- STEP 3: OVERALL -->
+  <div class="card" id="overallCard">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(184,245,58,.08); border-color:rgba(184,245,58,.2);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#b8f53a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div>
+        <div class="card-step">Step 3</div>
+        <div class="card-title">Final ranking</div>
+        <div class="card-desc">Combines performance and cost into one score. Higher is always better.</div>
+      </div>
+    </div>
 
-                <div class="input-options">
-                    <button type="button" class="secondary-button" onclick="triggerFileInput('costFileInput')">
-                        <span class="btn-text">Upload CSV / TSV</span>
-                    </button>
-                    <span class="input-divider" aria-hidden="true">or</span>
-                </div>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-full" id="calcOverallBtn" onclick="calcOverall()">
+        <span class="btn-text">Generate final ranking</span>
+        <span class="spinner-ring"></span>
+      </button>
+    </div>
 
-                <p class="mobile-upload-hint">Tip: On mobile, uploading a file is easier than pasting data.</p>
+    <div class="btn-row" style="margin-top:10px;">
+      <label class="check-label">
+        <input type="checkbox" id="removeNeg" onchange="calcOverall()">
+        Shift scores to remove negatives (order unchanged)
+      </label>
+    </div>
 
-                <label for="costData" class="sr-only">Cost data input area</label>
-                <textarea id="costData" class="spreadsheet-input" rows="8" placeholder="Country[TAB]CPM[TAB]CPC" spellcheck="false" aria-describedby="cost-instructions">Country    CPM    CPC
-France    1.20    0.48
-Germany    1.50    0.62
-Italy    0.95    0.35
-Spain    1.10    0.45</textarea>
+    <div id="overallError"></div>
+    <div id="overallResults"></div>
+  </div>
 
-                <input type="file" id="costFileInput" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" class="sr-only" onchange="handleFileUpload(event, 'costData')" aria-label="Upload cost data file">
+  <!-- CHART -->
+  <div class="chart-card" id="chartCard" style="display:none">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Score breakdown by metric</div>
+        <div class="chart-sub">Each segment shows how a metric contributed to the final score</div>
+      </div>
+      <div class="export-btns no-print">
+        <button class="btn btn-ghost" onclick="downloadPNG()" style="padding:8px 14px; font-size:12px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PNG
+        </button>
+        <button class="btn btn-ghost" onclick="exportCSV()" style="padding:8px 14px; font-size:12px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          CSV
+        </button>
+        <button class="btn btn-primary" onclick="exportHTML()" style="padding:8px 14px; font-size:12px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Share as HTML
+        </button>
+      </div>
+    </div>
 
-                <div class="button-row">
-                    <button type="button" class="secondary-button" onclick="setupCostWeights()">
-                        <span class="btn-text">Set up cost weights</span>
-                        <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Preparing…</span>
-                    </button>
-                </div>
+    <div><canvas id="overallChart"></canvas></div>
 
-                <div class="weights-container" id="costWeightsContainer" aria-live="polite"></div>
-
-                <div class="button-row">
-                    <button type="button" id="calcCostBtn" onclick="handleCalculateCost()">
-                        <span class="btn-text">Calculate cost Z-scores</span>
-                        <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Calculating…</span>
-                    </button>
-                </div>
-                <div id="costFeedback" class="results" aria-live="polite"></div>
-            </section>
-
-            <section class="results-container" role="region" aria-label="Performance and cost results">
-                <div class="result-box">
-                    <div id="performanceResults" aria-live="polite"></div>
-                </div>
-                <div class="result-box">
-                    <div id="costResults" aria-live="polite"></div>
-                </div>
-            </section>
-
-            <section aria-labelledby="overall-heading">
-                <div class="button-row">
-                    <h2 id="overall-heading" style="color:#f1623c; margin-bottom:6px; width: 100%; text-align: center;">Step 3: Generate your overall ranking</h2>
-                </div>
-                <p style="max-width: 720px; text-align: center; margin: 0 auto var(--space-2);">
-                    Combine performance and cost scores into one index. Higher values mean better results at lower cost.
-                </p>
-                <div class="button-row">
-                    <button type="button" id="calcOverallBtn" onclick="handleCalculateOverall()">
-                        <span class="btn-text">Calculate overall ranking</span>
-                        <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Calculating…</span>
-                    </button>
-                </div>
-            </section>
-
-            <section class="color-picker-container" aria-label="Chart appearance options">
-                <div class="color-picker">
-                    <label for="barColor">Bar colour:</label>
-                    <input type="color" id="barColorPicker" value="#f1623c" onchange="syncHexInput('barColorPicker', 'barColor'); updateChartColor('bar');">
-                    <input type="text" class="color-input" id="barColor" value="#f1623c" oninput="syncColorPicker('barColor', 'barColorPicker'); updateChartColor('bar');">
-                </div>
-                <div class="color-picker">
-                    <label for="bgColor">Chart background:</label>
-                    <input type="color" id="bgColorPicker" value="#ffffff" onchange="syncHexInput('bgColorPicker', 'bgColor'); updateChartColor('background');">
-                    <input type="text" class="color-input" id="bgColor" value="#ffffff" oninput="syncColorPicker('bgColor', 'bgColorPicker'); updateChartColor('background');">
-                </div>
-                <div class="color-picker">
-                    <label for="axesColor">Axes and labels:</label>
-                    <input type="color" id="axesColorPicker" value="#333333" onchange="syncHexInput('axesColorPicker', 'axesColor'); updateChartColor('axes');">
-                    <input type="text" class="color-input" id="axesColor" value="#333333" oninput="syncColorPicker('axesColor', 'axesColorPicker'); updateChartColor('axes');">
-                </div>
-
-                <p class="info-note" style="grid-column:1/-1;">
-                    Metric colours are editable below. The bar colour picker applies when there is only one metric.
-                </p>
-            </section>
-
-            <!-- NEW: Editable metric colours -->
-            <section class="color-picker-container" aria-label="Metric colours" id="metricColorSection">
-                <p class="info-note" style="grid-column:1/-1;">
-                    Metric colours are assigned automatically when you generate the overall chart. You can edit them here and the chart will update instantly.
-                </p>
-                <div class="button-row" style="grid-column:1/-1; justify-content: flex-start;">
-                    <button type="button" class="secondary-button" onclick="resetMetricColours()">Reset metric colours</button>
-                </div>
-                <div id="metricColorContainer" style="grid-column:1/-1; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-2);"></div>
-            </section>
-
-            <div class="button-row">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="removeNegativesCheckbox" onchange="handleCalculateOverall()">
-                    Remove negative values from overall scores
-                    <span class="tooltip-icon" title="Shifts all scores up so the lowest becomes zero. Rankings stay the same, this just makes presentation easier.">i</span>
-                </label>
-            </div>
-
-            <div id="overallResults" class="results" aria-live="polite"></div>
-
-            <div class="chart-container" role="img" aria-label="Overall Z-score chart">
-                <canvas id="overallChart" role="img" aria-label="Horizontal bar chart showing overall z-scores"></canvas>
-            </div>
-
-            <div class="button-row" id="exportButtons">
-                <button type="button" onclick="downloadChartAsImage()">
-                    <span class="btn-text">Download chart as PNG</span>
-                    <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Preparing…</span>
-                </button>
-                <button type="button" class="secondary-button" onclick="exportResultsAsCSV()">
-                    <span class="btn-text">Export results as CSV</span>
-                    <span class="btn-loader" aria-hidden="true"><span class="spinner"></span> Preparing…</span>
-                </button>
-            </div>
+    <div class="colors-section no-print">
+      <span class="colors-label">Chart appearance</span>
+      <div class="color-controls">
+        <div class="color-item">
+          <label>Background</label>
+          <input type="color" class="color-swatch" id="bgPicker" value="#111111" oninput="syncColor('bgPicker','bgHex'); refreshChart();">
+          <input type="text" class="color-hex" id="bgHex" value="#111111" oninput="syncSwatch('bgHex','bgPicker'); refreshChart();">
         </div>
-    </main>
+        <div class="color-item">
+          <label>Labels</label>
+          <input type="color" class="color-swatch" id="axesPicker" value="#909090" oninput="syncColor('axesPicker','axesHex'); refreshChart();">
+          <input type="text" class="color-hex" id="axesHex" value="#909090" oninput="syncSwatch('axesHex','axesPicker'); refreshChart();">
+        </div>
+      </div>
+      <div id="metricColorControls" class="metric-colors"></div>
+    </div>
+  </div>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</div>
 
-    <script>
-        let performanceZScores = [];
-        let costZScores = [];
-        let overallScores = [];
-        let performanceWeights = [];
-        let costWeights = [];
-        let performanceHeaders = [];
-        let costHeaders = [];
+<script>
+let perfScores = [], costScores = [], overallScores = [];
+let perfWeights = [], costWeights = [];
+let perfHeaders = [], costHeaders = [];
+const PALETTE = ['#b8f53a','#5b9cf6','#ff8c5a','#c77dff','#ffca3a','#06d6a0','#ff6b9d','#a8dadc','#f4a261','#8ecae6'];
+let metricColors = {};
+let chartInst = null;
 
-        const METRIC_COLORS = ['#f1623c','#235fc0','#2ca02c','#9467bd','#ff9800','#00bcd4','#e91e63','#795548','#607d8b','#ffc107','#3f51b5','#8bc34a'];
+function toggleExplainer() {
+  const el = document.getElementById('explainerMore');
+  const btn = el.previousElementSibling;
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? 'Hide details' : 'Show methodology details';
+}
 
-        let chartColor = '#f1623c';
-        let backgroundColor = '#ffffff';
-        let axesColor = '#333333';
+function setStep(n) {
+  document.querySelectorAll('.step-node').forEach(node => {
+    const s = parseInt(node.dataset.step);
+    node.classList.remove('active','done');
+    if (s < n) node.classList.add('done');
+    else if (s === n) node.classList.add('active');
+  });
+  ['line1','line2'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('done', n > i+1);
+  });
+}
 
-        // NEW: Metric colour state (editable)
-        let metricColours = {};
-        const METRIC_COLOUR_STORAGE_KEY = 'zscore_metric_colours_v1';
+function handleUpload(e, textareaId) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5*1024*1024) { alert('File too large (max 5 MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => { document.getElementById(textareaId).value = ev.target.result.trim(); };
+  reader.readAsText(file);
+  e.target.value = '';
+}
 
-        const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB
-        const ACCEPTED_MIME_TYPES = new Set([
-            'text/csv',
-            'text/tab-separated-values',
-            'text/plain',
-            'application/vnd.ms-excel',
-            'application/csv',
-            ''
-        ]);
+function parseData(textareaId, errorId) {
+  clearErr(errorId);
+  const raw = (document.getElementById(textareaId).value || '').trim();
+  if (!raw) { showErr(errorId, 'Please add some data first.'); return null; }
+  const rows = raw.split(/\r?\n/).map(r => r.trim()).filter(Boolean);
+  if (rows.length < 2) { showErr(errorId, 'Need at least one header row and one data row.'); return null; }
+  const headers = rows[0].split(/\t|,| {2,}/).map(h => h.trim()).filter(Boolean);
+  if (headers.length < 2) { showErr(errorId, 'Need at least two columns: one for names, one for a metric.'); return null; }
+  const dataRows = rows.slice(1).map(row => {
+    const cells = row.split(/\t|,| {2,}/).map(c => c.trim());
+    while (cells.length < headers.length) cells.push('');
+    return cells;
+  });
+  const entities = dataRows.map(r => r[0]);
+  const metrics = dataRows.map(r =>
+    r.slice(1).map(v => {
+      const clean = v.replace('%','').replace(',','.').replace(/[^\d.-]/g,'');
+      return clean === '' ? NaN : parseFloat(clean);
+    })
+  );
+  const bad = [];
+  metrics.forEach((row, ri) => row.forEach((v, ci) => {
+    if (!isFinite(v)) bad.push(`Row ${ri+2}, "${headers[ci+1]}"`);
+  }));
+  if (bad.length) { showErr(errorId, 'Non-numeric values found: ' + bad.slice(0,3).join('; ') + (bad.length>3?' (and more)':'')); return null; }
+  return { headers, entities, metrics };
+}
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadMetricColoursFromStorage();
-            setStepState(1);
-            renderMetricColourPickers(); // renders empty until metrics exist
-        });
+function showErr(id, msg) {
+  document.getElementById(id).innerHTML = `<div class="notice notice-error" style="margin-top:12px;"><svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span>${msg}</span></div>`;
+}
+function clearErr(id) { const el = document.getElementById(id); if (el) el.innerHTML = ''; }
 
-        document.addEventListener('keydown', event => {
-            const isMetaEnter = (event.ctrlKey || event.metaKey) && event.key === 'Enter';
-            if (isMetaEnter) {
-                const activeElement = document.activeElement;
+function setupWeights(type) {
+  const id = type === 'perf' ? 'perfData' : 'costData';
+  const errId = type === 'perf' ? 'perfError' : 'costError';
+  const parsed = parseData(id, errId);
+  if (!parsed) return;
+  const hdrs = parsed.headers;
+  const weightsArr = type === 'perf' ? perfWeights : costWeights;
+  const gridId = type + 'WeightsGrid';
+  const areaId = type + 'WeightsArea';
+  if (type === 'perf') perfHeaders = hdrs; else costHeaders = hdrs;
+  weightsArr.length = 0;
+  const metrics = hdrs.slice(1);
+  metrics.forEach((_,i) => weightsArr[i] = 1);
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  metrics.forEach((m, i) => {
+    const item = document.createElement('div');
+    item.className = 'weight-item';
+    item.innerHTML = `<label>${m}</label><input type="number" value="1" min="0" step="0.1" oninput="updateWeight('${type}',${i},this.value)">`;
+    grid.appendChild(item);
+  });
+  document.getElementById(areaId).classList.remove('hidden');
+  renderWeightSummary(type);
+}
 
-                if (activeElement && activeElement.closest('.input-section')) {
-                    const section = activeElement.closest('.input-section');
+function updateWeight(type, idx, val) {
+  const arr = type === 'perf' ? perfWeights : costWeights;
+  arr[idx] = Math.max(0, parseFloat(val) || 0);
+  renderWeightSummary(type);
+}
 
-                    if (section.querySelector('#performanceData')) {
-                        handleCalculatePerformance();
-                        event.preventDefault();
-                        return;
-                    }
+function renderWeightSummary(type) {
+  const arr = type === 'perf' ? perfWeights : costWeights;
+  const hdrs = type === 'perf' ? perfHeaders : costHeaders;
+  const metrics = hdrs.slice(1);
+  const total = arr.reduce((s,w)=>s+w,0);
+  const norm = total > 0 ? arr.map(w => w/total) : arr.map(()=> 1/arr.length);
+  const el = document.getElementById(type + 'WeightSummary');
+  el.innerHTML = metrics.map((m,i) =>
+    `<div class="weight-chip">${m}&nbsp;<strong>${(norm[i]*100).toFixed(0)}%</strong></div>`
+  ).join('');
+}
 
-                    if (section.querySelector('#costData')) {
-                        handleCalculateCost();
-                        event.preventDefault();
-                        return;
-                    }
-                }
+function normalizeWeights(arr) {
+  const total = arr.reduce((s,w)=>s+w,0);
+  if (total <= 0) return arr.map(()=>1/arr.length);
+  return arr.map(w=>w/total);
+}
 
-                handleCalculateOverall();
-                event.preventDefault();
-                return;
-            }
+function meanStd(arr) {
+  const n = arr.length;
+  if (n === 0) return {mean:0, std:1};
+  const mean = arr.reduce((s,v)=>s+v,0) / n;
+  if (n === 1) return {mean, std:1};
+  const variance = arr.reduce((s,v)=>s + Math.pow(v-mean,2),0) / (n-1);
+  return {mean, std: variance === 0 ? 1 : Math.sqrt(variance)};
+}
 
-            if (event.key === 'Escape') {
-                document.querySelectorAll('.inline-error').forEach(el => el.remove());
-                document.getElementById('performanceFeedback').innerHTML = '';
-                document.getElementById('costFeedback').innerHTML = '';
-            }
-        });
+function calcZScores(metrics, weights, invert=false) {
+  const normW = normalizeWeights(weights);
+  return Array.from({length: metrics[0].length}, (_,ci) => {
+    const col = metrics.map(r => r[ci]);
+    const {mean, std} = meanStd(col);
+    const weight = normW[ci] ?? 0;
+    return col.map(v => ((v - mean)/std) * weight * (invert ? -1 : 1));
+  });
+}
 
-        function triggerFileInput(inputId) {
-            const fileInput = document.getElementById(inputId);
-            if (fileInput) {
-                fileInput.click();
-            }
+function setLoading(id, on) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  btn.classList.toggle('loading', on);
+  btn.disabled = on;
+}
+
+function calcPerf() {
+  setLoading('calcPerfBtn', true);
+  setTimeout(() => { _calcPerf(); setLoading('calcPerfBtn', false); }, 50);
+}
+function _calcPerf() {
+  const parsed = parseData('perfData','perfError');
+  if (!parsed) return;
+  const {headers, entities, metrics} = parsed;
+  perfHeaders = headers;
+  let weights = perfWeights.length === headers.slice(1).length ? perfWeights : headers.slice(1).map(()=>1);
+  perfWeights = [...weights];
+  const metHdrs = headers.slice(1);
+  const normW = normalizeWeights(weights);
+  const zByMetric = calcZScores(metrics, weights, false);
+  perfScores = entities.map((entity, ri) => {
+    const contrib = {};
+    metHdrs.forEach((m, ci) => {
+      contrib[m] = { contribution: zByMetric[ci][ri], rawValue: metrics[ri][ci], weight: normW[ci]*100 };
+    });
+    return { entity, totalZ: metHdrs.reduce((s,m)=>s+contrib[m].contribution,0), contributions: contrib };
+  }).sort((a,b)=>b.totalZ - a.totalZ);
+  renderScoreTable('perfResults', headers[0], perfScores, 'Performance score');
+  setStep(2);
+  clearErr('perfError');
+}
+
+function calcCost() {
+  setLoading('calcCostBtn', true);
+  setTimeout(() => { _calcCost(); setLoading('calcCostBtn', false); }, 50);
+}
+function _calcCost() {
+  const parsed = parseData('costData','costError');
+  if (!parsed) return;
+  const {headers, entities, metrics} = parsed;
+  costHeaders = headers;
+  let weights = costWeights.length === headers.slice(1).length ? costWeights : headers.slice(1).map(()=>1);
+  costWeights = [...weights];
+  const metHdrs = headers.slice(1);
+  const normW = normalizeWeights(weights);
+  const zByMetric = calcZScores(metrics, weights, true);
+  costScores = entities.map((entity, ri) => {
+    const contrib = {};
+    metHdrs.forEach((m, ci) => {
+      contrib[m] = { contribution: zByMetric[ci][ri], rawValue: metrics[ri][ci], weight: normW[ci]*100 };
+    });
+    return { entity, totalZ: metHdrs.reduce((s,m)=>s+contrib[m].contribution,0), contributions: contrib };
+  }).sort((a,b)=>b.totalZ - a.totalZ);
+  renderScoreTable('costResults', headers[0], costScores, 'Cost score');
+  setStep(3);
+  clearErr('costError');
+}
+
+function renderScoreTable(containerId, entityLabel, scores, scoreLabel) {
+  const container = document.getElementById(containerId);
+  if (!scores.length) { container.innerHTML = ''; return; }
+  const vals = scores.map(s=>s.totalZ);
+  const maxAbs = Math.max(...vals.map(Math.abs), 0.01);
+  let rows = scores.map((s, i) => {
+    const pct = Math.abs(s.totalZ) / maxAbs * 100;
+    const neg = s.totalZ < 0;
+    const tag = tagForScore(s.totalZ, i, scores.length);
+    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+    return `<tr>
+      <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
+      <td style="font-weight:500">${s.entity}</td>
+      <td><div class="score-bar-wrap"><div class="score-bar ${neg?'score-bar-neg':''}" style="width:${pct.toFixed(1)}%"></div><span class="score-val">${s.totalZ>=0?'+':''}${s.totalZ.toFixed(2)}</span></div></td>
+      <td>${tag}</td>
+    </tr>`;
+  }).join('');
+  container.innerHTML = `
+    <div class="result-section">
+      <h3>${scoreLabel}</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>${entityLabel}</th><th>Score</th><th>vs group</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      ${statsChips(vals)}
+    </div>`;
+}
+
+function tagForScore(z, idx, total) {
+  if (idx === 0) return `<span class="tag tag-top">Top performer</span>`;
+  if (idx === total-1) return `<span class="tag tag-down">Lowest</span>`;
+  if (z >= 0.5) return `<span class="tag tag-up">Above average</span>`;
+  if (z > -0.5) return `<span class="tag tag-avg">Average</span>`;
+  return `<span class="tag tag-down">Below average</span>`;
+}
+
+function statsChips(vals) {
+  const spread = Math.max(...vals) - Math.min(...vals);
+  const n = vals.length;
+  return `<div class="stat-row">
+    <div class="stat-chip">n = <strong>${n}</strong></div>
+    <div class="stat-chip">spread <strong>${spread.toFixed(2)}</strong></div>
+    ${n < 10 ? `<div class="stat-chip stat-chip-warn">Small sample — results are indicative</div>` : ''}
+    ${spread < 1 ? `<div class="stat-chip stat-chip-info">Tight clustering — differences are modest</div>` : ''}
+  </div>`;
+}
+
+function calcOverall() {
+  setLoading('calcOverallBtn', true);
+  setTimeout(() => { _calcOverall(); setLoading('calcOverallBtn', false); }, 50);
+}
+function _calcOverall() {
+  if (!perfScores.length && !costScores.length) { showErr('overallError', 'Calculate performance or cost scores first.'); return; }
+  clearErr('overallError');
+  const entities = [...new Set([...perfScores.map(s=>s.entity), ...costScores.map(s=>s.entity)])];
+  const removeNeg = document.getElementById('removeNeg').checked;
+  let combined = entities.map(entity => {
+    const p = perfScores.find(s=>s.entity===entity);
+    const c = costScores.find(s=>s.entity===entity);
+    const contrib = { ...(p?.contributions||{}), ...(c?.contributions||{}) };
+    const overallZ = (p?.totalZ||0) + (c?.totalZ||0);
+    return { entity, performanceZ: p?.totalZ||0, costZ: c?.totalZ||0, overallZ, contributions: contrib, displayZ: overallZ };
+  }).sort((a,b)=>b.overallZ - a.overallZ);
+  const minZ = Math.min(...combined.map(s=>s.overallZ));
+  const adj = (removeNeg && minZ < 0) ? Math.abs(minZ) : 0;
+  combined = combined.map(s => ({...s, displayZ: s.overallZ + adj}));
+  overallScores = combined;
+  renderOverallTable(combined, adj);
+  document.getElementById('chartCard').style.display = '';
+  renderChart(combined);
+  setStep(4);
+}
+
+function renderOverallTable(scores, adj) {
+  const vals = scores.map(s=>s.overallZ);
+  const maxAbs = Math.max(...scores.map(s=>Math.abs(s.displayZ)), 0.01);
+  let rows = scores.map((s,i) => {
+    const pct = Math.abs(s.displayZ) / maxAbs * 100;
+    const neg = s.displayZ < 0;
+    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+    const scoreColor = s.displayZ >= 0 ? 'var(--accent)' : 'var(--danger)';
+    return `<tr>
+      <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
+      <td style="font-weight:600">${s.entity}</td>
+      <td><span class="score-val">${s.performanceZ>=0?'+':''}${s.performanceZ.toFixed(2)}</span></td>
+      <td><span class="score-val">${s.costZ>=0?'+':''}${s.costZ.toFixed(2)}</span></td>
+      <td><div class="score-bar-wrap"><div class="score-bar ${neg?'score-bar-neg':''}" style="width:${Math.max(pct,2).toFixed(1)}%"></div><span class="score-val" style="font-weight:600;color:${scoreColor}">${s.displayZ>=0?'+':''}${s.displayZ.toFixed(2)}</span></div></td>
+      <td>${tagForScore(s.overallZ, i, scores.length)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('overallResults').innerHTML = `
+    <div class="result-section">
+      <h3>Combined ranking</h3>
+      ${adj > 0 ? `<div class="notice notice-accent" style="margin-bottom:10px;"><svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Scores shifted by +${adj.toFixed(2)} to remove negatives. Order unchanged.</span></div>` : ''}
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Entry</th><th>Performance</th><th>Cost</th><th>Combined</th><th>Result</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      ${statsChips(scores.map(s=>s.overallZ))}
+    </div>`;
+}
+
+function getChartColors() {
+  return {
+    bg: document.getElementById('bgHex').value || '#111111',
+    axes: document.getElementById('axesHex').value || '#909090'
+  };
+}
+
+function renderChart(scores) {
+  if (!scores.length) return;
+  const canvas = document.getElementById('overallChart');
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
+  const allMetrics = [];
+  scores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
+  allMetrics.forEach((m,i) => { if (!metricColors[m]) metricColors[m] = PALETTE[i % PALETTE.length]; });
+  renderMetricColorPickers(allMetrics);
+  const h = Math.max(300, scores.length * 52 + 140);
+  canvas.height = h;
+  canvas.style.height = h + 'px';
+  const colors = getChartColors();
+  const datasets = allMetrics.map(m => ({
+    label: m,
+    data: scores.map(s => { const c = (s.contributions||{})[m]; return c ? c.contribution : 0; }),
+    backgroundColor: metricColors[m], borderColor: metricColors[m],
+    borderWidth: 0, stack: 'combined', borderRadius: 2, _metric: m
+  }));
+  chartInst = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: { labels: scores.map(s=>s.entity), datasets },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: colors.axes, font: { family: "'DM Mono'" } }, border: { display: false } },
+        y: { stacked: true, grid: { display: false }, ticks: { color: colors.axes, font: { family: "'DM Sans'", weight: '500' }, padding: 8 }, border: { display: false } }
+      },
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 16, color: colors.axes, font: { family: "'DM Sans'" } } },
+        tooltip: {
+          mode: 'nearest', intersect: true,
+          backgroundColor: 'rgba(10,10,10,.96)', padding: 14, cornerRadius: 8,
+          borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
+          titleFont: { size: 13, weight: '600', family: "'DM Sans'" },
+          bodyFont: { size: 12, family: "'DM Mono'" },
+          callbacks: {
+            title: items => items.length ? scores[items[0].dataIndex].entity : '',
+            label: item => {
+              const m = item.dataset._metric;
+              const s = scores[item.dataIndex];
+              const c = (s.contributions||{})[m];
+              if (!c || Math.abs(c.contribution) < 0.0005) return null;
+              const sign = c.contribution >= 0 ? '+' : '';
+              return [`${m}: ${sign}${c.contribution.toFixed(3)}`, `  raw: ${c.rawValue}  weight: ${c.weight.toFixed(1)}%`];
+            },
+            footer: items => items.length ? 'combined: ' + scores[items[0].dataIndex].displayZ.toFixed(3) : ''
+          }
         }
-
-        function isAscii(text) {
-            return /^[\u0000-\u00FF]*$/.test(text);
-        }
-
-        function handleFileUpload(event, textareaId) {
-            const file = event.target.files ? event.target.files[0] : null;
-            if (!file) return;
-
-            if (file.size > MAX_UPLOAD_BYTES) {
-                alert('File too large. Please upload a file under 5 MB.');
-                event.target.value = '';
-                return;
-            }
-
-            if (file.type && !ACCEPTED_MIME_TYPES.has(file.type)) {
-                alert('Please upload a CSV, TSV, or plain text file.');
-                event.target.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.onerror = () => {
-                alert('There was an error reading the file. Please try again with a different file.');
-                event.target.value = '';
-            };
-
-            reader.onload = e => {
-                const text = e.target.result;
-
-                if (!isAscii(text)) {
-                    alert('The file appears to use an unsupported encoding. Please save as UTF-8 and try again.');
-                    event.target.value = '';
-                    return;
-                }
-
-                const textarea = document.getElementById(textareaId);
-                if (textarea) {
-                    textarea.value = text.trim();
-                    textarea.focus();
-                }
-
-                event.target.value = '';
-            };
-
-            reader.readAsText(file);
-        }
-
-        function setStepState(currentStep) {
-            const steps = document.querySelectorAll('.progress-indicator .step');
-            const lines = document.querySelectorAll('.progress-indicator .progress-line');
-
-            if (steps.length === 0) return;
-
-            const maxStep = steps.length;
-            const normalizedStep = Math.min(Math.max(currentStep, 1), maxStep + 1);
-
-            steps.forEach(step => {
-                const stepNum = parseInt(step.dataset.step, 10);
-                const circle = step.querySelector('.step-circle');
-                step.classList.remove('active', 'completed');
-                if (circle) {
-                    circle.textContent = step.dataset.step;
-                }
-
-                if (stepNum < normalizedStep) {
-                    step.classList.add('completed');
-                    if (circle) circle.textContent = '✓';
-                } else if (stepNum === normalizedStep) {
-                    step.classList.add('active');
-                }
-            });
-
-            lines.forEach(line => {
-                const beforeStep = parseInt(line.dataset.beforeStep, 10);
-                if (beforeStep < normalizedStep) {
-                    line.classList.add('completed');
-                } else {
-                    line.classList.remove('completed');
-                }
-            });
-        }
-
-        function clearInlineErrors(elementId) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-
-            let sibling = element.nextElementSibling;
-            while (sibling && sibling.classList.contains('inline-error')) {
-                const toRemove = sibling;
-                sibling = sibling.nextElementSibling;
-                toRemove.remove();
-            }
-        }
-
-        function showInlineError(elementId, message) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            clearInlineErrors(elementId);
-            element.insertAdjacentHTML('afterend', `<p class="inline-error">${message}</p>`);
-        }
-
-        function parseInputData(elementId) {
-            clearInlineErrors(elementId);
-
-            const inputElement = document.getElementById(elementId);
-            if (!inputElement) {
-                return { headers: [], entities: [], metrics: [] };
-            }
-
-            const raw = (inputElement.value || '').trim();
-            if (!raw) {
-                showInlineError(elementId, 'Please paste data that includes headers and values.');
-                return { headers: [], entities: [], metrics: [] };
-            }
-
-            const rows = raw.split(/\r?\n/).map(row => row.trim()).filter(Boolean);
-
-            if (rows.length < 2) {
-                showInlineError(elementId, 'Include at least one header row and one data row.');
-                return { headers: [], entities: [], metrics: [] };
-            }
-
-            const headers = rows[0].split(/\t| {2,}|,/).map(cell => cell.trim()).filter(Boolean);
-            if (headers.length < 2) {
-                showInlineError(elementId, 'Need at least one metric column plus the entity column.');
-                return { headers: [], entities: [], metrics: [] };
-            }
-
-            rows.shift();
-
-            const data = rows.map(row => {
-                const splitRow = row.split(/\t| {2,}|,/).map(cell => cell.trim());
-
-                if (splitRow.length < headers.length) {
-                    while (splitRow.length < headers.length) {
-                        splitRow.push('');
-                    }
-                }
-
-                const entity = splitRow[0];
-                const metrics = splitRow.slice(1).map(val => {
-                    let cleanVal = val.replace('%', '').replace(',', '.').trim();
-                    cleanVal = cleanVal.replace(/[^\d.-]/g, '');
-                    return cleanVal === '' ? NaN : parseFloat(cleanVal);
-                });
-
-                return { entity, metrics };
-            });
-
-            const invalidCells = [];
-            data.forEach((row, rowIndex) => {
-                row.metrics.forEach((value, colIndex) => {
-                    if (!Number.isFinite(value)) {
-                        invalidCells.push(`Row ${rowIndex + 2}, Column ${headers[colIndex + 1]}`);
-                    }
-                });
-            });
-
-            if (invalidCells.length > 0) {
-                showInlineError(elementId, `Invalid entries at ${invalidCells.join(', ')}. Make sure metric columns only have numbers.`);
-                return { headers: [], entities: [], metrics: [] };
-            }
-
-            return {
-                headers,
-                entities: data.map(row => row.entity),
-                metrics: data.map(row => row.metrics)
-            };
-        }
-
-        function setupPerformanceWeights() {
-            const parsed = parseInputData('performanceData');
-            if (!parsed.headers.length) return;
-
-            performanceHeaders = parsed.headers;
-            generateWeightInputs(parsed.headers, 'performanceWeightsContainer', performanceWeights);
-            setStepState(1);
-        }
-
-        function setupCostWeights() {
-            const parsed = parseInputData('costData');
-            if (!parsed.headers.length) return;
-
-            costHeaders = parsed.headers;
-            generateWeightInputs(parsed.headers, 'costWeightsContainer', costWeights);
-            setStepState(2);
-        }
-
-        function generateWeightInputs(headers, containerId, weightArray) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            container.innerHTML = '';
-            weightArray.length = 0;
-
-            const metricHeaders = headers.slice(1);
-
-            if (metricHeaders.length === 0) {
-                container.innerHTML = '<p class="inline-error">No metric columns found. Add at least one numeric metric.</p>';
-                return;
-            }
-
-            metricHeaders.forEach((header, index) => {
-                const weightInput = document.createElement('div');
-                weightInput.className = 'weight-input';
-                weightInput.innerHTML = `
-                    <label for="${containerId}_weight_${index}">${header} weight:</label>
-                    <input type="number"
-                        id="${containerId}_weight_${index}"
-                        value="1"
-                        min="0"
-                        step="0.1"
-                        oninput="updateWeights('${containerId}', ${index}, this.value)"
-                        aria-label="${header} weight input" />
-                `;
-                container.appendChild(weightInput);
-                weightArray[index] = 1;
-            });
-
-            displayNormalizedWeights(weightArray, containerId, headers);
-        }
-
-        function updateWeights(containerId, index, value) {
-            const numericValue = parseFloat(value);
-            const safeValue = Number.isFinite(numericValue) && numericValue >= 0 ? numericValue : 0;
-
-            if (containerId === 'performanceWeightsContainer') {
-                performanceWeights[index] = safeValue;
-                displayNormalizedWeights(performanceWeights, containerId, performanceHeaders);
-            } else {
-                costWeights[index] = safeValue;
-                displayNormalizedWeights(costWeights, containerId, costHeaders);
-            }
-        }
-
-        function normalizeWeights(weights) {
-            if (!weights.length) return [];
-
-            const total = weights.reduce((sum, weight) => sum + weight, 0);
-
-            if (total <= 0) {
-                const equalWeight = 1 / weights.length;
-                return weights.map(() => equalWeight);
-            }
-
-            return weights.map(weight => weight / total);
-        }
-
-        function displayNormalizedWeights(weights, containerId, headers) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            const existing = container.querySelector('.weight-explanation');
-            if (existing) {
-                existing.remove();
-            }
-
-            if (!headers.length || weights.length === 0) return;
-
-            const metricHeaders = headers.slice(1);
-            if (!metricHeaders.length) return;
-
-            const normalized = normalizeWeights(weights);
-            const totalRaw = weights.reduce((sum, weight) => sum + weight, 0);
-
-            const rawParts = metricHeaders.map((header, idx) =>
-                `${header}: ${Number.isFinite(weights[idx]) ? weights[idx].toFixed(2) : '0.00'}`
-            );
-            const normalizedParts = metricHeaders.map((header, idx) =>
-                `${header}: <span style="color:#f1623c;font-weight:600;">${(normalized[idx] * 100).toFixed(1)}%</span>`
-            );
-
-            const explanation = document.createElement('div');
-            explanation.className = 'weight-explanation';
-            explanation.innerHTML = `
-                <p><strong>Your weights:</strong> ${rawParts.join(' • ')} (total = ${totalRaw.toFixed(2)})</p>
-                <p><strong>Normalised:</strong> ${normalizedParts.join(' • ')}</p>
-                <p style="font-style:italic; color:#31507a;">Tip: Only ratios matter. Using 1, 2, 3 gives the same result as 10, 20, 30.</p>
-            `;
-
-            container.appendChild(explanation);
-        }
-
-        function calculateMeanAndStd(arr) {
-            const n = arr.length;
-            if (n === 0) return { mean: NaN, std: NaN };
-
-            const mean = arr.reduce((sum, value) => sum + value, 0) / n;
-
-            if (n === 1) {
-                return { mean, std: 1 };
-            }
-
-            const variance = arr.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / (n - 1);
-            const std = variance === 0 ? 1 : Math.sqrt(variance);
-
-            return { mean, std };
-        }
-
-        function calculateWeightedZScores(metrics, weights, shouldInverse = false) {
-            const normalizedWeights = normalizeWeights(weights);
-
-            return metrics[0].map((_, colIndex) => {
-                const columnData = metrics.map(row => row[colIndex]);
-                const stats = calculateMeanAndStd(columnData);
-                const weight = normalizedWeights[colIndex] ?? 0;
-
-                const zScores = columnData.map(value => ((value - stats.mean) / stats.std) * weight);
-                return shouldInverse ? zScores.map(score => score * -1) : zScores;
-            });
-        }
-
-        function toggleButtonLoading(buttonId, isLoading) {
-            const button = document.getElementById(buttonId);
-            if (!button) return;
-
-            if (isLoading) {
-                button.setAttribute('aria-busy', 'true');
-                button.disabled = true;
-            } else {
-                button.removeAttribute('aria-busy');
-                button.disabled = false;
-            }
-        }
-
-        function handleCalculatePerformance() {
-            toggleButtonLoading('calcPerfBtn', true);
-            setTimeout(() => {
-                calculatePerformanceZScores();
-                toggleButtonLoading('calcPerfBtn', false);
-            }, 50);
-        }
-
-        function handleCalculateCost() {
-            toggleButtonLoading('calcCostBtn', true);
-            setTimeout(() => {
-                calculateCostZScores();
-                toggleButtonLoading('calcCostBtn', false);
-            }, 50);
-        }
-
-        function handleCalculateOverall() {
-            toggleButtonLoading('calcOverallBtn', true);
-            setTimeout(() => {
-                calculateOverallRanking();
-                toggleButtonLoading('calcOverallBtn', false);
-            }, 50);
-        }
-
-        function calculatePerformanceZScores() {
-            const { headers, entities, metrics } = parseInputData('performanceData');
-
-            if (!headers.length) return;
-            if (!metrics.length || !metrics[0] || metrics[0].length === 0) {
-                document.getElementById('performanceFeedback').innerHTML = '<p class="inline-error">No numeric performance metrics found. Add at least one metric column.</p>';
-                return;
-            }
-
-            if (performanceWeights.length !== headers.slice(1).length) {
-                document.getElementById('performanceFeedback').innerHTML = '<p class="inline-error">Set up weights for your performance metrics first.</p>';
-                return;
-            }
-
-            const metricHeaders = headers.slice(1);
-            const normalized = normalizeWeights(performanceWeights);
-            const zScoresByMetric = calculateWeightedZScores(metrics, performanceWeights);
-
-            performanceZScores = entities.map((entity, rowIndex) => {
-                const contributions = {};
-                metricHeaders.forEach((mh, colIndex) => {
-                    contributions[mh] = {
-                        contribution: zScoresByMetric[colIndex][rowIndex],
-                        rawValue: metrics[rowIndex][colIndex],
-                        weight: normalized[colIndex] * 100
-                    };
-                });
-
-                const totalZScore = metricHeaders.reduce((sum, mh) => sum + contributions[mh].contribution, 0);
-                return { entity, totalZScore, contributions };
-            });
-
-            performanceZScores.sort((a, b) => b.totalZScore - a.totalZScore);
-
-            document.getElementById('performanceFeedback').innerHTML = '';
-            displayResults('performanceResults', headers, performanceZScores, 'Performance', entities.length);
-
-            setStepState(2);
-        }
-
-        function calculateCostZScores() {
-            const { headers, entities, metrics } = parseInputData('costData');
-
-            if (!headers.length) return;
-            if (!metrics.length || !metrics[0] || metrics[0].length === 0) {
-                document.getElementById('costFeedback').innerHTML = '<p class="inline-error">No numeric cost metrics found. Add at least one metric column.</p>';
-                return;
-            }
-
-            if (costWeights.length !== headers.slice(1).length) {
-                document.getElementById('costFeedback').innerHTML = '<p class="inline-error">Set up weights for your cost metrics first.</p>';
-                return;
-            }
-
-            const metricHeaders = headers.slice(1);
-            const normalized = normalizeWeights(costWeights);
-            const zScoresByMetric = calculateWeightedZScores(metrics, costWeights, true);
-
-            costZScores = entities.map((entity, rowIndex) => {
-                const contributions = {};
-                metricHeaders.forEach((mh, colIndex) => {
-                    contributions[mh] = {
-                        contribution: zScoresByMetric[colIndex][rowIndex],
-                        rawValue: metrics[rowIndex][colIndex],
-                        weight: normalized[colIndex] * 100
-                    };
-                });
-
-                const totalZScore = metricHeaders.reduce((sum, mh) => sum + contributions[mh].contribution, 0);
-                return { entity, totalZScore, contributions };
-            });
-
-            costZScores.sort((a, b) => b.totalZScore - a.totalZScore);
-
-            document.getElementById('costFeedback').innerHTML = '';
-            displayResults('costResults', headers, costZScores, 'Cost', entities.length);
-
-            setStepState(3);
-        }
-
-        function interpretZScore(zScore, index, total) {
-            if (index === 0) return { icon: '★', label: 'Top performer', description: 'Highest score' };
-            if (index === total - 1) return { icon: '▼', label: 'Lowest performer', description: 'Needs work' };
-
-            if (zScore >= 1.0) return { icon: '↑↑', label: 'Excellent', description: 'Well above average' };
-            if (zScore >= 0.5) return { icon: '↑', label: 'Strong', description: 'Above average' };
-            if (zScore > -0.5) return { icon: '—', label: 'Average', description: 'Near average' };
-            if (zScore > -1.0) return { icon: '↓', label: 'Below average', description: 'Below average' };
-            return { icon: '↓↓', label: 'Weak', description: 'Well below average' };
-        }
-
-        function displayResults(elementId, headers, scores, type, sampleSize) {
-            const container = document.getElementById(elementId);
-            if (!container) return;
-
-            if (!scores.length) {
-                container.innerHTML = '';
-                return;
-            }
-
-            const zScores = scores.map(item => item.totalZScore);
-            const maxZ = Math.max(...zScores);
-            const minZ = Math.min(...zScores);
-            const spread = maxZ - minZ;
-            const stats = calculateMeanAndStd(zScores);
-
-            const label = type === 'Performance' ? 'Performance Z-score' : 'Cost Z-score';
-
-            let sampleSizeNote = '';
-            let sampleSizeClass = 'info-note';
-            if (sampleSize < 10) {
-                sampleSizeNote = `Small sample (n=${sampleSize}): Z-scores work well for comparison. Be aware that one strong/weak performer can notably influence the scale.`;
-                sampleSizeClass = 'warning-note';
-            } else if (sampleSize >= 30) {
-                sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Results are statistically robust.`;
-            } else {
-                sampleSizeNote = `Sample size: n=${sampleSize} (moderate - reasonably reliable)`;
-            }
-
-            let spreadNote = '';
-            if (spread < 1.0) {
-                spreadNote = '<li>Tight clustering: Entities perform very similarly overall.</li>';
-            } else if (spread > 3.0) {
-                spreadNote = '<li>Wide spread: Clear performance differences exist between entities.</li>';
-            }
-
-            let stdDevNote = '';
-            if (stats.std < 0.5) {
-                stdDevNote = `<li><strong>Note on std dev:</strong> Low standard deviation (${stats.std.toFixed(2)}) means values are tightly clustered. Ranking differences reflect small actual variations—z-scores may look larger than practical differences.</li>`;
-            } else if (stats.std > 2.0) {
-                stdDevNote = `<li><strong>Note on std dev:</strong> High standard deviation (${stats.std.toFixed(2)}) means substantial variation exists. Even modest z-scores can represent meaningful real-world differences.</li>`;
-            }
-
-            let html = `
-                <h3>${type} results (sorted by Z-score)</h3>
-                <div class="${sampleSizeClass}">${sampleSizeNote}</div>
-                <div class="interpretation-guide">
-                    <p><strong>Statistical context:</strong></p>
-                    <ul>
-                        <li>Higher Z-scores = Better ${type.toLowerCase()}</li>
-                        <li>Score range: ${minZ.toFixed(2)} to ${maxZ.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
-                        <li>Standard deviation of scores: ${stats.std.toFixed(2)}</li>
-                        ${spreadNote}
-                        ${stdDevNote}
-                        <li>Entries within 0.5 of each other are very close</li>
-                    </ul>
-                </div>
-                <div class="table-wrapper" tabindex="0">
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">${headers[0]}</th>
-                            <th scope="col">${label}</th>
-                            <th scope="col">Interpretation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            scores.forEach((item, index) => {
-                const zScore = item.totalZScore;
-                const interpretation = interpretZScore(zScore, index, scores.length);
-
-                html += `
-                    <tr>
-                        <td data-label="${headers[0]}">${item.entity}</td>
-                        <td data-label="${label}">${zScore.toFixed(3)}</td>
-                        <td data-label="Interpretation">
-                            <span class="interpretation-cell">
-                                <span class="interpretation-icon" aria-hidden="true">${interpretation.icon}</span>
-                                <span>${interpretation.description}<span class="sr-only"> (${interpretation.label})</span></span>
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += '</tbody></table></div>';
-            container.innerHTML = html;
-        }
-
-        function interpretOverallScore(zScore, index, total) {
-            if (index === 0) return { icon: '★', label: 'Best overall', description: 'Best balance' };
-            if (index === total - 1) return { icon: '▼', label: 'Weak overall', description: 'Lowest score' };
-
-            if (zScore >= 1.0) return { icon: '↑↑', label: 'Excellent', description: 'Much better than average' };
-            if (zScore >= 0.5) return { icon: '↑', label: 'Good', description: 'Above average' };
-            if (zScore > -0.5) return { icon: '—', label: 'Average', description: 'Typical' };
-            if (zScore > -1.0) return { icon: '↓', label: 'Below par', description: 'Room for improvement' };
-            return { icon: '↓↓', label: 'Poor', description: 'Needs work' };
-        }
-
-        function calculateOverallRanking() {
-            if (!performanceZScores.length && !costZScores.length) {
-                document.getElementById('overallResults').innerHTML = '<p class="inline-error">Calculate performance or cost Z-scores first.</p>';
-                return;
-            }
-
-            const entitiesSet = new Set([
-                ...performanceZScores.map(item => item.entity),
-                ...costZScores.map(item => item.entity)
-            ]);
-
-            const combinedScores = Array.from(entitiesSet).map(entity => {
-                const performance = performanceZScores.find(item => item.entity === entity);
-                const cost = costZScores.find(item => item.entity === entity);
-
-                const contributions = {};
-                if (performance && performance.contributions) {
-                    Object.keys(performance.contributions).forEach(k => {
-                        contributions[k] = { ...performance.contributions[k] };
-                    });
-                }
-                if (cost && cost.contributions) {
-                    Object.keys(cost.contributions).forEach(k => {
-                        contributions[k] = { ...cost.contributions[k] };
-                    });
-                }
-
-                return {
-                    entity,
-                    performanceZ: performance ? performance.totalZScore : 0,
-                    costZ: cost ? cost.totalZScore : 0,
-                    overallZ: (performance ? performance.totalZScore : 0) + (cost ? cost.totalZScore : 0),
-                    contributions
-                };
-            });
-
-            combinedScores.sort((a, b) => b.overallZ - a.overallZ);
-
-            const removeNegatives = document.getElementById('removeNegativesCheckbox').checked;
-            const overallValues = combinedScores.map(score => score.overallZ);
-            const maxOverall = Math.max(...overallValues);
-            const minOverall = Math.min(...overallValues);
-            const spread = maxOverall - minOverall;
-            const stats = calculateMeanAndStd(overallValues);
-            const sampleSize = combinedScores.length;
-
-            let adjustment = 0;
-            if (removeNegatives && minOverall < 0) {
-                adjustment = Math.abs(minOverall);
-            }
-
-            overallScores = combinedScores.map(score => ({
-                ...score,
-                displayOverallZ: score.overallZ + adjustment
-            }));
-
-            let sampleSizeNote = '';
-            let sampleSizeClass = 'info-note';
-            if (sampleSize < 10) {
-                sampleSizeNote = `Small sample (n=${sampleSize}): Rankings work well for comparison. Be aware they're more sensitive to individual data points.`;
-                sampleSizeClass = 'warning-note';
-            } else if (sampleSize >= 30) {
-                sampleSizeNote = `✓ Good sample size (n=${sampleSize}): Rankings are statistically robust.`;
-            } else {
-                sampleSizeNote = `Sample size: n=${sampleSize} (moderate reliability)`;
-            }
-
-            let spreadNote = '';
-            if (spread < 1.0) {
-                spreadNote = '<li>Tight clustering: Most entities perform similarly overall.</li>';
-            } else if (spread > 3.0) {
-                spreadNote = '<li>Wide spread: Clear differentiation in overall performance.</li>';
-            }
-
-            let stdDevNote = '';
-            if (stats.std < 0.5) {
-                stdDevNote = `<li><strong>Note on std dev:</strong> Low standard deviation (${stats.std.toFixed(2)}) means scores are tightly clustered. Rankings are accurate but practical differences may be smaller than z-scores suggest.</li>`;
-            } else if (stats.std > 2.0) {
-                stdDevNote = `<li><strong>Note on std dev:</strong> High standard deviation (${stats.std.toFixed(2)}) indicates substantial variation. Even moderate z-scores reflect meaningful performance gaps.</li>`;
-            }
-
-            let html = `
-                <h3>Overall ranking</h3>
-                <div class="${sampleSizeClass}">${sampleSizeNote}</div>
-                <div class="interpretation-guide">
-                    <p><strong>Statistical context:</strong></p>
-                    <ul>
-                        <li>Overall Z-score = performance + cost</li>
-                        <li>Higher is better</li>
-                        <li>Score range: ${minOverall.toFixed(2)} to ${maxOverall.toFixed(2)} (spread: ${spread.toFixed(2)})</li>
-                        <li>Standard deviation: ${stats.std.toFixed(2)}</li>
-                        ${spreadNote}
-                        ${stdDevNote}
-                    </ul>
-                </div>
-            `;
-
-            if (removeNegatives && adjustment > 0) {
-                html += `<p class="info-note">Scores shifted up by ${adjustment.toFixed(3)} to remove negatives. Ranking order unchanged. Chart shows unshifted contributions for analytical clarity.</p>`;
-            }
-
-            html += `
-                <div class="table-wrapper" tabindex="0">
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Entity</th>
-                            <th scope="col">Performance</th>
-                            <th scope="col">Cost</th>
-                            <th scope="col">Overall</th>
-                            <th scope="col">Interpretation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            overallScores.forEach((item, index) => {
-                const interpretation = interpretOverallScore(item.overallZ, index, overallScores.length);
-
-                html += `
-                    <tr>
-                        <td data-label="Entity">${item.entity}</td>
-                        <td data-label="Performance">${item.performanceZ.toFixed(3)}</td>
-                        <td data-label="Cost">${item.costZ.toFixed(3)}</td>
-                        <td data-label="Overall">${item.displayOverallZ.toFixed(3)}</td>
-                        <td data-label="Interpretation">
-                            <span class="interpretation-cell">
-                                <span class="interpretation-icon" aria-hidden="true">${interpretation.icon}</span>
-                                <span>${interpretation.description}<span class="sr-only"> (${interpretation.label})</span></span>
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += '</tbody></table></div>';
-            document.getElementById('overallResults').innerHTML = html;
-
-            renderOverallChart(overallScores);
-            setStepState(4);
-        }
-
-        function renderOverallChart(scores) {
-            if (!scores.length) {
-                if (window.overallChartInstance) {
-                    window.overallChartInstance.destroy();
-                    window.overallChartInstance = null;
-                }
-                return;
-            }
-
-            const canvas = document.getElementById('overallChart');
-            if (!canvas) return;
-
-            if (window.overallChartInstance) {
-                window.overallChartInstance.destroy();
-                window.overallChartInstance = null;
-            }
-
-            const ctx = canvas.getContext('2d');
-
-            // Collect all unique metric keys across all entities (in insertion order)
-            const allMetrics = [];
-            scores.forEach(score => {
-                Object.keys(score.contributions || {}).forEach(key => {
-                    if (!allMetrics.includes(key)) allMetrics.push(key);
-                });
-            });
-
-            // Ensure colours exist for these metrics, then render pickers
-            initialiseMetricColours(allMetrics);
-            renderMetricColourPickers();
-
-            // Dynamic canvas height
-            const barHeight = 48;
-            const chartPadding = 160;
-            const desiredHeight = Math.max(360, (scores.length * barHeight) + chartPadding);
-            canvas.height = desiredHeight;
-            canvas.style.height = desiredHeight + 'px';
-
-            const labels = scores.map(item => item.entity);
-            const useSingleMetric = allMetrics.length === 1;
-
-            const datasets = allMetrics.map((metric, idx) => {
-                const fallback = METRIC_COLORS[idx % METRIC_COLORS.length];
-                const colour = useSingleMetric ? chartColor : (metricColours[metric] || fallback);
-
-                return {
-                    label: metric,
-                    data: scores.map(score => {
-                        const c = (score.contributions || {})[metric];
-                        return c ? c.contribution : 0;
-                    }),
-                    backgroundColor: colour,
-                    borderColor: colour,
-                    borderWidth: 0,
-                    borderRadius: 0,
-                    stack: 'combined',
-                    _metricName: metric
-                };
-            });
-
-            window.overallChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: { labels, datasets },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.08)', drawBorder: false },
-                            ticks: {
-                                color: axesColor,
-                                font: { size: 13, family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }
-                            },
-                            border: { display: false }
-                        },
-                        y: {
-                            stacked: true,
-                            grid: { display: false },
-                            ticks: {
-                                color: axesColor,
-                                font: { size: 13, weight: '500', family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" },
-                                padding: 8
-                            },
-                            border: { display: false }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                pointStyle: 'rectRounded',
-                                padding: 16,
-                                font: { size: 13, family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }
-                            }
-                        },
-                        tooltip: {
-                            mode: 'nearest',
-                            intersect: true,
-                            backgroundColor: 'rgba(0, 0, 0, 0.88)',
-                            padding: 14,
-                            cornerRadius: 8,
-                            titleFont: { size: 14, weight: '600' },
-                            bodyFont: { size: 13 },
-                            footerFont: { size: 12, weight: '400', style: 'italic' },
-                            callbacks: {
-                                title: function(items) {
-                                    if (!items.length) return '';
-                                    return scores[items[0].dataIndex].entity;
-                                },
-                                label: function(item) {
-                                    const metricName = item.dataset._metricName;
-                                    const score = scores[item.dataIndex];
-                                    const contrib = (score.contributions || {})[metricName];
-                                    if (!contrib || Math.abs(contrib.contribution) < 0.0005) return null;
-
-                                    const sign = contrib.contribution >= 0 ? '+' : '';
-                                    return [
-                                        `${metricName}: ${sign}${contrib.contribution.toFixed(3)}`,
-                                        `  Raw value: ${contrib.rawValue}`,
-                                        `  Weight: ${contrib.weight.toFixed(1)}%`
-                                    ];
-                                },
-                                footer: function(items) {
-                                    if (!items.length) return '';
-                                    return 'Overall: ' + scores[items[0].dataIndex].displayOverallZ.toFixed(3);
-                                }
-                            }
-                        }
-                    },
-                    layout: { padding: { top: 20, right: 20, bottom: 20, left: 10 } }
-                },
-                plugins: [{
-                    id: 'customCanvasBackgroundColor',
-                    beforeDraw: function(chart) {
-                        const ctx = chart.canvas.getContext('2d');
-                        ctx.save();
-                        ctx.globalCompositeOperation = 'destination-over';
-                        ctx.fillStyle = backgroundColor;
-                        ctx.fillRect(0, 0, chart.width, chart.height);
-                        ctx.restore();
-                    }
-                }]
-            });
-        }
-
-        function updateChartColor(type) {
-            const hexRegex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
-
-            if (type === 'bar') {
-                const value = document.getElementById('barColor').value.trim();
-                if (hexRegex.test(value)) {
-                    chartColor = value;
-                } else {
-                    alert('Please enter a valid hex colour (like #f1623c).');
-                    return;
-                }
-            }
-
-            if (type === 'background') {
-                const value = document.getElementById('bgColor').value.trim();
-                if (hexRegex.test(value)) {
-                    backgroundColor = value;
-                } else {
-                    alert('Please enter a valid hex colour (like #ffffff).');
-                    return;
-                }
-            }
-
-            if (type === 'axes') {
-                const value = document.getElementById('axesColor').value.trim();
-                if (hexRegex.test(value)) {
-                    axesColor = value;
-                } else {
-                    alert('Please enter a valid hex colour (like #333333).');
-                    return;
-                }
-            }
-
-            if (!overallScores.length || !window.overallChartInstance) return;
-
-            // If only one metric dataset exists, update dataset colour directly
-            if (type === 'bar' && window.overallChartInstance.data.datasets && window.overallChartInstance.data.datasets.length === 1) {
-                window.overallChartInstance.data.datasets[0].backgroundColor = chartColor;
-                window.overallChartInstance.data.datasets[0].borderColor = chartColor;
-                window.overallChartInstance.update();
-                return;
-            }
-
-            renderOverallChart(overallScores);
-        }
-
-        function syncHexInput(pickerId, inputId) {
-            const pickerValue = document.getElementById(pickerId).value;
-            document.getElementById(inputId).value = pickerValue;
-        }
-
-        function syncColorPicker(inputId, pickerId) {
-            const value = document.getElementById(inputId).value.trim();
-            const hexRegex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
-            if (hexRegex.test(value)) {
-                document.getElementById(pickerId).value = value;
-            }
-        }
-
-        function downloadChartAsImage() {
-            if (!window.overallChartInstance) {
-                alert('Generate the chart first.');
-                return;
-            }
-
-            const link = document.createElement('a');
-            link.href = window.overallChartInstance.toBase64Image('image/png', 1.0);
-            link.download = 'overall_z_score_chart.png';
-            link.click();
-        }
-
-        function exportResultsAsCSV() {
-            if (!overallScores.length) {
-                alert('Calculate results first.');
-                return;
-            }
-
-            // Collect all unique metric names across all entities
-            const allMetrics = [];
-            overallScores.forEach(score => {
-                Object.keys(score.contributions || {}).forEach(key => {
-                    if (!allMetrics.includes(key)) allMetrics.push(key);
-                });
-            });
-
-            const csvRows = [];
-            const header = ['Entity', 'Performance Z-Score', 'Cost Z-Score', 'Overall Z-Score', 'Adjusted Overall Score'];
-            allMetrics.forEach(m => header.push(m + ' Contribution'));
-            csvRows.push(header);
-
-            overallScores.forEach(item => {
-                const row = [
-                    item.entity,
-                    item.performanceZ.toFixed(3),
-                    item.costZ.toFixed(3),
-                    item.overallZ.toFixed(3),
-                    item.displayOverallZ.toFixed(3)
-                ];
-
-                allMetrics.forEach(m => {
-                    const c = (item.contributions || {})[m];
-                    row.push(c ? c.contribution.toFixed(3) : '0.000');
-                });
-
-                csvRows.push(row);
-            });
-
-            const csvContent = csvRows
-                .map(row => row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','))
-                .join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'z_score_results.csv';
-            link.click();
-
-            URL.revokeObjectURL(url);
-        }
-
-        /* ================================================================
-           NEW: METRIC COLOUR EDITOR (editable stacked colours)
-           ================================================================ */
-
-        function loadMetricColoursFromStorage() {
-            try {
-                const raw = localStorage.getItem(METRIC_COLOUR_STORAGE_KEY);
-                if (!raw) return;
-                const parsed = JSON.parse(raw);
-                if (parsed && typeof parsed === 'object') {
-                    metricColours = parsed;
-                }
-            } catch (e) {
-                // ignore
-            }
-        }
-
-        function saveMetricColoursToStorage() {
-            try {
-                localStorage.setItem(METRIC_COLOUR_STORAGE_KEY, JSON.stringify(metricColours));
-            } catch (e) {
-                // ignore
-            }
-        }
-
-        function initialiseMetricColours(metricHeaders) {
-            if (!Array.isArray(metricHeaders) || metricHeaders.length === 0) return;
-
-            metricHeaders.forEach((metric, idx) => {
-                if (!metricColours[metric]) {
-                    metricColours[metric] = METRIC_COLORS[idx % METRIC_COLORS.length];
-                }
-            });
-
-            saveMetricColoursToStorage();
-        }
-
-        function renderMetricColourPickers() {
-            const container = document.getElementById('metricColorContainer');
-            if (!container) return;
-
-            container.innerHTML = '';
-
-            const keys = Object.keys(metricColours);
-            if (!keys.length) {
-                container.innerHTML = '<p class="info-note" style="grid-column:1/-1;">Generate the overall chart to populate metric colours.</p>';
-                return;
-            }
-
-            keys.forEach(metric => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'color-picker';
-
-                const safeId = 'metric_' + metric.replace(/[^a-z0-9]+/gi, '_');
-
-                wrapper.innerHTML = `
-                    <label for="${safeId}_hex">${metric}:</label>
-                    <input type="color" value="${metricColours[metric]}" aria-label="${metric} colour picker"
-                        onchange="updateMetricColour('${escapeForAttr(metric)}', this.value)">
-                    <input type="text" class="color-input" id="${safeId}_hex" value="${metricColours[metric]}" aria-label="${metric} hex colour"
-                        oninput="updateMetricColour('${escapeForAttr(metric)}', this.value)">
-                `;
-
-                container.appendChild(wrapper);
-            });
-        }
-
-        function updateMetricColour(metric, value) {
-            const realMetric = unescapeFromAttr(metric);
-            const hexRegex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
-            const cleaned = String(value || '').trim();
-
-            if (!hexRegex.test(cleaned)) return;
-
-            metricColours[realMetric] = cleaned;
-            saveMetricColoursToStorage();
-
-            if (overallScores.length) {
-                renderOverallChart(overallScores);
-            } else {
-                renderMetricColourPickers();
-            }
-        }
-
-        function resetMetricColours() {
-            metricColours = {};
-            saveMetricColoursToStorage();
-            renderMetricColourPickers();
-            if (overallScores.length) renderOverallChart(overallScores);
-        }
-
-        // Tiny helpers so metric names with quotes don't break inline handlers
-        function escapeForAttr(str) {
-            return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-        }
-        function unescapeFromAttr(str) {
-            return String(str).replace(/\\'/g, "'").replace(/\\\\/g, "\\");
-        }
-    </script>
+      },
+      layout: { padding: { top: 16, right: 24, bottom: 8, left: 8 } }
+    },
+    plugins: [{
+      id: 'bg',
+      beforeDraw(chart) {
+        const ctx = chart.canvas.getContext('2d');
+        ctx.save(); ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = getChartColors().bg;
+        ctx.fillRect(0,0,chart.width,chart.height);
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+function refreshChart() { if (overallScores.length) renderChart(overallScores); }
+
+function renderMetricColorPickers(metrics) {
+  const container = document.getElementById('metricColorControls');
+  if (!metrics || !metrics.length) { container.innerHTML = ''; return; }
+  container.innerHTML = metrics.map(m => {
+    return `<div class="color-item">
+      <label>${m}</label>
+      <input type="color" class="color-swatch" value="${metricColors[m]||'#b8f53a'}" oninput="updateMetricColor('${m.replace(/'/g,"\\'")}',this.value)">
+      <input type="text" class="color-hex" value="${metricColors[m]||'#b8f53a'}" oninput="updateMetricColor('${m.replace(/'/g,"\\'")}',this.value)">
+    </div>`;
+  }).join('');
+}
+
+function updateMetricColor(metric, val) {
+  if (!/^#[0-9a-f]{3,6}$/i.test(val.trim())) return;
+  metricColors[metric] = val.trim();
+  refreshChart();
+}
+
+function syncColor(pickerId, hexId) { document.getElementById(hexId).value = document.getElementById(pickerId).value; }
+function syncSwatch(hexId, pickerId) {
+  const v = document.getElementById(hexId).value.trim();
+  if (/^#[0-9a-f]{3,6}$/i.test(v)) document.getElementById(pickerId).value = v;
+}
+
+function downloadPNG() {
+  if (!chartInst) { alert('Generate the chart first.'); return; }
+  const a = document.createElement('a');
+  a.href = chartInst.toBase64Image('image/png', 1);
+  a.download = 'ranking_chart.png';
+  a.click();
+}
+
+function exportCSV() {
+  if (!overallScores.length) { alert('Generate the ranking first.'); return; }
+  const allMetrics = [];
+  overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
+  const headers = ['Entry','Performance Score','Cost Score','Combined Score',...allMetrics.map(m=>m+' Contribution')];
+  const rows = overallScores.map(s => [
+    s.entity, s.performanceZ.toFixed(3), s.costZ.toFixed(3), s.displayZ.toFixed(3),
+    ...allMetrics.map(m => { const c = (s.contributions||{})[m]; return c ? c.contribution.toFixed(3) : '0'; })
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ranking_results.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function exportHTML() {
+  if (!overallScores.length) { alert('Generate the ranking first.'); return; }
+  const scores = overallScores;
+  const allMetrics = [];
+  scores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
+  const chartData = JSON.stringify({
+    labels: scores.map(s=>s.entity),
+    datasets: allMetrics.map(m => ({
+      label: m,
+      data: scores.map(s => { const c=(s.contributions||{})[m]; return c ? c.contribution : 0; }),
+      backgroundColor: metricColors[m] || '#b8f53a',
+      borderColor: metricColors[m] || '#b8f53a',
+      borderWidth: 0, stack: 'combined', borderRadius: 2
+    }))
+  });
+  const tableRows = scores.map((s,i) => `
+    <tr>
+      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-weight:700;color:${i===0?'#b8f53a':i===1?'#666':i===2?'#555':'#444'};font-size:12px">${i+1}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #222;font-weight:600">${s.entity}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:12px;color:#909090">${s.performanceZ>=0?'+':''}${s.performanceZ.toFixed(2)}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:12px;color:#909090">${s.costZ>=0?'+':''}${s.costZ.toFixed(2)}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-weight:700;font-size:13px;color:${s.displayZ>=0?'#b8f53a':'#ff5e5e'}">${s.displayZ>=0?'+':''}${s.displayZ.toFixed(2)}</td>
+    </tr>`).join('');
+  const canvasH = Math.max(300, scores.length * 52 + 140);
+  const bgColor = document.getElementById('bgHex').value || '#111111';
+  const axesColor = document.getElementById('axesHex').value || '#909090';
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Performance Ranking — ${new Date().toLocaleDateString('en-GB')}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"><\/script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0a0a0a;color:#f0f0f0;padding:40px 20px 60px;font-size:15px}
+.shell{max-width:800px;margin:0 auto}
+.header{margin-bottom:32px}
+h1{font-size:26px;font-weight:600;letter-spacing:-.02em;color:#f0f0f0;margin-bottom:4px}
+.meta{font-size:12px;color:#555;font-family:'DM Mono',monospace}
+.card{background:#111;border:1px solid #1e1e1e;border-radius:16px;padding:24px 28px;margin-bottom:14px}
+.card-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#555;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#0e0e0e;padding:8px 14px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#444;border-bottom:1px solid #1e1e1e}
+td{padding:10px 14px;border-bottom:1px solid #1a1a1a;color:#f0f0f0}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#161616}
+canvas{width:100%!important;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #1e1e1e}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#666}
+.legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.footer{text-align:center;color:#333;font-size:11px;margin-top:28px;font-family:'DM Mono',monospace}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <h1>Performance Ranking</h1>
+    <div class="meta">Generated ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Final ranking</div>
+    <table>
+      <thead><tr><th>#</th><th>Entry</th><th>Performance</th><th>Cost</th><th>Combined</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">Score breakdown</div>
+    <canvas id="chart" style="height:${canvasH}px"></canvas>
+    <div class="legend">
+      ${allMetrics.map(m=>`<div class="legend-item"><div class="legend-dot" style="background:${metricColors[m]||'#b8f53a'}"></div>${m}</div>`).join('')}
+    </div>
+  </div>
+  <div class="footer">Performance Ranking Tool</div>
+</div>
+<script>
+const canvas = document.getElementById('chart');
+canvas.height = ${canvasH};
+new Chart(canvas.getContext('2d'), {
+  type: 'bar',
+  data: ${chartData},
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '${axesColor}', font: { family: "'DM Mono'" } }, border: { display: false } },
+      y: { stacked: true, grid: { display: false }, ticks: { color: '${axesColor}', font: { family: "'DM Sans'", weight: '500' }, padding: 8 }, border: { display: false } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(10,10,10,.96)', padding: 12, cornerRadius: 8,
+        borderColor: 'rgba(255,255,255,.08)', borderWidth: 1,
+        titleFont: { size: 13, weight: '600' }, bodyFont: { size: 12, family: "'DM Mono'" },
+        callbacks: { label: item => { const v = item.raw; if (Math.abs(v) < 0.0005) return null; return item.dataset.label + ': ' + (v>=0?'+':'') + v.toFixed(3); } }
+      }
+    },
+    layout: { padding: { top: 16, right: 24, bottom: 8, left: 8 } }
+  },
+  plugins: [{ id:'bg', beforeDraw(chart) { const ctx=chart.canvas.getContext('2d'); ctx.save(); ctx.globalCompositeOperation='destination-over'; ctx.fillStyle='${bgColor}'; ctx.fillRect(0,0,chart.width,chart.height); ctx.restore(); } }]
+});
+<\/script>
+</body>
+</html>`;
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ranking_interactive.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
 </body>
 </html>
