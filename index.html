@@ -280,7 +280,7 @@
   .tag-down { background: var(--danger-bg); color: #ff7c7c; }
 
   /* CHART DISPLAY */
-  .chart-card { background: var(--bg-card); padding: 24px 28px; margin-top: 24px; border-radius: var(--radius-xl); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+  .chart-card { background: var(--bg-card); padding: 24px 28px; margin-top: 24px; border-radius: var(--radius-xl); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); transition: background var(--transition); }
   .chart-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
   .chart-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
   .chart-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
@@ -289,7 +289,7 @@
   /* CONFIGURATION PALETTES */
   .colors-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.03); }
   .colors-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: block; }
-  .color-controls { display: flex; flex-wrap: wrap; gap: 12px; }
+  .color-controls { display: flex; flex-wrap: wrap; gap: 16px; }
   .color-item { display: flex; align-items: center; gap: 8px; }
   .color-item label { font-size: 12px; color: var(--text-secondary); }
   .color-swatch { width: 24px; height: 24px; border-radius: 5px; border: none; cursor: pointer; background: transparent; }
@@ -324,7 +324,7 @@
   <div class="hero">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      Multiple Metric Ranking Tool
+      Mutli Metric Ranking Tool
     </div>
     <h1>Find your <span>best performers</span> at a glance</h1>
     <p class="hero-sub">Upload performance data, adjust metric importance, and generate standardised rankings instantly.</p>
@@ -508,7 +508,7 @@ Spain	1.10	0.45</textarea>
           <span class="colors-label">Customise Presentation Palettes</span>
           <div class="color-controls">
             <div class="color-item">
-              <label for="colorBg">Chart Positive Accent</label>
+              <label for="colorBg">Positive Accent</label>
               <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" onchange="syncColor('colorBg','hexBg'); updateChartPresentation()">
               <input type="text" id="hexBg" class="color-hex" value="#b8f53a" oninput="syncSwatch('hexBg','colorBg'); updateChartPresentation()">
             </div>
@@ -517,10 +517,15 @@ Spain	1.10	0.45</textarea>
               <input type="color" id="colorAxes" class="color-swatch" value="#9EA3AE" onchange="syncColor('colorAxes','hexAxes'); updateChartPresentation()">
               <input type="text" id="hexAxes" class="color-hex" value="#9EA3AE" oninput="syncSwatch('hexAxes','colorAxes'); updateChartPresentation()">
             </div>
+            <div class="color-item">
+              <label for="colorChartBg">Chart Canvas Background</label>
+              <input type="color" id="colorChartBg" class="color-swatch" value="#111214" onchange="syncColor('colorChartBg','hexChartBg'); updateChartPresentation(); syncContainerCardBg()">
+              <input type="text" id="hexChartBg" class="color-hex" value="#111214" oninput="syncSwatch('hexChartBg','colorChartBg'); updateChartPresentation(); syncContainerCardBg()">
+            </div>
           </div>
         </div>
 
-        <div class="chart-card">
+        <div class="chart-card" id="mainChartCard">
           <div class="chart-header">
             <div>
               <div class="chart-title">Visual Score Spreads</div>
@@ -963,7 +968,28 @@ Spain	1.10	0.45</textarea>
       </div>
     `;
     updateChartPresentation();
+    syncContainerCardBg();
   }
+
+  function syncContainerCardBg() {
+    const colorVal = document.getElementById('hexChartBg').value;
+    const cardEl = document.getElementById('mainChartCard');
+    if (cardEl && /^#[0-9A-F]{6}$/i.test(colorVal)) {
+      cardEl.style.backgroundColor = colorVal;
+    }
+  }
+
+  // --- Custom Background Rendering Plugin for Chart.js ---
+  const customCanvasBgPlugin = {
+    id: 'customCanvasBgPlugin',
+    beforeDraw: (chart) => {
+      const { ctx, width, height } = chart;
+      ctx.save();
+      ctx.fillStyle = document.getElementById('hexChartBg').value || '#111214';
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+  };
 
   function updateChartPresentation() {
     const ctx = document.getElementById('overallChart');
@@ -979,7 +1005,6 @@ Spain	1.10	0.45</textarea>
     const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
     const baselineValue = isPoints ? 50 : 0;
 
-    // Calculate clean, balanced symmetric min/max padding frames for standard deviations view mode
     let minScaleValue = 0;
     let maxScaleValue = 100;
     
@@ -1008,6 +1033,7 @@ Spain	1.10	0.45</textarea>
     } else {
       chartInst = new Chart(ctx, {
         type: 'bar',
+        plugins: [customCanvasBgPlugin],
         data: {
           labels: labels,
           datasets: [{
@@ -1093,7 +1119,9 @@ Spain	1.10	0.45</textarea>
     }
   }
 
-  function syncColor(sId, tId) { document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase(); }
+  function syncColor(sId, tId) { 
+    document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase(); 
+  }
   function syncSwatch(tId, sId) {
     const val = document.getElementById(tId).value;
     if (/^#[0-9A-F]{6}$/i.test(val)) document.getElementById(sId).value = val;
