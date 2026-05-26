@@ -316,7 +316,6 @@
 
 <div class="page-shell">
 
-  <!-- HERO -->
   <div class="hero">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
@@ -326,7 +325,6 @@
     <p class="hero-sub">Paste your data, set what matters most, and get a clear ranking that combines performance and cost.</p>
   </div>
 
-  <!-- STEP TRACKER -->
   <div class="step-track" id="stepTrack">
     <div class="step-node active" data-step="1">
       <div class="step-dot">
@@ -353,24 +351,23 @@
     </div>
   </div>
 
-  <!-- EXPLAINER -->
   <div class="explainer">
     <h3>How this works</h3>
-    <p>This tool scores your data fairly, even when different metrics use different units — like percentages and currency. It combines them into one clear ranking. Lower costs automatically score higher, so the final number always means the same thing: higher is better.</p>
+    <p>This tool scores your data fairly using an advanced <strong>Re-standardized Logistic Sigmoid pipeline</strong>. It standardizes each component metric against its group average, compounds them based on your custom weight configuration, and runs a secondary standardization over the final composite values. This allows us to cleanly map every cohort cleanly onto an intuitive, bounded <strong>0 to 100 Performance Index Scale</strong>.</p>
     <button class="explainer-toggle" onclick="toggleExplainer()">Show methodology details</button>
     <div class="explainer-more" id="explainerMore">
-      <p>Each metric is standardised by comparing it against the group average. The distance from the average — measured in standard deviations — is the score.</p>
+      <p>Each individual metric component is isolated by calculating its distance from the cohort average via Standard Deviations ($Z$-scores):</p>
       <ul>
-        <li><strong>Score above 0</strong> — above average for that metric</li>
-        <li><strong>Score below 0</strong> — below average, room for improvement</li>
-        <li><strong>Weights</strong> control how much each metric contributes to the total. Only the ratios matter — 1:2:3 gives the same result as 10:20:30.</li>
-        <li><strong>Cost metrics are inverted</strong> — a lower cost becomes a higher score automatically</li>
-        <li>The final score is the sum of all weighted metric scores</li>
+        <li><strong>Index Score of 50</strong> — Represents the absolute cohort mathematical average.</li>
+        <li><strong>Index Score above 50</strong> — Above-average performance ($>0$ standardized composite deviations).</li>
+        <li><strong>Index Score below 50</strong> — Below-average performance ($<0$ standardized composite deviations).</li>
+        <li><strong>Weights</strong> determine the proportional balance. Modifying total value spans does not break performance curves (e.g., 1:2:3 outputs identically to 10:20:30).</li>
+        <li><strong>Cost inversion handles expenses</strong> — Lower monetary raw values systematically elevate baseline component score structures.</li>
+        <li><strong>Consistent Bounding</strong> — The logistic transformation mathematically caps boundaries to protect presentation tables from blowing out due to severe outlier anomalies while entirely preserving intra-cohort scaling gaps.</li>
       </ul>
     </div>
   </div>
 
-  <!-- STEP 1: PERFORMANCE -->
   <div class="card" id="perfCard">
     <div class="card-header">
       <div class="card-icon">
@@ -385,7 +382,7 @@
 
     <div class="upload-row no-print">
       <button class="btn-upload" onclick="document.getElementById('perfFile').click()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Upload CSV / TSV
       </button>
       <span class="or-divider">or paste below</span>
@@ -423,7 +420,6 @@ Spain	2.2%	41.5%</textarea>
     <div id="perfResults"></div>
   </div>
 
-  <!-- STEP 2: COST -->
   <div class="card" id="costCard">
     <div class="card-header">
       <div class="card-icon">
@@ -438,7 +434,7 @@ Spain	2.2%	41.5%</textarea>
 
     <div class="upload-row no-print">
       <button class="btn-upload" onclick="document.getElementById('costFile').click()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Upload CSV / TSV
       </button>
       <span class="or-divider">or paste below</span>
@@ -476,7 +472,6 @@ Spain	1.10	0.45</textarea>
     <div id="costResults"></div>
   </div>
 
-  <!-- STEP 3: OVERALL -->
   <div class="card" id="overallCard">
     <div class="card-header">
       <div class="card-icon" style="background:rgba(184,245,58,.08); border-color:rgba(184,245,58,.2);">
@@ -485,7 +480,7 @@ Spain	1.10	0.45</textarea>
       <div>
         <div class="card-step">Step 3</div>
         <div class="card-title">Final ranking</div>
-        <div class="card-desc">Combines performance and cost into one score. Higher is always better.</div>
+        <div class="card-desc">Combines performance and cost inputs, processes intermediate metrics through standardizations, and runs logistic sigmoids into a normalized 0–100 index.</div>
       </div>
     </div>
 
@@ -496,23 +491,15 @@ Spain	1.10	0.45</textarea>
       </button>
     </div>
 
-    <div class="btn-row" style="margin-top:10px;">
-      <label class="check-label">
-        <input type="checkbox" id="removeNeg" onchange="calcOverall()">
-        Shift scores to remove negatives (order unchanged)
-      </label>
-    </div>
-
     <div id="overallError"></div>
     <div id="overallResults"></div>
   </div>
 
-  <!-- CHART -->
   <div class="chart-card" id="chartCard" style="display:none">
     <div class="chart-header">
       <div>
         <div class="chart-title">Score breakdown by metric</div>
-        <div class="chart-sub">Each segment shows how a metric contributed to the final score</div>
+        <div class="chart-sub">Each segment shows how a metric contributed to the final normalized score</div>
       </div>
       <div class="export-btns no-print">
         <button class="btn btn-ghost" onclick="downloadPNG()" style="padding:8px 14px; font-size:12px;">
@@ -758,12 +745,12 @@ function renderScoreTable(containerId, entityLabel, scores, scoreLabel) {
   let rows = scores.map((s, i) => {
     const pct = Math.abs(s.totalZ) / maxAbs * 100;
     const neg = s.totalZ < 0;
-    const tag = tagForScore(s.totalZ, i, scores.length);
+    const tag = tagForRawZ(s.totalZ, i, scores.length);
     const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
     return `<tr>
       <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
       <td style="font-weight:500">${s.entity}</td>
-      <td><div class="score-bar-wrap"><div class="score-bar ${neg?'score-bar-neg':''}" style="width:${pct.toFixed(1)}%"></div><span class="score-val">${s.totalZ>=0?'+':''}${s.totalZ.toFixed(2)}</span></div></td>
+      <td><div class="score-bar-wrap"><div class="score-bar ${neg?'score-bar-neg':''}" style="width:${pct.toFixed(1)}%"></div><span class="score-val">${s.totalZ>0?'+':''}${s.totalZ.toFixed(2)}</span></div></td>
       <td>${tag}</td>
     </tr>`;
   }).join('');
@@ -771,18 +758,26 @@ function renderScoreTable(containerId, entityLabel, scores, scoreLabel) {
     <div class="result-section">
       <h3>${scoreLabel}</h3>
       <div class="table-wrap"><table>
-        <thead><tr><th>#</th><th>${entityLabel}</th><th>Score</th><th>vs group</th></tr></thead>
+        <thead><tr><th>#</th><th>${entityLabel}</th><th>Score (Z)</th><th>vs group</th></tr></thead>
         <tbody>${rows}</tbody>
       </table></div>
       ${statsChips(vals)}
     </div>`;
 }
 
-function tagForScore(z, idx, total) {
+function tagForRawZ(z, idx, total) {
   if (idx === 0) return `<span class="tag tag-top">Top performer</span>`;
   if (idx === total-1) return `<span class="tag tag-down">Lowest</span>`;
   if (z >= 0.5) return `<span class="tag tag-up">Above average</span>`;
   if (z > -0.5) return `<span class="tag tag-avg">Average</span>`;
+  return `<span class="tag tag-down">Below average</span>`;
+}
+
+function tagForSigmoidScore(score, idx, total) {
+  if (idx === 0) return `<span class="tag tag-top">Top performer</span>`;
+  if (idx === total-1) return `<span class="tag tag-down">Lowest</span>`;
+  if (score >= 62.2) return `<span class="tag tag-up">Above average</span>`;
+  if (score > 37.8) return `<span class="tag tag-avg">Average</span>`;
   return `<span class="tag tag-down">Below average</span>`;
 }
 
@@ -801,54 +796,74 @@ function calcOverall() {
   setLoading('calcOverallBtn', true);
   setTimeout(() => { _calcOverall(); setLoading('calcOverallBtn', false); }, 50);
 }
+
 function _calcOverall() {
   if (!perfScores.length && !costScores.length) { showErr('overallError', 'Calculate performance or cost scores first.'); return; }
   clearErr('overallError');
+  
   const entities = [...new Set([...perfScores.map(s=>s.entity), ...costScores.map(s=>s.entity)])];
-  const removeNeg = document.getElementById('removeNeg').checked;
+  
+  // 1 & 2. Aggregate raw composite Z-scores from available sub-structures
   let combined = entities.map(entity => {
     const p = perfScores.find(s=>s.entity===entity);
     const c = costScores.find(s=>s.entity===entity);
     const contrib = { ...(p?.contributions||{}), ...(c?.contributions||{}) };
-    const overallZ = (p?.totalZ||0) + (c?.totalZ||0);
-    return { entity, performanceZ: p?.totalZ||0, costZ: c?.totalZ||0, overallZ, contributions: contrib, displayZ: overallZ };
-  }).sort((a,b)=>b.overallZ - a.overallZ);
-  const minZ = Math.min(...combined.map(s=>s.overallZ));
-  const adj = (removeNeg && minZ < 0) ? Math.abs(minZ) : 0;
-  combined = combined.map(s => ({...s, displayZ: s.overallZ + adj}));
+    const rawCompositeZ = (p?.totalZ||0) + (c?.totalZ||0);
+    return { entity, performanceZ: p?.totalZ||0, costZ: c?.totalZ||0, rawCompositeZ, contributions: contrib };
+  });
+
+  // 3. Re-standardize the composite across the cohort (forces mean = 0, std = 1)
+  const compositeVals = combined.map(s => s.rawCompositeZ);
+  const { mean: compMean, std: compStd } = meanStd(compositeVals);
+  
+  combined = combined.map(s => {
+    const reStandardizedZ = compStd === 0 ? 0 : (s.rawCompositeZ - compMean) / compStd;
+    
+    // 4. Map through logistic sigmoid: 100 / (1 + e^-z)
+    const sigmoidIndexScore = 100 / (1 + Math.exp(-reStandardizedZ));
+    
+    return { 
+      ...s, 
+      reStandardizedZ, 
+      displayZ: sigmoidIndexScore
+    };
+  }).sort((a,b) => b.displayZ - a.displayZ);
+
   overallScores = combined;
-  renderOverallTable(combined, adj);
+  renderOverallTable(combined);
   document.getElementById('chartCard').style.display = '';
   renderChart(combined);
   setStep(4);
 }
 
-function renderOverallTable(scores, adj) {
-  const vals = scores.map(s=>s.overallZ);
-  const maxAbs = Math.max(...scores.map(s=>Math.abs(s.displayZ)), 0.01);
+function renderOverallTable(scores) {
   let rows = scores.map((s,i) => {
-    const pct = Math.abs(s.displayZ) / maxAbs * 100;
-    const neg = s.displayZ < 0;
+    const pct = s.displayZ;
     const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
-    const scoreColor = s.displayZ >= 0 ? 'var(--accent)' : 'var(--danger)';
+    const scoreColor = s.displayZ >= 50 ? 'var(--accent)' : 'var(--danger)';
     return `<tr>
       <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
       <td style="font-weight:600">${s.entity}</td>
       <td><span class="score-val">${s.performanceZ>=0?'+':''}${s.performanceZ.toFixed(2)}</span></td>
       <td><span class="score-val">${s.costZ>=0?'+':''}${s.costZ.toFixed(2)}</span></td>
-      <td><div class="score-bar-wrap"><div class="score-bar ${neg?'score-bar-neg':''}" style="width:${Math.max(pct,2).toFixed(1)}%"></div><span class="score-val" style="font-weight:600;color:${scoreColor}">${s.displayZ>=0?'+':''}${s.displayZ.toFixed(2)}</span></div></td>
-      <td>${tagForScore(s.overallZ, i, scores.length)}</td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar" style="width:${Math.max(pct,2).toFixed(1)}%; background-color:${scoreColor}"></div>
+          <span class="score-val" style="font-weight:600;color:${scoreColor}">${s.displayZ.toFixed(1)}</span>
+        </div>
+      </td>
+      <td>${tagForSigmoidScore(s.displayZ, i, scores.length)}</td>
     </tr>`;
   }).join('');
+  
   document.getElementById('overallResults').innerHTML = `
     <div class="result-section">
-      <h3>Combined ranking</h3>
-      ${adj > 0 ? `<div class="notice notice-accent" style="margin-bottom:10px;"><svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Scores shifted by +${adj.toFixed(2)} to remove negatives. Order unchanged.</span></div>` : ''}
+      <h3>Combined 0–100 index ranking</h3>
       <div class="table-wrap"><table>
-        <thead><tr><th>#</th><th>Entry</th><th>Performance</th><th>Cost</th><th>Combined</th><th>Result</th></tr></thead>
+        <thead><tr><th>#</th><th>Entry</th><th>Performance (Z)</th><th>Cost (Z)</th><th>Index Score (0-100)</th><th>Result</th></tr></thead>
         <tbody>${rows}</tbody>
       </table></div>
-      ${statsChips(scores.map(s=>s.overallZ))}
+      ${statsChips(scores.map(s=>s.reStandardizedZ))}
     </div>`;
 }
 
@@ -863,20 +878,24 @@ function renderChart(scores) {
   if (!scores.length) return;
   const canvas = document.getElementById('overallChart');
   if (chartInst) { chartInst.destroy(); chartInst = null; }
+  
   const allMetrics = [];
   scores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
   allMetrics.forEach((m,i) => { if (!metricColors[m]) metricColors[m] = PALETTE[i % PALETTE.length]; });
   renderMetricColorPickers(allMetrics);
+  
   const h = Math.max(300, scores.length * 52 + 140);
   canvas.height = h;
   canvas.style.height = h + 'px';
   const colors = getChartColors();
+  
   const datasets = allMetrics.map(m => ({
     label: m,
     data: scores.map(s => { const c = (s.contributions||{})[m]; return c ? c.contribution : 0; }),
     backgroundColor: metricColors[m], borderColor: metricColors[m],
     borderWidth: 0, stack: 'combined', borderRadius: 2, _metric: m
   }));
+  
   chartInst = new Chart(canvas.getContext('2d'), {
     type: 'bar',
     data: { labels: scores.map(s=>s.entity), datasets },
@@ -904,7 +923,7 @@ function renderChart(scores) {
               const sign = c.contribution >= 0 ? '+' : '';
               return [`${m}: ${sign}${c.contribution.toFixed(3)}`, `  raw: ${c.rawValue}  weight: ${c.weight.toFixed(1)}%`];
             },
-            footer: items => items.length ? 'combined: ' + scores[items[0].dataIndex].displayZ.toFixed(3) : ''
+            footer: items => items.length ? 'Index Score: ' + scores[items[0].dataIndex].displayZ.toFixed(1) + ' / 100' : ''
           }
         }
       },
@@ -961,9 +980,9 @@ function exportCSV() {
   if (!overallScores.length) { alert('Generate the ranking first.'); return; }
   const allMetrics = [];
   overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
-  const headers = ['Entry','Performance Score','Cost Score','Combined Score',...allMetrics.map(m=>m+' Contribution')];
+  const headers = ['Entry','Performance Score (Z)','Cost Score (Z)','Index Score (0-100)',...allMetrics.map(m=>m+' Contribution')];
   const rows = overallScores.map(s => [
-    s.entity, s.performanceZ.toFixed(3), s.costZ.toFixed(3), s.displayZ.toFixed(3),
+    s.entity, s.performanceZ.toFixed(3), s.costZ.toFixed(3), s.displayZ.toFixed(1),
     ...allMetrics.map(m => { const c = (s.contributions||{})[m]; return c ? c.contribution.toFixed(3) : '0'; })
   ]);
   const csv = [headers, ...rows].map(r => r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -996,7 +1015,7 @@ function exportHTML() {
       <td style="padding:10px 14px;border-bottom:1px solid #222;font-weight:600">${s.entity}</td>
       <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:12px;color:#909090">${s.performanceZ>=0?'+':''}${s.performanceZ.toFixed(2)}</td>
       <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:12px;color:#909090">${s.costZ>=0?'+':''}${s.costZ.toFixed(2)}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-weight:700;font-size:13px;color:${s.displayZ>=0?'#b8f53a':'#ff5e5e'}">${s.displayZ>=0?'+':''}${s.displayZ.toFixed(2)}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-weight:700;font-size:13px;color:${s.displayZ>=50?'#b8f53a':'#ff5e5e'}">${s.displayZ.toFixed(1)}</td>
     </tr>`).join('');
   const canvasH = Math.max(300, scores.length * 52 + 140);
   const bgColor = document.getElementById('bgHex').value || '#111111';
@@ -1037,9 +1056,9 @@ canvas{width:100%!important;display:block}
     <div class="meta">Generated ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
   </div>
   <div class="card">
-    <div class="card-title">Final ranking</div>
+    <div class="card-title">Final ranking index</div>
     <table>
-      <thead><tr><th>#</th><th>Entry</th><th>Performance</th><th>Cost</th><th>Combined</th></tr></thead>
+      <thead><tr><th>#</th><th>Entry</th><th>Performance (Z)</th><th>Cost (Z)</th><th>Index Score (0-100)</th></tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
   </div>
