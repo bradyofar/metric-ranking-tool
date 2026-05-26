@@ -736,6 +736,31 @@ Segment D	0.73	2.45</textarea>
               <input type="color" id="colorTitle" class="color-swatch" value="#f5f5f7" oninput="syncColor('colorTitle','hexTitle'); renderOverallChart();">
               <input type="text" id="hexTitle" class="color-hex" value="#F5F5F7" onchange="syncSwatch('hexTitle','colorTitle'); renderOverallChart();">
             </div>
+            <div class="colors-section">
+          <span class="colors-label">Customise Presentation Palettes</span>
+          <div class="color-controls">
+            <div class="color-item">
+              <label for="colorBg">Positive Accent</label>
+              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" oninput="syncColor('colorBg','hexBg'); renderOverallChart();">
+              <input type="text" id="hexBg" class="color-hex" value="#B8F53A" onchange="syncSwatch('hexBg','colorBg'); renderOverallChart();">
+            </div>
+            <div class="color-item">
+              <label for="colorAxes">Labels &amp; Axes</label>
+              <input type="color" id="colorAxes" class="color-swatch" value="#9ea3ae" oninput="syncColor('colorAxes','hexAxes'); renderOverallChart();">
+              <input type="text" id="hexAxes" class="color-hex" value="#9EA3AE" onchange="syncSwatch('hexAxes','colorAxes'); renderOverallChart();">
+            </div>
+            <div class="color-item">
+              <label for="colorTitle">Chart Title</label>
+              <input type="color" id="colorTitle" class="color-swatch" value="#f5f5f7" oninput="syncColor('colorTitle','hexTitle'); renderOverallChart();">
+              <input type="text" id="hexTitle" class="color-hex" value="#F5F5F7" onchange="syncSwatch('hexTitle','colorTitle'); renderOverallChart();">
+            </div>
+            <div class="color-item">
+              <label for="colorBgCard">Card Background</label>
+              <input type="color" id="colorBgCard" class="color-swatch" value="#111214" oninput="syncColor('colorBgCard','hexBgCard'); updateLayoutBackgrounds();">
+              <input type="text" id="hexBgCard" class="color-hex" value="#111214" onchange="syncSwatch('hexBgCard','colorBgCard'); updateLayoutBackgrounds();">
+            </div>
+          </div>
+        </div>
           </div>
         </div>
 
@@ -1450,6 +1475,19 @@ Segment D	0.73	2.45</textarea>
 
   function syncColor(sId, tId) {
     document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase();
+  }
+
+  function updateLayoutBackgrounds() {
+    const cardColor = document.getElementById('hexBgCard').value;
+    if (/^#[0-9A-F]{6}$/i.test(cardColor)) {
+      // Update CSS variable so all cards change color automatically
+      document.documentElement.style.setProperty('--bg-card', cardColor);
+      
+      // If the chart exists, redraw it to match the new background context
+      if (chartInst) {
+        renderOverallChart();
+      }
+    }
   }
   function syncSwatch(tId, sId) {
     const val = document.getElementById(tId).value;
