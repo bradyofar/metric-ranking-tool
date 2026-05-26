@@ -257,13 +257,43 @@
   .btn-upload:focus-visible { outline: 2px solid var(--accent); }
   .or-divider { font-size: 12px; color: var(--text-muted); }
 
-  /* WEIGHTS HOOKS */
+  /* COLLAPSIBLE WEIGHTS IMPLEMENTATION */
   .weights-container-block {
     opacity: 0; max-height: 0; overflow: hidden;
     transition: opacity 250ms ease, max-height 300ms cubic-bezier(0.4, 0, 0.2, 1), margin-top 250ms ease;
     margin-top: 0;
   }
   .weights-container-block.revealed { opacity: 1; max-height: 1200px; margin-top: 20px; }
+  
+  .weights-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-bottom: 4px;
+    user-select: none;
+  }
+  .weights-toggle-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+  }
+  .weights-toggle-btn svg {
+    transition: transform var(--transition);
+  }
+  .weights-toggle-btn.active svg {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
+
   .weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
   
   .weight-item {
@@ -336,7 +366,7 @@
   .toast.show { transform: translateY(0) scale(1); opacity: 1; }
   .toast-icon-wrapper { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-  /* LEADERBOARD TABLE - SAAS EVOLUTION */
+  /* LEADERBOARD TABLE */
   .result-section { margin-top: 12px; }
   .table-wrap { 
     overflow-x: auto; 
@@ -398,11 +428,9 @@
   }
   tbody tr.master-row:last-child:not(.expanded) td { border-bottom: none; }
   
-  /* Focus States & Row Anchors */
   tbody tr.master-row:hover td { background: var(--bg-hover); }
   tbody tr.master-row.expanded td { background: rgba(184,245,58,0.02); border-bottom-color: transparent; }
   
-  /* Chevron indicator */
   .row-toggle-cell { width: 30px; text-align: center; color: var(--text-muted); }
   .chevron-icon {
     display: inline-block;
@@ -413,7 +441,6 @@
   }
   tr.expanded .chevron-icon { transform: rotate(90deg); color: var(--accent); }
 
-  /* Expanded Analytical Breakdown Details View */
   tbody tr.detail-row { display: none; }
   tbody tr.detail-row.open { display: table-row; }
   tbody tr.detail-row td {
@@ -538,8 +565,7 @@
 
   <div class="hero">
     <div class="hero-badge">
-      <div class="hero-badge-dot"></div>
-      Multi Metric Ranking Tool
+      <div class="hero-badge-dot"></div> Multi Metric Ranking Tool
     </div>
     <h1>Find your <span>best performers</span> at a glance</h1>
     <p class="hero-sub">Upload performance data, adjust metric importance, and generate standardised rankings instantly.</p>
@@ -596,46 +622,35 @@
     <div class="card">
       <div class="card-header">
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17 2 22 7 22 22 7"/></svg>
         </div>
         <div>
           <div class="card-step">Step 1</div>
-          <div class="card-title">Performance Metrics</div>
-          <div class="card-desc">Metrics where higher values are better (e.g. CTR, CTOR, Open Rate).</div>
+          <div class="card-title">Performance Metrics Database</div>
+          <div class="card-desc">Provide raw performance parameters with entity identifiers.</div>
         </div>
       </div>
 
       <div class="upload-row">
-        <button class="btn-upload" onclick="document.getElementById('perfFile').click()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Upload CSV File
+        <button type="button" class="btn-upload" onclick="triggerFileInput('perfFileInput')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          Upload performance CSV
         </button>
-        <span class="or-divider">or enter text details below</span>
+        <span class="or-divider">or paste dataset raw text values below:</span>
+        <input type="file" id="perfFileInput" accept=".csv" onchange="handleFileUpload(event, 'perfInputArea')">
       </div>
-      
-      <input type="file" id="perfFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'perfData')">
 
       <div class="data-label-row">
-        <label class="data-label" for="perfData">Performance Metrics Table</label>
-        <span class="paste-hint">Tab or Comma Separated Columns</span>
+        <div class="data-label">CSV Data Matrix Layout Fields</div>
+        <div class="paste-hint">Include top baseline column labels row</div>
       </div>
-      <textarea id="perfData">Segment	CTR	Open Rate
-Segment A	0.54	45.2
-Segment B	1.81	52.1
-Segment C	0.91	38.9
-Segment D	1.98	41.5</textarea>
 
-      <div id="perfWeightsArea" class="weights-container-block">
-        <div class="notice notice-accent">
-          <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Adjust individual metric weight importances and tracking polarity limits.</span>
-        </div>
-        <div class="weights-grid" id="perfWeightsGrid"></div>
-        <div class="weight-summary" id="perfWeightSummary"></div>
-      </div>
+      <textarea id="perfInputArea" spellcheck="false" placeholder="Entity,Speed,Accuracy,Output Volume&#10;Team Alpha,88,94,1240&#10;Team Beta,92,81,1410&#10;Team Gamma,79,96,990"></textarea>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="processPerformanceStep()">Continue to Efficiency Metrics &rarr;</button>
+        <button type="button" class="btn btn-primary" onclick="proceedToStep2()">
+          <span class="btn-text">Proceed to Efficiency Mapping</span>
+        </button>
       </div>
     </div>
   </div>
@@ -644,262 +659,198 @@ Segment D	1.98	41.5</textarea>
     <div class="card">
       <div class="card-header">
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <div>
           <div class="card-step">Step 2</div>
-          <div class="card-title">Efficiency Metrics</div>
-          <div class="card-desc">Metrics where lower values are better (e.g. Unsubscribe Rate, Cost Per Click, Bounce Rate).</div>
+          <div class="card-title">Efficiency Parameters Database</div>
+          <div class="card-desc">Provide underlying resources consumption data (e.g. costs, hours, errors).</div>
         </div>
       </div>
 
       <div class="upload-row">
-        <button class="btn-upload" onclick="document.getElementById('costFile').click()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Upload CSV File
+        <button type="button" class="btn-upload" onclick="triggerFileInput('costFileInput')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          Upload resource CSV
         </button>
-        <span class="or-divider">or enter text details below</span>
+        <span class="or-divider">or paste dataset raw text values below:</span>
+        <input type="file" id="costFileInput" accept=".csv" onchange="handleFileUpload(event, 'costInputArea')">
       </div>
-      
-      <input type="file" id="costFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'costData')">
 
       <div class="data-label-row">
-        <label class="data-label" for="costData">Efficiency Metrics Table</label>
-        <span class="paste-hint">Tab or Comma Separated Columns</span>
+        <div class="data-label">CSV Data Matrix Layout Fields</div>
+        <div class="paste-hint">Match baseline entity identifiers perfectly</div>
       </div>
-      <textarea id="costData">Segment	CPC	Unsubscribe Rate
-Segment A	0.24	1.12
-Segment B	0.89	3.14
-Segment C	0.35	0.94
-Segment D	0.73	2.45</textarea>
 
-      <div id="costWeightsArea" class="weights-container-block">
-        <div class="notice notice-accent">
-          <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Configure cost metric balances. Lower values naturally boost points results.</span>
-        </div>
-        <div class="weights-grid" id="costWeightsGrid"></div>
-        <div class="weight-summary" id="costWeightSummary"></div>
-      </div>
+      <textarea id="costInputArea" spellcheck="false" placeholder="Entity,Operating Cost,Defects Counter&#10;Team Alpha,4200,12&#10;Team Beta,6100,24&#10;Team Gamma,3100,5"></textarea>
 
       <div class="btn-row">
-        <button class="btn btn-ghost" onclick="switchView(1)">&larr; Back to Step 1</button>
-        <button class="btn btn-primary" id="calcCostBtn" onclick="processCostStep()">
-          <span class="btn-text">Generate Rankings &rarr;</span>
+        <button type="button" class="btn btn-ghost" onclick="switchView(1)">Back</button>
+        <button type="button" class="btn btn-primary" id="btnCalculateRankings" onclick="calculateFinalRankings()">
           <span class="spinner-ring"></span>
+          <span class="btn-text">Generate Performance Rankings</span>
         </button>
       </div>
     </div>
   </div>
 
-  <div class="tab-panel" id="viewOverall" role="tabpanel">
+  <div class="tab-panel" id="viewLead" role="tabpanel">
     <div class="card">
       <div class="card-header">
-        <div class="card-icon" style="background:var(--accent-dim);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#b8f53a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
         </div>
         <div>
           <div class="card-step">Step 3</div>
-          <div class="card-title">Combined Rankings</div>
-          <div class="card-desc">Click headers to sort table rows. Expand entries to view individual contribution breakdowns.</div>
+          <div class="card-title">Calculated Leaderboard Matrices</div>
+          <div class="card-desc">Consolidated multi-index standardization performance records. Click an entity row to view metric breakdown details.</div>
         </div>
       </div>
 
-      <div id="overallResults">
-        <div class="result-section">
-          <div class="table-wrap">
-            <table id="resultsTable">
-              <thead>
-                <tr id="tableHeaders"></tr>
-              </thead>
-              <tbody id="overallTableBody"></tbody>
-            </table>
-          </div>
-          <div id="overallStats"></div>
+      <div style="margin-top: 10px; margin-bottom: 6px;">
+        <button type="button" class="weights-toggle-btn" id="btnWeightsToggle" onclick="toggleWeightsPanel()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span>Customize Metric Weightings</span>
+        </button>
+      </div>
+
+      <div id="perfWeightsArea" class="weights-container-block"></div>
+
+      <div class="notice notice-accent hidden" id="normalizationNotice">
+        <div class="notice-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <div>Weighted score allocation adjusts performance balance calculations in real-time.</div>
+      </div>
+
+      <div class="result-section">
+        <div class="table-wrap">
+          <table id="leaderboardTable">
+            <thead>
+              <tr id="tableHeaderRow">
+                </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+              </tbody>
+          </table>
         </div>
 
-        <div class="colors-section">
-          <span class="colors-label">Customise Presentation Palettes</span>
-          <div class="color-controls">
-            <div class="color-item">
-              <label for="colorBg">Positive Accent</label>
-              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" oninput="syncColor('colorBg','hexBg'); renderOverallChart();">
-              <input type="text" id="hexBg" class="color-hex" value="#B8F53A" onchange="syncSwatch('hexBg','colorBg'); renderOverallChart();">
-            </div>
-            <div class="color-item">
-              <label for="colorAxes">Labels &amp; Axes</label>
-              <input type="color" id="colorAxes" class="color-swatch" value="#9ea3ae" oninput="syncColor('colorAxes','hexAxes'); renderOverallChart();">
-              <input type="text" id="hexAxes" class="color-hex" value="#9EA3AE" onchange="syncSwatch('hexAxes','colorAxes'); renderOverallChart();">
-            </div>
-            <div class="color-item">
-              <label for="colorTitle">Chart Title</label>
-              <input type="color" id="colorTitle" class="color-swatch" value="#f5f5f7" oninput="syncColor('colorTitle','hexTitle'); renderOverallChart();">
-              <input type="text" id="hexTitle" class="color-hex" value="#F5F5F7" onchange="syncSwatch('hexTitle','colorTitle'); renderOverallChart();">
-            </div>
-            <div class="colors-section">
-          <span class="colors-label">Customise Presentation Palettes</span>
-          <div class="color-controls">
-            <div class="color-item">
-              <label for="colorBg">Positive Accent</label>
-              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" oninput="syncColor('colorBg','hexBg'); renderOverallChart();">
-              <input type="text" id="hexBg" class="color-hex" value="#B8F53A" onchange="syncSwatch('hexBg','colorBg'); renderOverallChart();">
-            </div>
-            <div class="color-item">
-              <label for="colorAxes">Labels &amp; Axes</label>
-              <input type="color" id="colorAxes" class="color-swatch" value="#9ea3ae" oninput="syncColor('colorAxes','hexAxes'); renderOverallChart();">
-              <input type="text" id="hexAxes" class="color-hex" value="#9EA3AE" onchange="syncSwatch('hexAxes','colorAxes'); renderOverallChart();">
-            </div>
-            <div class="color-item">
-              <label for="colorTitle">Chart Title</label>
-              <input type="color" id="colorTitle" class="color-swatch" value="#f5f5f7" oninput="syncColor('colorTitle','hexTitle'); renderOverallChart();">
-              <input type="text" id="hexTitle" class="color-hex" value="#F5F5F7" onchange="syncSwatch('hexTitle','colorTitle'); renderOverallChart();">
-            </div>
-            <div class="color-item">
-              <label for="colorBgCard">Card Background</label>
-              <input type="color" id="colorBgCard" class="color-swatch" value="#111214" oninput="syncColor('colorBgCard','hexBgCard'); updateLayoutBackgrounds();">
-              <input type="text" id="hexBgCard" class="color-hex" value="#111214" onchange="syncSwatch('hexBgCard','colorBgCard'); updateLayoutBackgrounds();">
-            </div>
+        <div class="stat-row" id="statsRowSummary">
           </div>
-        </div>
-          </div>
-        </div>
-
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title" id="dynChartTitle">Performance Index Distribution Matrix</div>
-              <div class="chart-sub">Cohort tracking standard deviations visualization</div>
-            </div>
-          </div>
-          <div style="position: relative; width: 100%; height: 320px;">
-            <canvas id="overallChart"></canvas>
-          </div>
-        </div>
 
         <div class="export-btns">
-          <button class="btn btn-ghost" onclick="downloadPNG()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Save Chart Image (.png)
+          <button type="button" class="btn btn-ghost" onclick="exportCSV()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Export CSV File
           </button>
-          <button class="btn btn-ghost" onclick="exportCSV()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            Export Complete Dataset (.csv)
+          <button type="button" class="btn btn-ghost" onclick="downloadPNG()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Save Chart Image
           </button>
-          <button class="btn btn-ghost" style="margin-left: auto;" onclick="switchView(2)">&larr; Refine Efficiency Metrics</button>
         </div>
       </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title" id="chartMainTitle">Cohort Multi-Index Portfolio Grid Mapping</div>
+          <div class="chart-sub">Top Right segment isolates high output / high efficiency items. Bottom left reveals optimization targets.</div>
+        </div>
+      </div>
+      <div style="position: relative; width: 100%; overflow: hidden;">
+        <canvas id="overallChart" height="420"></canvas>
+      </div>
+      
+      <div class="colors-section">
+        <span class="colors-label">UI Component Theme Configuration</span>
+        <div class="color-controls">
+          <div class="color-item">
+            <label for="colorThemeAccent">System Primary</label>
+            <input type="color" id="colorThemeSwatch" class="color-swatch" value="#b8f53a" onchange="syncColorInput('colorThemeSwatch', 'colorThemeAccent')">
+            <input type="text" id="colorThemeAccent" class="color-hex" value="#b8f53a" onchange="syncSwatch('colorThemeAccent', 'colorThemeSwatch')">
+          </div>
+          <div class="color-item">
+            <label for="colorThemeCard">Component Fill</label>
+            <input type="color" id="colorThemeCardSwatch" class="color-swatch" value="#111214" onchange="syncColorInput('colorThemeCardSwatch', 'colorThemeCard')">
+            <input type="text" id="colorThemeCard" class="color-hex" value="#111214" onchange="syncSwatch('colorThemeCard', 'colorThemeCardSwatch')">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-ghost" onclick="switchView(2)">Back</button>
+      <button type="button" class="btn btn-ghost" style="margin-right: auto; color: var(--danger);" onclick="resetWorkflow()">Reset System Data</button>
     </div>
   </div>
 
 </div>
 
 <script>
-  // --- Embedded Client Access Security Phrase ---
-  const CONFIG_SALT_HASH = "unicorn"; 
-
-  function checkSessionAuth() {
-    if (sessionStorage.getItem('tool_authenticated') === 'true') {
-      document.body.classList.add('authenticated');
-    }
+  // SECURITY PASSWORD GATE
+  const ENCRYPTED_KEY = "65c2918b958864b2a3fa4f40f09b552fa8a1bfdb4b50c0587cbfa97e09ef2fe6";
+  
+  async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  function handleAuthSubmit(e) {
+  async function handleAuthSubmit(e) {
     e.preventDefault();
-    const inputEl = document.getElementById('appPassword');
-    const cardEl = document.getElementById('authCard');
+    const input = document.getElementById('appPassword').value;
+    const hashed = await sha256(input);
     
-    if (inputEl.value === CONFIG_SALT_HASH) {
-      sessionStorage.setItem('tool_authenticated', 'true');
+    if (hashed === ENCRYPTED_KEY) {
       document.body.classList.add('authenticated');
-      showToast("Security access granted.", "info");
+      showToast("Access authorized successfully.", "success");
     } else {
-      cardEl.classList.remove('shake');
-      void cardEl.offsetWidth; 
-      cardEl.classList.add('shake');
-      inputEl.value = '';
-      inputEl.focus();
-      showToast("Invalid password credential entered.", "error");
+      const card = document.getElementById('authCard');
+      card.classList.add('shake');
+      showToast("Access verification failed.", "error");
+      setTimeout(() => card.classList.remove('shake'), 400);
     }
   }
 
-  // --- UI Toast Engine ---
-  function showToast(message, type = 'warning') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    
-    let iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
-    if (type === 'error') {
-      iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
-    } else if (type === 'info') {
-      iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
-    }
-    
-    toast.innerHTML = `
-      <div class="toast-icon-wrapper">${iconSvg}</div>
-      <div class="toast-text">${message}</div>
-    `;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 40);
-    setTimeout(() => {
-      toast.classList.remove('show');
-      toast.addEventListener('transitionend', () => toast.remove());
-    }, 4500);
-  }
-
-  // --- Global Application States ---
-  let perfScores = [];
-  let costScores = [];
-  let overallScores = [];
-  let perfWeights = [];
-  let costWeights = [];
-  let perfInverted = [];
-  let costInverted = [];
-  let perfHeaders = [];
-  let costHeaders = [];
-  let currentViewMode = 'points';
+  // SYSTEM GLOBAL DATA STORES
+  let parsedPerformance = null;
+  let parsedEfficiency = null;
+  let currentViewMode = 'points'; // 'points' or 'zscore'
+  let metricMetadata = {}; 
+  let overallScores = []; 
   let chartInst = null;
-  let unlockedStep = 1;
+  let expandedRows = new Set();
+  
+  // Tab/Sort Defaults
+  let currentSortColumn = 'rank';
+  let currentSortDirection = 'asc';
 
-  // Table Sorting State Tracking
-  let activeSortColumn = 'score'; 
-  let activeSortDirection = 'desc'; 
-
-  document.addEventListener('DOMContentLoaded', () => {
-    checkSessionAuth();
-    setupWeights('perf');
-    setupWeights('cost');
-    document.getElementById('perfData').addEventListener('input', () => setupWeights('perf'));
-    document.getElementById('costData').addEventListener('input', () => setupWeights('cost'));
-  });
-
-  function switchView(stepNum) {
-    if (stepNum > unlockedStep) {
-      showToast("Complete previous metrics steps to unlock this tab segment.");
-      return;
-    }
-    document.querySelectorAll('.step-node').forEach(node => {
-      const idx = parseInt(node.id.replace('tabNode', ''));
-      node.classList.remove('active', 'done');
-      node.setAttribute('aria-selected', 'false');
-      if (idx < stepNum) node.classList.add('done');
-      else if (idx === stepNum) {
-        node.classList.add('active');
-        node.setAttribute('aria-selected', 'true');
-      }
-    });
-    ['line1','line2'].forEach((lineId, i) => {
-      const el = document.getElementById(lineId);
-      if (el) el.classList.toggle('done', stepNum > i + 1);
-    });
-
+  // INTERNAL WORKFLOW LOGIC
+  function switchView(stepIndex) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-view'));
-    if (stepNum === 1) document.getElementById('viewPerf').classList.add('active-view');
-    if (stepNum === 2) document.getElementById('viewCost').classList.add('active-view');
-    if (stepNum === 3) {
-      document.getElementById('viewOverall').classList.add('active-view');
-      setTimeout(() => { renderOverallChart(); }, 50);
+    document.querySelectorAll('.step-node').forEach(n => n.classList.remove('active', 'done'));
+    document.querySelectorAll('.step-line').forEach(l => l.classList.remove('done'));
+
+    if (stepIndex === 1) {
+      document.getElementById('viewPerf').classList.add('active-view');
+      document.getElementById('tabNode1').classList.add('active');
+    } else if (stepIndex === 2) {
+      document.getElementById('viewCost').classList.add('active-view');
+      document.getElementById('tabNode1').classList.add('done');
+      document.getElementById('line1').classList.add('done');
+      document.getElementById('tabNode2').classList.add('active');
+    } else if (stepIndex === 3) {
+      document.getElementById('viewLead').classList.add('active-view');
+      document.getElementById('tabNode1').classList.add('done');
+      document.getElementById('line1').classList.add('done');
+      document.getElementById('tabNode2').classList.add('done');
+      document.getElementById('line2').classList.add('done');
+      document.getElementById('tabNode3').classList.add('active');
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function setGlobalViewMode(mode) {
@@ -907,595 +858,621 @@ Segment D	0.73	2.45</textarea>
     currentViewMode = mode;
     document.getElementById('modePoints').classList.toggle('active', mode === 'points');
     document.getElementById('modeZScore').classList.toggle('active', mode === 'zscore');
+    
     if (overallScores.length > 0) {
-      sortDataMatrix();
-      renderFinalOutputs();
+      renderLeaderboardTable();
+      renderEvaluationChart();
     }
   }
 
   function toggleExplainer() {
-    const el = document.getElementById('explainerMore');
-    const btn = el.previousElementSibling;
-    const open = el.classList.toggle('open');
-    btn.textContent = open ? 'Hide math details' : 'Show math details';
+    const more = document.getElementById('explainerMore');
+    const btn = document.querySelector('.explainer-toggle');
+    const isOpen = more.classList.toggle('open');
+    btn.textContent = isOpen ? "Hide details" : "Show details";
   }
 
-  function handleUpload(event, targetId) {
+  // COLLAPSIBLE WEIGHTS SYSTEM PANEL TOGGLE
+  function toggleWeightsPanel() {
+    const panel = document.getElementById('perfWeightsArea');
+    const btn = document.getElementById('btnWeightsToggle');
+    const label = btn.querySelector('span');
+    
+    if (panel.classList.contains('revealed')) {
+      panel.classList.remove('revealed');
+      btn.classList.remove('active');
+      label.textContent = "Customize Metric Weightings";
+    } else {
+      panel.classList.add('revealed');
+      btn.classList.add('active');
+      label.textContent = "Hide Metric Weightings";
+    }
+  }
+
+  // CSV DATA PARSING ENGINES
+  function triggerFileInput(id) {
+    document.getElementById(id).click();
+  }
+
+  function handleFileUpload(event, areaId) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById(targetId).value = e.target.result.trim();
-      setupWeights(targetId === 'perfData' ? 'perf' : 'cost');
-      showToast("File uploaded successfully.", "info");
+    reader.onload = function(e) {
+      document.getElementById(areaId).value = e.target.result;
+      showToast(`Loaded ${file.name} successfully.`, "success");
     };
     reader.readAsText(file);
   }
 
-  function setupWeights(type) {
-    try {
-      const txt = document.getElementById(type === 'perf' ? 'perfData' : 'costData').value.trim();
-      const area = document.getElementById(type === 'perf' ? 'perfWeightsArea' : 'costWeightsArea');
-      const grid = document.getElementById(type === 'perf' ? 'perfWeightsGrid' : 'costWeightsGrid');
-      if (!txt) {
-        area.classList.remove('revealed');
-        return;
-      }
-      const parsedMatrix = parseDelimitedString(txt);
-      if (!parsedMatrix || !parsedMatrix.subHeaders.length) {
-        area.classList.remove('revealed');
-        return;
-      }
-      
-      const metrics = parsedMatrix.subHeaders;
-      if (type === 'perf') {
-        perfHeaders = metrics;
-        perfWeights = metrics.map((_, i) => perfWeights[i] !== undefined ? perfWeights[i] : 1);
-        perfInverted = metrics.map((_, i) => perfInverted[i] !== undefined ? perfInverted[i] : false);
-      } else {
-        costHeaders = metrics;
-        costWeights = metrics.map((_, i) => costWeights[i] !== undefined ? costWeights[i] : 1);
-        costInverted = metrics.map((_, i) => costInverted[i] !== undefined ? costInverted[i] : true);
-      }
+  function parseCSVText(text) {
+    if (!text.trim()) return null;
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+    if (lines.length < 2) return null;
 
-      grid.innerHTML = '';
-      metrics.forEach((m, i) => {
-        const item = document.createElement('div');
-        item.className = 'weight-item';
-        
-        const left = document.createElement('div');
-        left.className = 'weight-item-left';
-        const lbl = document.createElement('label');
-        lbl.textContent = m;
-        lbl.title = m;
-        left.appendChild(lbl);
-        
-        const ctrl = document.createElement('div');
-        ctrl.className = 'weight-controls';
-        
-        const dirBtn = document.createElement('button');
-        dirBtn.className = 'weight-btn dir-toggle';
-        dirBtn.type = "button";
-        const isInverted = type === 'perf' ? perfInverted[i] : costInverted[i];
-        dirBtn.textContent = isInverted ? 'MIN' : 'MAX';
-        dirBtn.style.color = isInverted ? 'var(--danger)' : 'var(--accent)';
-        dirBtn.onclick = () => {
-          if (type === 'perf') {
-            perfInverted[i] = !perfInverted[i];
-            dirBtn.textContent = perfInverted[i] ? 'MIN' : 'MAX';
-            dirBtn.style.color = perfInverted[i] ? 'var(--danger)' : 'var(--accent)';
-          } else {
-            costInverted[i] = !costInverted[i];
-            dirBtn.textContent = costInverted[i] ? 'MIN' : 'MAX';
-            dirBtn.style.color = costInverted[i] ? 'var(--danger)' : 'var(--accent)';
-          }
-          updateWeightChips(type);
-        };
+    const headers = parseCSVLine(lines[0]);
+    const records = [];
 
-        const dec = document.createElement('button');
-        dec.className = 'weight-btn';
-        dec.textContent = '−';
-        dec.type = "button";
-        dec.onclick = () => {
-          let val = type === 'perf' ? perfWeights[i] : costWeights[i];
-          if (val > 0) {
-            val--;
-            if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
-            num.value = val;
-            updateWeightChips(type);
-          }
-        };
-
-        const num = document.createElement('input');
-        num.type = 'number';
-        num.value = type === 'perf' ? perfWeights[i] : costWeights[i];
-        num.readOnly = true;
-
-        const inc = document.createElement('button');
-        inc.className = 'weight-btn';
-        inc.textContent = '+';
-        inc.type = "button";
-        inc.onclick = () => {
-          let val = type === 'perf' ? perfWeights[i] : costWeights[i];
-          val++;
-          if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
-          num.value = val;
-          updateWeightChips(type);
-        };
-
-        ctrl.appendChild(dirBtn);
-        ctrl.appendChild(dec);
-        ctrl.appendChild(num);
-        ctrl.appendChild(inc);
-        item.appendChild(left);
-        item.appendChild(ctrl);
-        grid.appendChild(item);
-      });
-
-      area.classList.add('revealed');
-      updateWeightChips(type);
-    } catch(e) {}
-  }
-
-  function updateWeightChips(type) {
-    const summary = document.getElementById(type === 'perf' ? 'perfWeightSummary' : 'costWeightSummary');
-    const headers = type === 'perf' ? perfHeaders : costHeaders;
-    const weights = type === 'perf' ? perfWeights : costWeights;
-    const inverted = type === 'perf' ? perfInverted : costInverted;
-    
-    summary.innerHTML = '';
-    headers.forEach((h, i) => {
-      if (weights[i] <= 0) return;
-      const chip = document.createElement('span');
-      chip.className = 'weight-chip';
-      chip.innerHTML = `${h}: <strong>x${weights[i]}</strong> (${inverted[i] ? 'Minimise' : 'Maximise'})`;
-      summary.appendChild(chip);
-    });
-  }
-
-  function parseDelimitedString(txt) {
-    const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    if (!lines.length) return null;
-    
-    const delim = lines[0].includes('\t') ? '\t' : (lines[0].includes(',') ? ',' : ' ');
-    const headers = lines[0].split(delim).map(h => h.trim()).filter(h => h.length > 0);
-    const subHeaders = headers.slice(1);
-    
-    let rows = [];
     for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(delim).map(p => p.trim()).filter(p => p.length > 0);
-      if (parts.length < headers.length) continue;
+      const values = parseCSVLine(lines[i]);
+      if (values.length !== headers.length) continue; 
       
-      let item = { entity: parts[0], rawNormalizedKey: parts[0].toLowerCase().replace(/[^a-z0-9]/g, ''), values: {} };
-      subHeaders.forEach((sh, idx) => {
-        const val = parseFloat(parts[idx + 1]);
-        if (isNaN(val)) throw new Error(`Non-numeric value structural exception detected inside matrix line: ${i + 1}`);
-        item.values[sh] = val;
-      });
-      rows.push(item);
+      const obj = {};
+      for (let j = 0; j < headers.length; j++) {
+        obj[headers[j].trim()] = values[j].trim();
+      }
+      records.push(obj);
     }
-    return { subHeaders, rows };
+    return { headers, records };
   }
 
-  function parseInputMatrix(elemId) {
-    const val = document.getElementById(elemId).value.trim();
-    if (!val) throw new Error("Target input configuration dataset cannot be processed empty.");
-    return parseDelimitedString(val);
+  function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current);
+    return result.map(v => v.replace(/^"|"$/g, ''));
   }
 
-  function computeStandardZMatrix(data, weights, inverted) {
-    const metrics = data.subHeaders;
-    const elements = data.rows;
-    let meta = {};
+  // VALUATION STEP PROGRESSION PIPELINES
+  function proceedToStep2() {
+    const perfText = document.getElementById('perfInputArea').value;
+    const parsed = parseCSVText(perfText);
+    if (!parsed || parsed.records.length === 0) {
+      showToast("Please provide valid performance metrics.", "error");
+      return;
+    }
+    parsedPerformance = parsed;
+    switchView(2);
+  }
+
+  // MATHEMATICAL NORMALIZATION CALCULATIONS MODULE
+  function calculateFinalRankings() {
+    const costText = document.getElementById('costInputArea').value;
+    const parsedCost = parseCSVText(costText);
     
-    metrics.forEach(m => {
-      const vals = elements.map(e => e.values[m]);
-      const avg = vals.reduce((s, v) => s + v, 0) / vals.length;
-      const dev = Math.sqrt(vals.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / vals.length);
-      meta[m] = { avg, dev: dev || 1 };
-    });
-
-    return elements.map(e => {
-      let sumZ = 0, weightSum = 0;
-      let contributions = {};
-      
-      metrics.forEach((m, idx) => {
-        const w = weights[idx];
-        if (w <= 0) return;
-        
-        let z = (e.values[m] - meta[m].avg) / meta[m].dev;
-        if (inverted[idx]) z = -z;
-        
-        let weightedCont = z * w;
-        sumZ += weightedCont;
-        weightSum += w;
-        
-        contributions[m] = { raw: e.values[m], zScore: z, weightedContribution: weightedCont };
-      });
-      
-      return {
-        entity: e.entity,
-        rawNormalizedKey: e.rawNormalizedKey,
-        scoreZ: weightSum > 0 ? (sumZ / weightSum) : 0,
-        contributions: contributions
-      };
-    });
-  }
-
-  function processPerformanceStep() {
-    try {
-      const data = parseInputMatrix('perfData');
-      perfScores = computeStandardZMatrix(data, perfWeights, perfInverted);
-      if (unlockedStep < 2) unlockedStep = 2;
-      switchView(2);
-    } catch (err) {
-      showToast(err.message, "error");
+    if (!parsedCost || parsedCost.records.length === 0) {
+      showToast("Please provide valid resource efficiency metrics.", "error");
+      return;
     }
-  }
-
-  function processCostStep() {
-    try {
-      const data = parseInputMatrix('costData');
-      costScores = computeStandardZMatrix(data, costWeights, costInverted);
-      executeUnifiedCalculation();
-    } catch (err) {
-      showToast(err.message, "error");
-    }
-  }
-
-  function executeUnifiedCalculation() {
-    const btn = document.getElementById('calcCostBtn');
-    btn.classList.add('loading');
     
+    const calcBtn = document.getElementById('btnCalculateRankings');
+    calcBtn.classList.add('loading');
+    calcBtn.disabled = true;
+
     setTimeout(() => {
       try {
-        let costLookupMap = {};
-        costScores.forEach(c => costLookupMap[c.rawNormalizedKey] = c);
-        
-        let integrated = [];
-        perfScores.forEach(p => {
-          const costMatch = costLookupMap[p.rawNormalizedKey];
-          if (!costMatch) return; 
-          
-          const compositeZ = p.scoreZ + costMatch.scoreZ;
-          
-          let combinedContributions = {};
-          Object.keys(p.contributions).forEach(k => combinedContributions[k] = p.contributions[k]);
-          Object.keys(costMatch.contributions).forEach(k => combinedContributions[k] = costMatch.contributions[k]);
-          
-          integrated.push({
-            entity: p.entity,
-            rawNormalizedKey: p.rawNormalizedKey,
-            performanceZ: p.scoreZ,
-            costZ: costMatch.scoreZ,
-            compositeRawZ: compositeZ,
-            contributions: combinedContributions
-          });
-        });
-
-        if (!integrated.length) {
-          throw new Error("No cross-matching entries discovered. Verify baseline primary labels match exactly.");
-        }
-
-        const zValues = integrated.map(i => i.compositeRawZ);
-        const zAvg = zValues.reduce((s, v) => s + v, 0) / zValues.length;
-        const zDev = Math.sqrt(zValues.reduce((s, v) => s + Math.pow(v - zAvg, 2), 0) / zValues.length) || 1;
-
-        overallScores = integrated.map(row => {
-          const reStandardizedZ = (row.compositeRawZ - zAvg) / zDev;
-          let pointsScale = 50 + (reStandardizedZ * 15);
-          if (pointsScale > 100) pointsScale = 100;
-          if (pointsScale < 0) pointsScale = 0;
-          
-          return { ...row, reStandardizedZ, pointsScale, defaultRank: 0, expanded: false };
-        });
-
-        overallScores.sort((a, b) => b.pointsScale - a.pointsScale);
-        overallScores.forEach((row, idx) => row.defaultRank = idx + 1);
-        
-        activeSortColumn = 'score';
-        activeSortDirection = 'desc';
-        
-        sortDataMatrix();
-        renderFinalOutputs();
-        
-        unlockedStep = 3;
+        parsedEfficiency = parsedCost;
+        initializeMetricsWeightsMap();
+        computeRankingsMatrix();
         switchView(3);
+        showToast("Calculated ranking matrix indices.", "success");
       } catch (err) {
-        showToast(err.message, "error");
+        showToast("Calculation execution mismatched entity keys.", "error");
+        console.error(err);
       } finally {
-        btn.classList.remove('loading');
+        calcBtn.classList.remove('loading');
+        calcBtn.disabled = false;
       }
-    }, 250);
+    }, 450);
   }
 
-  function sortDataMatrix() {
+  function initializeMetricsWeightsMap() {
+    const freshMetadata = {};
+
+    // Performance Headers
+    const perfIdKey = parsedPerformance.headers[0];
+    parsedPerformance.headers.slice(1).forEach(h => {
+      if (!metricMetadata[h]) {
+        freshMetadata[h] = { weight: 10, higherBetter: true, type: 'performance' };
+      } else {
+        freshMetadata[h] = metricMetadata[h];
+        freshMetadata[h].type = 'performance';
+      }
+    });
+
+    // Efficiency Headers
+    const costIdKey = parsedEfficiency.headers[0];
+    parsedEfficiency.headers.slice(1).forEach(h => {
+      if (!metricMetadata[h]) {
+        freshMetadata[h] = { weight: 10, higherBetter: false, type: 'efficiency' };
+      } else {
+        freshMetadata[h] = metricMetadata[h];
+        freshMetadata[h].type = 'efficiency';
+      }
+    });
+
+    metricMetadata = freshMetadata;
+    renderWeightsControlPanel();
+  }
+
+  function renderWeightsControlPanel() {
+    const area = document.getElementById('perfWeightsArea');
+    document.getElementById('normalizationNotice').classList.remove('hidden');
+    
+    let html = `<div class="weights-grid">`;
+    Object.keys(metricMetadata).forEach(m => {
+      const item = metricMetadata[m];
+      const badgeLabel = item.type === 'performance' ? 'Perf' : 'Eff';
+      const dirText = item.higherBetter ? 'High Prefer' : 'Low Prefer';
+      
+      html += `
+        <div class="weight-item">
+          <div class="weight-item-left">
+            <label title="${m}">${m}</label>
+            <span style="font-size:10px; color:var(--text-muted); font-weight:600;">${badgeLabel.toUpperCase()} • ${dirText}</span>
+          </div>
+          <div class="weight-controls">
+            <button type="button" class="weight-btn dir-toggle" onclick="toggleMetricDirection('${m}')" title="Invert metric polar optimization target">${item.higherBetter ? '↑' : '↓'}</button>
+            <button type="button" class="weight-btn" onclick="adjustWeightValue('${m}', -1)">-</button>
+            <input type="number" id="w_val_${btoa(m).replace(/=/g,'')}" value="${item.weight}" readonly>
+            <button type="button" class="weight-btn" onclick="adjustWeightValue('${m}', 1)">+</button>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    
+    // Summary row
+    html += `<div class="weight-summary">`;
+    Object.keys(metricMetadata).forEach(m => {
+      html += `<div class="weight-chip">${m}: <strong>${metricMetadata[m].weight}</strong></div>`;
+    });
+    html += `</div>`;
+    
+    area.innerHTML = html;
+  }
+
+  function adjustWeightValue(metricName, offset) {
+    const m = metricMetadata[metricName];
+    const nextValue = m.weight + offset;
+    if (nextValue < 0 || nextValue > 100) return;
+    m.weight = nextValue;
+    
+    // Soft sync display
+    renderWeightsControlPanel();
+    computeRankingsMatrix();
+  }
+
+  function toggleMetricDirection(metricName) {
+    const m = metricMetadata[metricName];
+    m.higherBetter = !m.higherBetter;
+    renderWeightsControlPanel();
+    computeRankingsMatrix();
+  }
+
+  function computeRankingsMatrix() {
+    const perfKeyId = parsedPerformance.headers[0];
+    const effKeyId = parsedEfficiency.headers[0];
+
+    // Find overlapping entities
+    const perfEntities = parsedPerformance.records.map(r => r[perfKeyId]);
+    const effEntities = parsedEfficiency.records.map(r => r[effKeyId]);
+    const commonEntities = perfEntities.filter(e => effEntities.includes(e));
+
+    if (commonEntities.length === 0) {
+      throw new Error("No matching Entity identifier records found.");
+    }
+
+    // Extract values maps
+    const metricsData = {};
+    Object.keys(metricMetadata).forEach(m => { metricsData[m] = []; });
+
+    const entityRecordMap = {};
+    commonEntities.forEach(ent => {
+      entityRecordMap[ent] = { entity: ent, rawValues: {}, zScores: {} };
+      
+      const pRec = parsedPerformance.records.find(r => r[perfKeyId] === ent);
+      const eRec = parsedEfficiency.records.find(r => r[effKeyId] === ent);
+
+      Object.keys(metricMetadata).forEach(m => {
+        const type = metricMetadata[m].type;
+        const rawString = type === 'performance' ? pRec[m] : eRec[m];
+        const val = parseFloat(rawString) || 0;
+        entityRecordMap[ent].rawValues[m] = val;
+        metricsData[m].push(val);
+      });
+    });
+
+    // Compute standard descriptive baseline variations
+    const statisticsMap = {};
+    Object.keys(metricMetadata).forEach(m => {
+      const vals = metricsData[m];
+      const total = vals.reduce((a, b) => a + b, 0);
+      const mean = total / vals.length;
+      const variance = vals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / vals.length;
+      const stdDev = Math.sqrt(variance) || 1; // Prevent zero division defaults safely
+      statisticsMap[m] = { mean, stdDev };
+    });
+
+    // Build standalone core matrix lists
+    overallScores = [];
+    commonEntities.forEach(ent => {
+      const rec = entityRecordMap[ent];
+      let weightedPerformanceZSum = 0;
+      let performanceWeightsTotal = 0;
+
+      let weightedEfficiencyZSum = 0;
+      let efficiencyWeightsTotal = 0;
+
+      Object.keys(metricMetadata).forEach(m => {
+        const meta = metricMetadata[m];
+        const stats = statisticsMap[m];
+        let rawVal = rec.rawValues[m];
+        
+        // Z standard deviation distances balance scaling logic
+        let z = (rawVal - stats.mean) / stats.stdDev;
+        if (!meta.higherBetter) z = -z; // Invert polar value coordinates for errors/costs
+
+        rec.zScores[m] = z;
+
+        if (meta.type === 'performance') {
+          weightedPerformanceZSum += z * meta.weight;
+          performanceWeightsTotal += meta.weight;
+        } else {
+          weightedEfficiencyZSum += z * meta.weight;
+          efficiencyWeightsTotal += meta.weight;
+        }
+      });
+
+      const finalPerformanceIndexZ = performanceWeightsTotal > 0 ? (weightedPerformanceZSum / performanceWeightsTotal) : 0;
+      const finalEfficiencyIndexZ = efficiencyWeightsTotal > 0 ? (weightedEfficiencyZSum / efficiencyWeightsTotal) : 0;
+      
+      // Combined default global value index score
+      const unifiedCompositeZ = (finalPerformanceIndexZ + finalEfficiencyIndexZ) / 2;
+
+      overallScores.push({
+        entity: ent,
+        performanceZ: finalPerformanceIndexZ,
+        costEfficiencyZ: finalEfficiencyIndexZ,
+        compositeZ: unifiedCompositeZ,
+        metaRecord: rec
+      });
+    });
+
+    // Multi points conversion model constraints
+    let minZ = Math.min(...overallScores.map(o => o.compositeZ));
+    let maxZ = Math.max(...overallScores.map(o => o.compositeZ));
+    if (maxZ === minZ) { minZ -= 1; maxZ += 1; }
+
+    overallScores.forEach(o => {
+      // Map smoothly into standard linear points system curve parameters
+      const pct = (o.compositeZ - minZ) / (maxZ - minZ);
+      o.pointsScale = 30 + (pct * 65); // Standardized distribution limits tracking
+    });
+
+    // Dynamic array default prioritization allocation
+    sortRankedDataEngine();
+  }
+
+  function sortRankedDataEngine() {
     overallScores.sort((a, b) => {
       let valA, valB;
-      if (activeSortColumn === 'rank') {
-        valA = a.defaultRank; valB = b.defaultRank;
-      } else if (activeSortColumn === 'name') {
+      if (currentSortColumn === 'rank') {
+        valA = a.compositeZ; valB = b.compositeZ;
+        return currentSortDirection === 'asc' ? valB - valA : valA - valB; 
+      } else if (currentSortColumn === 'name') {
         valA = a.entity.toLowerCase(); valB = b.entity.toLowerCase();
-      } else if (activeSortColumn === 'perf') {
+        return currentSortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      } else if (currentSortColumn === 'perf') {
         valA = a.performanceZ; valB = b.performanceZ;
-      } else if (activeSortColumn === 'cost') {
-        valA = a.costZ; valB = b.costZ;
-      } else {
-        valA = currentViewMode === 'points' ? a.pointsScale : a.reStandardizedZ;
-        valB = currentViewMode === 'points' ? b.pointsScale : b.reStandardizedZ;
+      } else if (currentSortColumn === 'eff') {
+        valA = a.costEfficiencyZ; valB = b.costEfficiencyZ;
+      } else if (currentSortColumn === 'score') {
+        valA = currentViewMode === 'points' ? a.pointsScale : a.compositeZ;
+        valB = currentViewMode === 'points' ? b.pointsScale : b.compositeZ;
       }
-      
-      if (valA < valB) return activeSortDirection === 'asc' ? -1 : 1;
-      if (valA > valB) return activeSortDirection === 'asc' ? 1 : -1;
-      return 0;
+      return currentSortDirection === 'asc' ? valA - valB : valB - valA;
     });
+
+    // Assign standard default positional rank indices explicitly
+    // Always compute ranking positions based on descending overall mathematical composite z values
+    const rankOrderReference = [...overallScores].sort((a, b) => b.compositeZ - a.compositeZ);
+    overallScores.forEach(o => {
+      o.defaultRank = rankOrderReference.findIndex(x => x.entity === o.entity) + 1;
+    });
+
+    renderLeaderboardTable();
+    renderEvaluationChart();
+    renderCohortAnalyticsSummaryChips();
   }
 
-  function toggleColumnSort(colKey) {
-    if (activeSortColumn === colKey) {
-      activeSortDirection = activeSortDirection === 'desc' ? 'asc' : 'desc';
+  function handleColumnSortTrigger(colKey) {
+    if (currentSortColumn === colKey) {
+      currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      activeSortColumn = colKey;
-      activeSortDirection = 'desc';
+      currentSortColumn = colKey;
+      currentSortDirection = colKey === 'name' ? 'asc' : 'desc'; // Default text to asc, calculations to desc
     }
-    sortDataMatrix();
-    renderFinalOutputs();
+    sortRankedDataEngine();
   }
 
-  function getSortIndicatorMarkup(colKey) {
-    if (activeSortColumn !== colKey) return `<span class="sort-icon">↕</span>`;
-    return activeSortDirection === 'desc' ? `<span class="sort-icon">↓</span>` : `<span class="sort-icon">↑</span>`;
-  }
-
-  function toggleRowExpansion(index) {
-    overallScores[index].expanded = !overallScores[index].expanded;
-    const mRow = document.getElementById(`master-row-${index}`);
-    const dRow = document.getElementById(`detail-row-${index}`);
-    
-    if(overallScores[index].expanded) {
-      mRow.classList.add('expanded');
-      dRow.classList.add('open');
+  function toggleRowExpansion(entityName) {
+    if (expandedRows.has(entityName)) {
+      expandedRows.delete(entityName);
     } else {
-      mRow.classList.remove('expanded');
-      dRow.classList.remove('open');
+      expandedRows.add(entityName);
     }
+    renderLeaderboardTable();
   }
 
-  function renderFinalOutputs() {
-    const headers = document.getElementById('tableHeaders');
-    const body = document.getElementById('overallTableBody');
-    const scoreTitleLabel = currentViewMode === 'points' ? 'Points Index' : 'Z-Score Index';
+  function renderLeaderboardTable() {
+    const headRow = document.getElementById('tableHeaderRow');
+    const body = document.getElementById('leaderboardBody');
     
-    headers.innerHTML = `
+    const displayScoreLabel = currentViewMode === 'points' ? 'Unified Index (0-100)' : 'Composite Z-Score';
+
+    const getSortIcon = (col) => {
+      if (currentSortColumn !== col) return `<span class="sort-icon">↕</span>`;
+      return currentSortDirection === 'asc' ? `<span class="sort-icon">▲</span>` : `<span class="sort-icon">▼</span>`;
+    };
+
+    headRow.innerHTML = `
       <th style="width:30px;"></th>
-      <th class="sortable ${activeSortColumn==='rank'?'active-sort':''}" onclick="toggleColumnSort('rank')">Rank ${getSortIndicatorMarkup('rank')}</th>
-      <th class="sortable ${activeSortColumn==='name'?'active-sort':''}" onclick="toggleColumnSort('name')">Entry Name ${getSortIndicatorMarkup('name')}</th>
-      <th class="sortable ${activeSortColumn==='perf'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Perf Quality ${getSortIndicatorMarkup('perf')}</th>
-      <th class="sortable ${activeSortColumn==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Efficiency Offset ${getSortIndicatorMarkup('cost')}</th>
-      <th class="sortable ${activeSortColumn==='score'?'active-sort':''}" style="width:240px;" onclick="toggleColumnSort('score')">${scoreTitleLabel} ${getSortIndicatorMarkup('score')}</th>
+      <th class="sortable ${currentSortColumn==='rank'?'active-sort':''}" onclick="handleColumnSortTrigger('rank')">Rank ${getSortIcon('rank')}</th>
+      <th class="sortable ${currentSortColumn==='name'?'active-sort':''}" onclick="handleColumnSortTrigger('name')">Cohort Entity Name ${getSortIcon('name')}</th>
+      <th class="sortable ${currentSortColumn==='perf'?'active-sort':''}" onclick="handleColumnSortTrigger('perf')">Performance Index Z ${getSortIcon('perf')}</th>
+      <th class="sortable ${currentSortColumn==='eff'?'active-sort':''}" onclick="handleColumnSortTrigger('eff')">Efficiency Index Z ${getSortIcon('eff')}</th>
+      <th class="sortable ${currentSortColumn==='score'?'active-sort':''}" onclick="handleColumnSortTrigger('score')">${displayScoreLabel} ${getSortIcon('score')}</th>
     `;
 
-    body.innerHTML = '';
-    overallScores.forEach((row, idx) => {
-      const pos = row.defaultRank;
-      let badge = "rank-other";
-      if (pos === 1) badge = "rank-1";
-      if (pos === 2) badge = "rank-2";
-      if (pos === 3) badge = "rank-3";
-      
-      let valStr = '', barMarkup = '';
-      if (currentViewMode === 'points') {
-        valStr = row.pointsScale.toFixed(1);
-        barMarkup = `<div class="score-bar" style="width: ${row.pointsScale}%"></div>`;
-      } else {
-        valStr = row.reStandardizedZ.toFixed(2);
-        const w = Math.min(Math.abs(row.reStandardizedZ) * 25, 100);
-        barMarkup = `<div class="score-bar ${row.reStandardizedZ < 0 ? 'score-bar-neg' : ''}" style="width: ${w}%"></div>`;
-      }
-
-      const pTag = row.performanceZ > 0.25 ? 'tag-top' : (row.performanceZ >= -0.25 ? 'tag-avg' : 'tag-down');
-      const pLbl = row.performanceZ > 0.25 ? 'Strong' : (row.performanceZ >= -0.25 ? 'Average' : 'Weak');
-      const cTag = row.costZ > 0.25 ? 'tag-top' : (row.costZ >= -0.25 ? 'tag-avg' : 'tag-down');
-      const cLbl = row.costZ > 0.25 ? 'Efficient' : (row.costZ >= -0.25 ? 'Moderate' : 'High');
-
-      const trMaster = document.createElement('tr');
-      trMaster.className = `master-row ${row.expanded ? 'expanded' : ''}`;
-      trMaster.id = `master-row-${idx}`;
-      trMaster.setAttribute('onclick', `toggleRowExpansion(${idx})`);
-      trMaster.innerHTML = `
-        <td class="row-toggle-cell"><i class="chevron-icon">▶</i></td>
-        <td><span class="rank-badge ${badge}">${pos}</span></td>
-        <td><strong>${row.entity}</strong></td>
-        <td style="text-align:right;"><span class="tag ${pTag}">${pLbl}</span></td>
-        <td style="text-align:right;"><span class="tag ${cTag}">${cLbl}</span></td>
-        <td>
-          <div class="score-bar-wrap">
-            ${barMarkup}
-            <span class="score-val">${valStr}</span>
-          </div>
-        </td>
-      `;
-      body.appendChild(trMaster);
-
-      const trDetail = document.createElement('tr');
-      trDetail.className = `detail-row ${row.expanded ? 'open' : ''}`;
-      trDetail.id = `detail-row-${idx}`;
-      
-      let contributionCardsMarkup = '';
-      if (row.contributions) {
-        Object.keys(row.contributions).forEach(mName => {
-          const item = row.contributions[mName];
-          const isPos = item.zScore >= 0;
-          
-          contributionCardsMarkup += `
-            <div class="breakdown-card">
-              <div class="breakdown-lbl" title="${mName}">${mName}</div>
-              <div class="breakdown-val">${item.raw}</div>
-              <div class="breakdown-z ${isPos ? 'pos' : 'neg'}">${isPos ? '▲' : '▼'} ${Math.abs(item.zScore).toFixed(2)} σ</div>
-            </div>
-          `;
-        });
-      }
-
-      trDetail.innerHTML = `
-        <td colspan="6">
-          <div class="breakdown-title">Vector Deviation Contributions Breakdown</div>
-          <div class="breakdown-grid">${contributionCardsMarkup}</div>
-        </td>
-      `;
-      body.appendChild(trDetail);
-    });
-
-    // Generate descriptive metrics stats summaries
-    const statsContainer = document.getElementById('overallStats');
-    const totalCount = overallScores.length;
-    const topPerformer = overallScores.find(s => s.defaultRank === 1)?.entity || 'None';
-    
-    statsContainer.innerHTML = `
-      <div class="stat-row">
-        <div class="stat-chip">Total Tracked Elements: <strong>${totalCount}</strong></div>
-        <div class="stat-chip stat-chip-info">Top Rank Leader: <strong>${topPerformer}</strong></div>
-        <div class="stat-chip">Active Valuation Mode: <strong>${currentViewMode === 'points' ? 'Points Scale Index Model' : 'Raw standard deviations standard scale'}</strong></div>
-      </div>
-    `;
-
-    renderOverallChart();
-  }
-
-  function renderOverallChart() {
-    if (!overallScores.length) return;
-    
-    const canvas = document.getElementById('overallChart');
-    if (!canvas) return;
-
-    // Synchronize global chart visual context headers dynamically
-    const titleLabelText = currentViewMode === 'points' ? 'Calculated Points Index' : 'Composite Z-Score Ranking';
-    document.getElementById('dynChartTitle').textContent = titleLabelText;
-
-    const labels = overallScores.map(s => s.entity);
-    const isPoints = currentViewMode === 'points';
-    const dataVals = isPoints ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
-    
-    // Custom color config hooks retrieval
-    const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
-    const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
-    const titleColor = document.getElementById('hexTitle').value || '#F5F5F7'; // Retrieved custom title color picker hex hook
-    
-    const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
-    const baselineValue = isPoints ? 50 : 0;
-    
-    let minScaleValue = 0;
-    let maxScaleValue = 100;
-    if (!isPoints) {
-      const maxAbsDeviation = Math.max(...dataVals.map(v => Math.abs(v)), 1.0);
-      const balancedBoundary = Math.ceil(maxAbsDeviation * 1.2 * 10) / 10;
-      minScaleValue = -balancedBoundary;
-      maxScaleValue = balancedBoundary;
+    if (overallScores.length === 0) {
+      body.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">No parsed records available.</td></tr>`;
+      return;
     }
 
+    let html = '';
+    overallScores.forEach(row => {
+      const isExpanded = expandedRows.has(row.entity);
+      const isTop3 = row.defaultRank <= 3;
+      const rankClass = row.defaultRank <= 3 ? `rank-${row.defaultRank}` : 'rank-other';
+      
+      let scoreDisplayValue = '';
+      let scoreBarPercentage = 0;
+      let barIsNegative = false;
+
+      if (currentViewMode === 'points') {
+        scoreDisplayValue = row.pointsScale.toFixed(1);
+        scoreBarPercentage = Math.max(0, Math.min(100, row.pointsScale));
+      } else {
+        scoreDisplayValue = (row.compositeZ >= 0 ? '+' : '') + row.compositeZ.toFixed(3);
+        // Map z scores into simple visually normalized scale indicators for UI bars (-2.5 to +2.5 standard deviations range)
+        let mappedPct = ((row.compositeZ + 2) / 4) * 100;
+        scoreBarPercentage = Math.max(4, Math.min(100, mappedPct));
+        if (row.compositeZ < 0) barIsNegative = true;
+      }
+
+      // Performance index categorizations badges tags logic
+      let tagHtml = `<span class="tag tag-avg">Average</span>`;
+      if (row.defaultRank === 1) tagHtml = `<span class="tag tag-top">Leader</span>`;
+      else if (row.compositeZ > 0.4) tagHtml = `<span class="tag tag-up">High Output</span>`;
+      else if (row.compositeZ < -0.4) tagHtml = `<span class="tag tag-down">Underperforming</span>`;
+
+      html += `
+        <tr class="master-row ${isExpanded ? 'expanded' : ''}" onclick="toggleRowExpansion('${row.entity.replace(/'/g, "\\'")}')">
+          <td class="row-toggle-cell"><i class="chevron-icon">▶</i></td>
+          <td><span class="rank-badge ${rankClass}">${row.defaultRank}</span></td>
+          <td style="font-weight:600; color:var(--text-primary);">${row.entity}</td>
+          <td class="breakdown-z ${row.performanceZ >= 0 ? 'pos' : 'neg'}">${(row.performanceZ >= 0 ? '+' : '') + row.performanceZ.toFixed(2)}</td>
+          <td class="breakdown-z ${row.costEfficiencyZ >= 0 ? 'pos' : 'neg'}">${(row.costEfficiencyZ >= 0 ? '+' : '') + row.costEfficiencyZ.toFixed(2)}</td>
+          <td>
+            <div class="score-bar-wrap">
+              <div class="score-bar ${barIsNegative ? 'score-bar-neg' : ''}" style="width: ${scoreBarPercentage}%;"></div>
+              <span class="score-val">${scoreDisplayValue}</span>
+              ${tagHtml}
+            </div>
+          </td>
+        </tr>
+        <tr class="detail-row ${isExpanded ? 'open' : ''}">
+          <td colspan="6">
+            <div class="breakdown-title">Granular Analytical Dimension Data Feed Parameters Breakdown</div>
+            <div class="breakdown-grid">
+      `;
+
+      // Build out sub list detail item elements cards programmatically
+      Object.keys(metricMetadata).forEach(m => {
+        const meta = metricMetadata[m];
+        const raw = row.metaRecord.rawValues[m];
+        const zValue = row.metaRecord.zScores[m];
+        const typeLabel = meta.type === 'performance' ? 'Performance' : 'Efficiency Expense';
+
+        html += `
+          <div class="breakdown-card">
+            <div class="breakdown-lbl" title="${m}">${m}</div>
+            <div class="breakdown-val">${raw.toLocaleString()}</div>
+            <div style="font-size:10px; color:var(--text-muted); margin-bottom: 2px;">${typeLabel}</div>
+            <div class="breakdown-z ${zValue >= 0 ? 'pos' : 'neg'}">${(zValue >= 0 ? '↑ +' : '↓ ')+zValue.toFixed(2)} std dev</div>
+          </div>
+        `;
+      });
+
+      html += `
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    body.innerHTML = html;
+  }
+
+  function renderCohortAnalyticsSummaryChips() {
+    const summaryArea = document.getElementById('statsRowSummary');
+    if (overallScores.length === 0) {
+      summaryArea.innerHTML = '';
+      return;
+    }
+
+    const meanZ = overallScores.reduce((sum, s) => sum + s.compositeZ, 0) / overallScores.length;
+    const highPerformerCount = overallScores.filter(s => s.compositeZ > 0.5).length;
+    
+    summaryArea.innerHTML = `
+      <div class="stat-chip">Total Tracked Group Records: <strong>${overallScores.length}</strong></div>
+      <div class="stat-chip">High-Yield Yield Entities (>0.5 Z): <strong>${highPerformerCount}</strong></div>
+      <div class="stat-chip stat-chip-info">Normalized Cluster Variance Delta Baseline: <strong>${meanZ.toFixed(4)}</strong></div>
+    `;
+  }
+
+  // GRAPH CHART RENDERING ENGINES
+  function renderEvaluationChart() {
+    const ctx = document.getElementById('overallChart').getContext('2d');
+    
     if (chartInst) {
-      chartInst.data.labels = labels;
-      chartInst.data.datasets[0].data = dataVals;
-      chartInst.data.datasets[0].backgroundColor = barColors;
-      chartInst.options.scales.x.ticks.color = axisColor;
-      chartInst.options.scales.y.ticks.color = axisColor;
-      chartInst.options.scales.y.min = minScaleValue;
-      chartInst.options.scales.y.max = maxScaleValue;
-      chartInst.options.plugins.title.color = titleColor; // Applied custom configuration title text color dynamically on update sequences
-      chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.yMin = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.yMax = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.label.content = isPoints ? 'Cohort Median Centerline (50 pts)' : 'Group Absolute Standard Average Base (0.0 σ)';
-      chartInst.update();
-    } else {
-      const ctx = canvas.getContext('2d');
-      chartInst = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: dataVals,
-            backgroundColor: barColors,
-            borderRadius: 6,
-            borderSkipped: false,
-            barPercentage: 0.55,
-            categoryPercentage: 0.8
-          }]
+      chartInst.destroy();
+    }
+
+    if (overallScores.length === 0) return;
+
+    // Determine current color tokens programmatically
+    const accentColor = document.getElementById('colorThemeAccent').value || '#b8f53a';
+
+    const datasets = [{
+      label: 'Cohort Group Distribution Profile Map',
+      data: overallScores.map(o => ({
+        x: o.performanceZ,
+        y: o.costEfficiencyZ,
+        label: o.entity,
+        scorePoints: o.pointsScale,
+        compositeZ: o.compositeZ
+      })),
+      backgroundColor: accentColor,
+      borderColor: 'rgba(255,255,255,0.1)',
+      borderWidth: 1,
+      pointRadius: 7,
+      pointHoverRadius: 9,
+      transitionDuration: 0
+    }];
+
+    chartInst = new Chart(ctx, {
+      type: 'scatter',
+      data: { datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 200 },
+        scales: {
+          x: {
+            title: { display: true, text: 'Overall Performance Capabilities Index (Z-Score Deviation)', color: '#9ea3ae', font: { family: 'DM Sans', size: 12, weight: 500 } },
+            grid: { color: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.08)' },
+            ticks: { color: '#626771', font: { family: 'DM Mono' } }
+          },
+          y: {
+            title: { display: true, text: 'Resource Efficiency Balance Matrix Index (Z-Score Deviation)', color: '#9ea3ae', font: { family: 'DM Sans', size: 12, weight: 500 } },
+            grid: { color: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.08)' },
+            ticks: { color: '#626771', font: { family: 'DM Mono' } }
+          }
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            title: {
-              display: true,
-              text: isPoints ? 'Unified Points Distribution' : 'Standard Vector Deviations Balance Scale',
-              color: titleColor, // Inserted title text color styling on fresh initialization instances
-              font: { family: "'DM Sans', sans-serif", size: 13, weight: '600' },
-              padding: { bottom: 12 }
-            },
-            annotation: {
-              annotations: {
-                line1: {
-                  type: 'line',
-                  yMin: baselineValue,
-                  yMax: baselineValue,
-                  borderColor: 'rgba(255,255,255,0.15)',
-                  borderWidth: 1.5,
-                  borderDash: [5, 5],
-                  label: {
-                    display: true,
-                    content: isPoints ? 'Cohort Median Centerline (50 pts)' : 'Group Absolute Standard Average Base (0.0 σ)',
-                    position: 'end',
-                    backgroundColor: 'rgba(6,6,6,0.8)',
-                    color: axisColor,
-                    font: { family: 'DM Mono', size: 10, weight: '500' },
-                    padding: 4
-                  }
-                }
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#17181c',
+            titleColor: '#f5f5f7',
+            bodyColor: '#9ea3ae',
+            borderColor: 'rgba(255,255,255,0.08)',
+            borderWidth: 1,
+            cornerRadius: 8,
+            padding: 12,
+            fontFamily: 'DM Sans',
+            callbacks: {
+              label: function(context) {
+                const p = context.raw;
+                return [
+                  `Entity: ${p.label}`,
+                  `Performance Component Z: ${p.x.toFixed(3)}`,
+                  `Efficiency Component Z: ${p.y.toFixed(3)}`,
+                  `Unified Points Scale (0-100): ${p.scorePoints.toFixed(1)}`,
+                  `Combined Composite Delta Z: ${p.compositeZ.toFixed(3)}`
+                ];
               }
             }
           },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { color: axisColor, font: { family: 'DM Sans', size: 12 } }
-            },
-            y: {
-              min: minScaleValue,
-              max: maxScaleValue,
-              grid: { color: 'rgba(255,255,255,0.02)' },
-              ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } }
+          annotation: {
+            annotations: {
+              lineX: { type: 'line', xMin: 0, xMax: 0, borderColor: 'rgba(255, 255, 255, 0.08)', borderWidth: 1.5, borderDash: [4, 4] },
+              lineY: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255, 255, 255, 0.08)', borderWidth: 1.5, borderDash: [4, 4] }
             }
           }
         }
-      });
-    }
-  }
-
-  function syncColor(sId, tId) {
-    document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase();
-  }
-
-  function updateLayoutBackgrounds() {
-    const cardColor = document.getElementById('hexBgCard').value;
-    if (/^#[0-9A-F]{6}$/i.test(cardColor)) {
-      // Update CSS variable so all cards change color automatically
-      document.documentElement.style.setProperty('--bg-card', cardColor);
-      
-      // If the chart exists, redraw it to match the new background context
-      if (chartInst) {
-        renderOverallChart();
       }
-    }
-  }
-  function syncSwatch(tId, sId) {
-    const val = document.getElementById(tId).value;
-    if (/^#[0-9A-F]{6}$/i.test(val)) document.getElementById(sId).value = val;
+    });
   }
 
+  // THEME MANAGEMENT SYNCHRONIZER HOOKS
+  function syncColorInput(sourceId, targetId) {
+    const val = document.getElementById(sourceId).value;
+    document.getElementById(targetId).value = val;
+    applyDynamicThemeStyles();
+  }
+
+  function syncSwatch(sourceId, targetId) {
+    const val = document.getElementById(sourceId).value;
+    if (/^#[0-9A-F]{6}$/i.test(val)) {
+      document.getElementById(targetId).value = val;
+      applyDynamicThemeStyles();
+    }
+  }
+
+  function applyDynamicThemeStyles() {
+    const accent = document.getElementById('colorThemeAccent').value;
+    const cardBg = document.getElementById('colorThemeCard').value;
+
+    const root = document.documentElement;
+    root.style.setProperty('--accent', accent);
+    root.style.setProperty('--bg-card', cardBg);
+
+    // Compute matching dim variations automatically for charts and background layers panels elements hooks safely
+    if (/^#[0-9A-F]{6}$/i.test(accent)) {
+      const r = parseInt(accent.slice(1, 3), 16);
+      const g = parseInt(accent.slice(3, 5), 16);
+      const b = parseInt(accent.slice(5, 7), 16);
+      root.style.setProperty('--accent-dim', `rgba(${r},${g},${b},.08)`);
+      root.style.setProperty('--accent-dim2', `rgba(${r},${g},${b},.04)`);
+    }
+
+    // Refresh display layout chart colors without full state reconstruction routines
+    if (chartInst && overallScores.length > 0) {
+      chartInst.data.datasets[0].backgroundColor = accent;
+      chartInst.update('none');
+    }
+  }
+
+  // FILE EXPORT INTERFACE PIPELINES
   function downloadPNG() {
-    if (!chartInst) { showToast("Generate rankings before downloading charts."); return; }
+    if (!chartInst) {
+      showToast("Generate rankings before downloading charts.", "error");
+      return;
+    }
     const a = document.createElement('a');
     a.href = chartInst.toBase64Image('image/png', 1);
     a.download = 'performance_rankings_chart.png';
@@ -1503,22 +1480,77 @@ Segment D	0.73	2.45</textarea>
   }
 
   function exportCSV() {
-    if (!overallScores.length) { showToast("Generate rankings before exporting."); return; }
+    if (!overallScores.length) {
+      showToast("Generate rankings before exporting.", "error");
+      return;
+    }
     
     const metricScoreLabel = currentViewMode === 'points' ? 'Unified Index Score (0-100)' : 'Composite Z-Score (Deviation)';
-    let lines = [`\"Calculated Rank\",\"Entry Name\",\"Performance Quality Z\",\"Cost Efficiency Z\",\"${metricScoreLabel}\"`];
+    let lines = [`"Calculated Rank","Entry Name","Performance Quality Z","Cost Efficiency Z","${metricScoreLabel}"`];
     
     overallScores.forEach(r => {
       const activeValueExport = currentViewMode === 'points' ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
-      lines.push(`${r.defaultRank},\"${r.entity.replace(/\"/g, '\"\"')}\",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
+      lines.push(`${r.defaultRank},"${r.entity.replace(/"/g, '""')}",${r.performanceZ.toFixed(3)},${r.costEfficiencyZ.toFixed(3)},${activeValueExport}`);
     });
     
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'performance_multimetric_rankings_export.csv';
+    link.download = `matrix_cohort_rankings_${currentViewMode}.csv`;
     link.click();
-    showToast("CSV dataset exported successfully.", "info");
+  }
+
+  function resetWorkflow() {
+    overallScores = [];
+    expandedRows.clear();
+    document.getElementById('perfInputArea').value = '';
+    document.getElementById('costInputArea').value = '';
+    
+    parsedPerformance = null;
+    parsedEfficiency = null;
+    
+    document.getElementById('normalizationNotice').classList.add('hidden');
+    document.getElementById('perfWeightsArea').innerHTML = '';
+    
+    // Collapse weighting element panel explicitly for next cycle setup cleanliness
+    const panel = document.getElementById('perfWeightsArea');
+    const btn = document.getElementById('btnWeightsToggle');
+    panel.classList.remove('revealed');
+    btn.classList.remove('active');
+    btn.querySelector('span').textContent = "Customize Metric Weightings";
+
+    if (chartInst) {
+      chartInst.destroy();
+      chartInst = null;
+    }
+
+    switchView(1);
+    showToast("System database workflow reset successfully.", "success");
+  }
+
+  // NOTIFICATION UTILITIES
+  function showToast(message, type = "success") {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    
+    let iconColor = type === 'success' ? 'var(--accent)' : 'var(--danger)';
+    let svgIcon = type === 'success' 
+      ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+      : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+
+    toast.innerHTML = `
+      <div class="toast-icon-wrapper">${svgIcon}</div>
+      <div class="toast-text">${message}</div>
+    `;
+    
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 50);
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
   }
 </script>
 </body>
