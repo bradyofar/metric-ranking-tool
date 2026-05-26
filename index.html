@@ -47,7 +47,6 @@
     overflow-x: hidden;
   }
 
-  /* AUTH SCREEN OVERLAY (DARK GLASS / VERCEL AESTHETIC) */
   #authOverlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
@@ -124,7 +123,6 @@
   .btn-auth:active { transform: translateY(0); }
   .btn-auth:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  /* Auth Failure Shake Animation */
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-6px); }
@@ -132,13 +130,11 @@
   }
   .shake { animation: shake 350ms cubic-bezier(.36,.07,.19,.97) both; }
 
-  /* MAIN ENVIRONMENT INTERFACES */
   .page-shell { max-width: 840px; margin: 0 auto; padding: 0 20px 80px; filter: blur(16px); opacity: 0; transition: filter 600ms ease, opacity 600ms ease; }
   body.authenticated .page-shell { filter: blur(0); opacity: 1; }
   body.authenticated #authOverlay { opacity: 0; visibility: hidden; pointer-events: none; }
   body.authenticated #authOverlay .auth-card { transform: translateY(-16px); }
 
-  /* HERO */
   .hero { padding: 56px 0 36px; text-align: center; }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 7px;
@@ -157,7 +153,6 @@
     margin: 0 auto; line-height: 1.6; font-weight: 400;
   }
 
-  /* WORKFLOW TABS */
   .step-track {
     display: flex; align-items: center; gap: 0;
     margin-bottom: 36px; width: 100%;
@@ -187,7 +182,6 @@
   .step-node.done .step-lbl { color: var(--text-secondary); }
   .step-line.done { background: var(--accent-dim); }
 
-  /* DISPLAY TOGGLE */
   .view-toggle-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
   .toggle-container { display: inline-flex; background: var(--bg-card); padding: 4px; border-radius: 100px; gap: 2px; }
   .toggle-btn {
@@ -198,7 +192,6 @@
   .toggle-btn:focus-visible { outline: 2px solid var(--accent); }
   .toggle-btn.active { background: var(--bg-hover); color: var(--text-primary); font-weight: 600; }
 
-  /* CARDS & TAB PANELS */
   .tab-panel {
     display: none; opacity: 0; transform: translateY(8px);
     transition: opacity 250ms cubic-bezier(.25, 1, .5, 1), transform 250ms cubic-bezier(.25, 1, .5, 1);
@@ -218,7 +211,6 @@
   .card-title { font-size: 18px; font-weight: 600; letter-spacing: -.01em; color: var(--text-primary); }
   .card-desc { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
 
-  /* EXPLAINER */
   .explainer { background: var(--bg-input); border-radius: var(--radius-lg); padding: 18px 22px; margin-bottom: 20px; }
   .explainer h3 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
   .explainer p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
@@ -233,7 +225,6 @@
   .explainer-more ul { padding-left: 18px; }
   .explainer-more li { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; }
 
-  /* TEXTAREAS */
   .data-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .data-label { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; }
   .paste-hint { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
@@ -245,7 +236,6 @@
   }
   textarea:focus { background: var(--bg-hover); }
 
-  /* UPLOAD ROW */
   .upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
   .btn-upload {
     display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
@@ -257,7 +247,6 @@
   .btn-upload:focus-visible { outline: 2px solid var(--accent); }
   .or-divider { font-size: 12px; color: var(--text-muted); }
 
-  /* WEIGHTS HOOKS */
   .weights-container-block {
     opacity: 0; max-height: 0; overflow: hidden;
     transition: opacity 250ms ease, max-height 300ms cubic-bezier(0.4, 0, 0.2, 1), margin-top 250ms ease;
@@ -297,7 +286,6 @@
   }
   .weight-chip strong { color: var(--accent); font-family: var(--mono); }
 
-  /* BUTTONS */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 7px;
     padding: 12px 24px; border-radius: var(--radius-md); font-family: inherit;
@@ -317,7 +305,6 @@
   .btn.loading .btn-text { display: none; }
   .btn.loading .spinner-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,.15); border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; }
 
-  /* NOTIFICATIONS & TOASTS */
   .notice { border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; }
   .notice-icon { flex-shrink: 0; margin-top: 2px; }
   .notice-accent { background: var(--accent-dim2); color: var(--text-secondary); }
@@ -336,7 +323,6 @@
   .toast.show { transform: translateY(0) scale(1); opacity: 1; }
   .toast-icon-wrapper { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-  /* LEADERBOARD TABLE - SAAS EVOLUTION */
   .result-section { margin-top: 12px; }
   .table-wrap { 
     overflow-x: auto; 
@@ -397,12 +383,9 @@
     position: relative;
   }
   tbody tr.master-row:last-child:not(.expanded) td { border-bottom: none; }
-  
-  /* Focus States & Row Anchors */
   tbody tr.master-row:hover td { background: var(--bg-hover); }
   tbody tr.master-row.expanded td { background: rgba(184,245,58,0.02); border-bottom-color: transparent; }
   
-  /* Chevron indicator */
   .row-toggle-cell { width: 30px; text-align: center; color: var(--text-muted); }
   .chevron-icon {
     display: inline-block;
@@ -413,7 +396,6 @@
   }
   tr.expanded .chevron-icon { transform: rotate(90deg); color: var(--accent); }
 
-  /* Expanded Analytical Breakdown Details View */
   tbody tr.detail-row { display: none; }
   tbody tr.detail-row.open { display: table-row; }
   tbody tr.detail-row td {
@@ -470,14 +452,12 @@
   .tag-avg { background: var(--bg-hover); color: var(--text-secondary); }
   .tag-down { background: var(--danger-bg); color: #ff7c7c; }
 
-  /* CHART DISPLAY */
   .chart-card { background: var(--bg-card); padding: 24px 28px; margin-top: 24px; border-radius: var(--radius-xl); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); transition: background var(--transition); }
   .chart-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
   .chart-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
   .chart-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   #overallChart { width: 100% !important; display: block; }
 
-  /* CONFIGURATION PALETTES */
   .colors-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.03); }
   .colors-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: block; }
   .color-controls { display: flex; flex-wrap: wrap; gap: 16px; }
@@ -486,7 +466,6 @@
   .color-swatch { width: 24px; height: 24px; border-radius: 5px; border: none; cursor: pointer; background: transparent; }
   .color-hex { font-family: var(--mono); font-size: 12px; width: 82px; padding: 4px 8px; border: none; border-radius: var(--radius-sm); color: var(--text-primary); background: var(--bg-input); }
 
-  /* STATS CHIPS */
   .stat-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
   .stat-chip { background: var(--bg-input); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 11.5px; color: var(--text-secondary); font-family: var(--mono); }
   .stat-chip strong { color: var(--text-primary); }
@@ -539,10 +518,10 @@
   <div class="hero">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      Multi Metric Ranking Tool
+      Comparative Analytics Engine
     </div>
-    <h1>Find your <span>best performers</span> at a glance</h1>
-    <p class="hero-sub">Upload performance data, adjust metric importance, and generate standardised rankings instantly.</p>
+    <h1>Compare performance <span>fairly across</span> multiple metrics</h1>
+    <p class="hero-sub">Upload performance datasets, customise metric weighting, and generate statistically standardised rankings instantly.</p>
   </div>
 
   <nav class="step-track" id="stepTrack" role="tablist">
@@ -579,15 +558,15 @@
   </div>
 
   <div class="explainer">
-    <h3>Mathematical Scoring System</h3>
-    <p>This system compares different metrics fairly by standardising the data, helping prevent unusually high or low values from unfairly skewing the results.</p>
+    <h3>How scoring works</h3>
+    <p>This tool standardises metrics relative to the group average so different performance indicators can be compared fairly on a consistent scale.</p>
     <button class="explainer-toggle" onclick="toggleExplainer()">Show details</button>
     <div class="explainer-more" id="explainerMore">
-      <p>Standard deviations isolate tracking records against group variations:</p>
+      <p>Each metric is compared against the overall dataset distribution:</p>
       <ul>
-        <li><strong>Index Baseline:</strong> Reflects the precise cohort geometric average (0 for Z-Scores, 50 for Points).</li>
-        <li><strong>Higher Values Preferred:</strong> Optimises metrics where bigger scales signify success.</li>
-        <li><strong>Minimised Costs:</strong> Efficiency tracking limits isolate heavy expenses and overhead items which can be optimised.</li>
+        <li><strong>Baseline:</strong> Scores are centred around the dataset average (0 for Z-Scores, 50 for Points).</li>
+        <li><strong>Positive Metrics:</strong> Higher values improve ranking performance.</li>
+        <li><strong>Efficiency Metrics:</strong> Metrics such as CPA, bounce rate or unsubscribe rate can be inversely weighted so that lower values improve scoring automatically.</li>
       </ul>
     </div>
   </div>
@@ -601,7 +580,7 @@
         <div>
           <div class="card-step">Step 1</div>
           <div class="card-title">Performance Metrics</div>
-          <div class="card-desc">Metrics where higher values are better (e.g. CTR, CTOR, Open Rate).</div>
+          <div class="card-desc">Metrics where higher values indicate stronger performance (e.g. CTR, Open Rate, Conversion Rate).</div>
         </div>
       </div>
 
@@ -628,7 +607,7 @@ Segment D	1.98	41.5</textarea>
       <div id="perfWeightsArea" class="weights-container-block">
         <div class="notice notice-accent">
           <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Adjust individual metric weight importances and tracking polarity limits.</span>
+          <span>Adjust metric weighting and configure whether higher or lower values should improve scoring.</span>
         </div>
         <div class="weights-grid" id="perfWeightsGrid"></div>
         <div class="weight-summary" id="perfWeightSummary"></div>
@@ -649,7 +628,7 @@ Segment D	1.98	41.5</textarea>
         <div>
           <div class="card-step">Step 2</div>
           <div class="card-title">Efficiency Metrics</div>
-          <div class="card-desc">Metrics where lower values are better (e.g. Unsubscribe Rate, Cost Per Click, Bounce Rate).</div>
+          <div class="card-desc">Metrics where lower values indicate stronger efficiency (e.g. Bounce Rate, CPA, Unsubscribe Rate).</div>
         </div>
       </div>
 
@@ -676,7 +655,7 @@ Segment D	0.73	0.45</textarea>
       <div id="costWeightsArea" class="weights-container-block">
         <div class="notice notice-accent">
           <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Configure cost metric balances. Lower values naturally boost points results.</span>
+          <span>Configure efficiency weighting. Metrics can automatically reward lower values where appropriate.</span>
         </div>
         <div class="weights-grid" id="costWeightsGrid"></div>
         <div class="weight-summary" id="costWeightSummary"></div>
@@ -685,7 +664,7 @@ Segment D	0.73	0.45</textarea>
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="switchView(1)">&larr; Back to Step 1</button>
         <button class="btn btn-primary" id="calcCostBtn" onclick="processCostStep()">
-          <span class="btn-text">Generate Rankings &rarr;</span>
+          <span class="btn-text">Calculate Comparative Scores &rarr;</span>
           <span class="spinner-ring"></span>
         </button>
       </div>
@@ -700,8 +679,8 @@ Segment D	0.73	0.45</textarea>
         </div>
         <div>
           <div class="card-step">Step 3</div>
-          <div class="card-title">Combined Rankings</div>
-          <div class="card-desc">Click headers to sort table rows. Expand entries to view individual contribution breakdowns.</div>
+          <div class="card-title">Weighted Performance Rankings</div>
+          <div class="card-desc">Expand rows to inspect metric-level score contributions and weighted performance drivers.</div>
         </div>
       </div>
 
@@ -717,7 +696,7 @@ Segment D	0.73	0.45</textarea>
           </div>
           <div id="overallStats"></div>
         </div>
-            <div class="colors-section">
+        <div class="colors-section">
           <span class="colors-label">Customise Presentation Palettes</span>
           <div class="color-controls">
             <div class="color-item">
@@ -742,40 +721,37 @@ Segment D	0.73	0.45</textarea>
             </div>
           </div>
         </div>
-          </div>
-        </div>
+      </div>
+    </div>
 
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title" id="dynChartTitle">Performance Index Distribution Matrix</div>
-              <div class="chart-sub">Cohort tracking standard deviations visualisation</div>
-            </div>
-          </div>
-          <div style="position: relative; width: 100%; height: 320px;">
-            <canvas id="overallChart"></canvas>
-          </div>
-        </div>
-
-        <div class="export-btns">
-          <button class="btn btn-ghost" onclick="downloadPNG()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Save Chart Image (.png)
-          </button>
-          <button class="btn btn-ghost" onclick="exportCSV()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            Export Complete Dataset (.csv)
-          </button>
-          <button class="btn btn-ghost" style="margin-left: auto;" onclick="switchView(2)">&larr; Refine Efficiency Metrics</button>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title" id="dynChartTitle">Standardised Score Distribution</div>
+          <div class="chart-sub">Standardised distribution of weighted scores across the dataset.</div>
         </div>
       </div>
+      <div style="position: relative; width: 100%; height: 320px;">
+        <canvas id="overallChart"></canvas>
+      </div>
+    </div>
+
+    <div class="export-btns">
+      <button class="btn btn-ghost" onclick="downloadPNG()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Save Chart Image (.png)
+      </button>
+      <button class="btn btn-ghost" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Export Rankings Dataset (.csv)
+      </button>
+      <button class="btn btn-ghost" style="margin-left: auto;" onclick="switchView(2)">&larr; Refine Efficiency Metrics</button>
     </div>
   </div>
 
 </div>
 
 <script>
-  // --- Embedded Client Access Security Phrase ---
   const CONFIG_SALT_HASH = "unicorn"; 
 
   function checkSessionAuth() {
@@ -792,18 +768,17 @@ Segment D	0.73	0.45</textarea>
     if (inputEl.value === CONFIG_SALT_HASH) {
       sessionStorage.setItem('tool_authenticated', 'true');
       document.body.classList.add('authenticated');
-      showToast("Security access granted.", "info");
+      showToast("Access granted.", "info");
     } else {
       cardEl.classList.remove('shake');
       void cardEl.offsetWidth; 
       cardEl.classList.add('shake');
       inputEl.value = '';
       inputEl.focus();
-      showToast("Invalid password credential entered.", "error");
+      showToast("Incorrect password.", "error");
     }
   }
 
-  // --- UI Toast Engine ---
   function showToast(message, type = 'warning') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -828,7 +803,6 @@ Segment D	0.73	0.45</textarea>
     }, 4500);
   }
 
-  // --- Global Application States ---
   let perfScores = [];
   let costScores = [];
   let overallScores = [];
@@ -841,8 +815,6 @@ Segment D	0.73	0.45</textarea>
   let currentViewMode = 'points';
   let chartInst = null;
   let unlockedStep = 1;
-
-  // Table Sorting State Tracking
   let activeSortColumn = 'score'; 
   let activeSortDirection = 'desc'; 
 
@@ -856,7 +828,7 @@ Segment D	0.73	0.45</textarea>
 
   function switchView(stepNum) {
     if (stepNum > unlockedStep) {
-      showToast("Complete previous metrics steps to unlock this tab segment.");
+      showToast("Complete the previous step to continue.");
       return;
     }
     document.querySelectorAll('.step-node').forEach(node => {
@@ -898,7 +870,7 @@ Segment D	0.73	0.45</textarea>
     const el = document.getElementById('explainerMore');
     const btn = el.previousElementSibling;
     const open = el.classList.toggle('open');
-    btn.textContent = open ? 'Hide math details' : 'Show math details';
+    btn.textContent = open ? 'Hide details' : 'Show details';
   }
 
   function handleUpload(event, targetId) {
@@ -1050,7 +1022,7 @@ Segment D	0.73	0.45</textarea>
       let item = { entity: parts[0], rawNormalizedKey: parts[0].toLowerCase().replace(/[^a-z0-9]/g, ''), values: {} };
       subHeaders.forEach((sh, idx) => {
         const val = parseFloat(parts[idx + 1]);
-        if (isNaN(val)) throw new Error(`Non-numeric value structural exception detected inside matrix line: ${i + 1}`);
+        if (isNaN(val)) throw new Error(`Non-numeric value detected on row ${i + 1}.`);
         item.values[sh] = val;
       });
       rows.push(item);
@@ -1060,7 +1032,7 @@ Segment D	0.73	0.45</textarea>
 
   function parseInputMatrix(elemId) {
     const val = document.getElementById(elemId).value.trim();
-    if (!val) throw new Error("Target input configuration dataset cannot be processed empty.");
+    if (!val) throw new Error("Input dataset cannot be empty.");
     return parseDelimitedString(val);
   }
 
@@ -1155,7 +1127,7 @@ Segment D	0.73	0.45</textarea>
         });
 
         if (!integrated.length) {
-          throw new Error("No cross-matching entries discovered. Verify baseline primary labels match exactly.");
+          throw new Error("No matching entities were found between datasets. Ensure entity names match exactly across both tables.");
         }
 
         const zValues = integrated.map(i => i.compositeRawZ);
@@ -1251,8 +1223,8 @@ Segment D	0.73	0.45</textarea>
       <th style="width:30px;"></th>
       <th class="sortable ${activeSortColumn==='rank'?'active-sort':''}" onclick="toggleColumnSort('rank')">Rank ${getSortIndicatorMarkup('rank')}</th>
       <th class="sortable ${activeSortColumn==='name'?'active-sort':''}" onclick="toggleColumnSort('name')">Entry Name ${getSortIndicatorMarkup('name')}</th>
-      <th class="sortable ${activeSortColumn==='perf'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Perf Quality ${getSortIndicatorMarkup('perf')}</th>
-      <th class="sortable ${activeSortColumn==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Efficiency Offset ${getSortIndicatorMarkup('cost')}</th>
+      <th class="sortable ${activeSortColumn==='perf'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Performance ${getSortIndicatorMarkup('perf')}</th>
+      <th class="sortable ${activeSortColumn==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Efficiency ${getSortIndicatorMarkup('cost')}</th>
       <th class="sortable ${activeSortColumn==='score'?'active-sort':''}" style="width:240px;" onclick="toggleColumnSort('score')">${scoreTitleLabel} ${getSortIndicatorMarkup('score')}</th>
     `;
 
@@ -1320,23 +1292,22 @@ Segment D	0.73	0.45</textarea>
 
       trDetail.innerHTML = `
         <td colspan="6">
-          <div class="breakdown-title">Vector Deviation Contributions Breakdown</div>
+          <div class="breakdown-title">Metric Contributions</div>
           <div class="breakdown-grid">${contributionCardsMarkup}</div>
         </td>
       `;
       body.appendChild(trDetail);
     });
 
-    // Generate descriptive metrics stats summaries
     const statsContainer = document.getElementById('overallStats');
     const totalCount = overallScores.length;
     const topPerformer = overallScores.find(s => s.defaultRank === 1)?.entity || 'None';
     
     statsContainer.innerHTML = `
       <div class="stat-row">
-        <div class="stat-chip">Total Tracked Elements: <strong>${totalCount}</strong></div>
-        <div class="stat-chip stat-chip-info">Top Rank Leader: <strong>${topPerformer}</strong></div>
-        <div class="stat-chip">Active Valuation Mode: <strong>${currentViewMode === 'points' ? 'Points Scale Index Model' : 'Raw standard deviations standard scale'}</strong></div>
+        <div class="stat-chip">Total entries: <strong>${totalCount}</strong></div>
+        <div class="stat-chip stat-chip-info">Top ranked: <strong>${topPerformer}</strong></div>
+        <div class="stat-chip">Scoring mode: <strong>${currentViewMode === 'points' ? 'Points (0–100)' : 'Z-Score'}</strong></div>
       </div>
     `;
 
@@ -1349,18 +1320,16 @@ Segment D	0.73	0.45</textarea>
     const canvas = document.getElementById('overallChart');
     if (!canvas) return;
 
-    // Synchronize global chart visual context headers dynamically
-    const titleLabelText = currentViewMode === 'points' ? 'Calculated Points Index' : 'Composite Z-Score Ranking';
-    document.getElementById('dynChartTitle').textContent = titleLabelText;
+    const titleLabelText = currentViewMode === 'points' ? 'Points Index' : 'Composite Z-Score';
+    document.getElementById('dynChartTitle').textContent = 'Standardised Score Distribution';
 
     const labels = overallScores.map(s => s.entity);
     const isPoints = currentViewMode === 'points';
     const dataVals = isPoints ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
     
-    // Custom color config hooks retrieval
     const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
     const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
-    const titleColor = document.getElementById('hexTitle').value || '#F5F5F7'; // Retrieved custom title color picker hex hook
+    const titleColor = document.getElementById('hexTitle').value || '#F5F5F7';
     
     const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
     const baselineValue = isPoints ? 50 : 0;
@@ -1382,11 +1351,11 @@ Segment D	0.73	0.45</textarea>
       chartInst.options.scales.y.ticks.color = axisColor;
       chartInst.options.scales.y.min = minScaleValue;
       chartInst.options.scales.y.max = maxScaleValue;
-      chartInst.options.plugins.title.color = titleColor; // Applied custom configuration title text color dynamically on update sequences
+      chartInst.options.plugins.title.color = titleColor;
       chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMin = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMax = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.label.content = isPoints ? 'Cohort Median Centerline (50 pts)' : 'Group Absolute Standard Average Base (0.0 σ)';
+      chartInst.options.plugins.annotation.annotations.line1.label.content = isPoints ? 'Dataset average (50 pts)' : 'Dataset average (0.0 σ)';
       chartInst.update();
     } else {
       const ctx = canvas.getContext('2d');
@@ -1410,8 +1379,8 @@ Segment D	0.73	0.45</textarea>
             legend: { display: false },
             title: {
               display: true,
-              text: isPoints ? 'Points Ranking Index' : 'Z Score Ranking Index',
-              color: titleColor, // Inserted title text color styling on fresh initialization instances
+              text: titleLabelText,
+              color: titleColor,
               font: { family: "'DM Sans', sans-serif", size: 13, weight: '600' },
               padding: { bottom: 12 }
             },
@@ -1426,7 +1395,7 @@ Segment D	0.73	0.45</textarea>
                   borderDash: [5, 5],
                   label: {
                     display: true,
-                    content: isPoints ? 'Cohort Median Centerline (50 pts)' : 'Group Absolute Standard Average Base (0.0 σ)',
+                    content: isPoints ? 'Dataset average (50 pts)' : 'Dataset average (0.0 σ)',
                     position: 'end',
                     backgroundColor: 'rgba(6,6,6,0.8)',
                     color: axisColor,
@@ -1461,22 +1430,18 @@ Segment D	0.73	0.45</textarea>
   function updateLayoutBackgrounds() {
     const cardColor = document.getElementById('hexBgCard').value;
     if (/^#[0-9A-F]{6}$/i.test(cardColor)) {
-      // Update CSS variable so all cards change color automatically
       document.documentElement.style.setProperty('--bg-card', cardColor);
-      
-      // If the chart exists, redraw it to match the new background context
-      if (chartInst) {
-        renderOverallChart();
-      }
+      if (chartInst) { renderOverallChart(); }
     }
   }
+
   function syncSwatch(tId, sId) {
     const val = document.getElementById(tId).value;
     if (/^#[0-9A-F]{6}$/i.test(val)) document.getElementById(sId).value = val;
   }
 
   function downloadPNG() {
-    if (!chartInst) { showToast("Generate rankings before downloading charts."); return; }
+    if (!chartInst) { showToast("Generate rankings before downloading the chart."); return; }
     const a = document.createElement('a');
     a.href = chartInst.toBase64Image('image/png', 1);
     a.download = 'performance_rankings_chart.png';
@@ -1486,8 +1451,8 @@ Segment D	0.73	0.45</textarea>
   function exportCSV() {
     if (!overallScores.length) { showToast("Generate rankings before exporting."); return; }
     
-    const metricScoreLabel = currentViewMode === 'points' ? 'Unified Index Score (0-100)' : 'Composite Z-Score (Deviation)';
-    let lines = [`\"Calculated Rank\",\"Entry Name\",\"Performance Quality Z\",\"Cost Efficiency Z\",\"${metricScoreLabel}\"`];
+    const metricScoreLabel = currentViewMode === 'points' ? 'Score (0–100)' : 'Z-Score';
+    let lines = [`\"Rank\",\"Name\",\"Performance Z\",\"Efficiency Z\",\"${metricScoreLabel}\"`];
     
     overallScores.forEach(r => {
       const activeValueExport = currentViewMode === 'points' ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
@@ -1497,9 +1462,9 @@ Segment D	0.73	0.45</textarea>
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'performance_multimetric_rankings_export.csv';
+    link.download = 'performance_rankings_export.csv';
     link.click();
-    showToast("CSV dataset exported successfully.", "info");
+    showToast("Rankings exported successfully.", "info");
   }
 </script>
 </body>
