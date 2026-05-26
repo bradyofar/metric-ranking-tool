@@ -559,7 +559,7 @@
         <span>2</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div class="step-lbl">Penalty Metrics</div>
+      <div class="step-lbl">Efficiency Metrics</div>
     </button>
     <div class="step-line" id="line2"></div>
     <button class="step-node" id="tabNode3" role="tab" aria-selected="false" onclick="switchView(3)">
@@ -587,7 +587,7 @@
       <ul>
         <li><strong>Index Baseline:</strong> Reflects the precise cohort geometric average (0 for Z-Scores, 50 for Points).</li>
         <li><strong>Higher Values Preferred:</strong> Optimises metrics where bigger scales signify success.</li>
-        <li><strong>Minimised Costs:</strong> Penalty tracking limits isolate heavy expenses and overhead items which are then seamlessly converted into positive performance attributes.</li>
+        <li><strong>Minimised Costs:</strong> Efficiency tracking limits isolate heavy expenses and overhead items which can be optimised.</li>
       </ul>
     </div>
   </div>
@@ -635,7 +635,7 @@ Segment D	1.98	41.5</textarea>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="processPerformanceStep()">Continue to Penalties &rarr;</button>
+        <button class="btn btn-primary" onclick="processPerformanceStep()">Continue to Efficiencies &rarr;</button>
       </div>
     </div>
   </div>
@@ -648,7 +648,7 @@ Segment D	1.98	41.5</textarea>
         </div>
         <div>
           <div class="card-step">Step 2</div>
-          <div class="card-title">Penalty & Cost Metrics</div>
+          <div class="card-title">Efficiency Metrics</div>
           <div class="card-desc">Metrics where lower values are better (e.g. Unsubscribe Rate, Cost Per Click, Bounce Rate).</div>
         </div>
       </div>
@@ -664,7 +664,7 @@ Segment D	1.98	41.5</textarea>
       <input type="file" id="costFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'costData')">
 
       <div class="data-label-row">
-        <label class="data-label" for="costData">Penalty Metrics Table</label>
+        <label class="data-label" for="costData">Efficiency Metrics Table</label>
         <span class="paste-hint">Tab or Comma Separated Columns</span>
       </div>
       <textarea id="costData">Segment	CPC	Unsubscribe Rate
@@ -785,7 +785,7 @@ Segment D	0.73	2.45</textarea>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             Export Complete Dataset (.csv)
           </button>
-          <button class="btn btn-ghost" style="margin-left: auto;" onclick="switchView(2)">&larr; Refine Penalties</button>
+          <button class="btn btn-ghost" style="margin-left: auto;" onclick="switchView(2)">&larr; Refine Efficiencies</button>
         </div>
       </div>
     </div>
@@ -1271,7 +1271,7 @@ Segment D	0.73	2.45</textarea>
       <th class="sortable ${activeSortColumn==='rank'?'active-sort':''}" onclick="toggleColumnSort('rank')">Rank ${getSortIndicatorMarkup('rank')}</th>
       <th class="sortable ${activeSortColumn==='name'?'active-sort':''}" onclick="toggleColumnSort('name')">Entry Name ${getSortIndicatorMarkup('name')}</th>
       <th class="sortable ${activeSortColumn==='perf'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Perf Quality ${getSortIndicatorMarkup('perf')}</th>
-      <th class="sortable ${activeSortColumn==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Penalty Offset ${getSortIndicatorMarkup('cost')}</th>
+      <th class="sortable ${activeSortColumn==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Efficiency Offset ${getSortIndicatorMarkup('cost')}</th>
       <th class="sortable ${activeSortColumn==='score'?'active-sort':''}" style="width:240px;" onclick="toggleColumnSort('score')">${scoreTitleLabel} ${getSortIndicatorMarkup('score')}</th>
     `;
 
