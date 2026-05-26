@@ -587,7 +587,7 @@
       <ul>
         <li><strong>Index Baseline:</strong> Reflects the precise cohort geometric average (0 for Z-Scores, 50 for Points).</li>
         <li><strong>Higher Values Preferred:</strong> Optimises metrics where bigger scales signify success.</li>
-        <li><strong>Minimised Costs:</strong> Penalty data points are safely converted into positive performance attributes.</li>
+        <li><strong>Minimised Costs:</strong> Penalty tracking limits isolate heavy expenses and overhead items which are then seamlessly converted into positive performance attributes.</li>
       </ul>
     </div>
   </div>
@@ -612,6 +612,7 @@
         </button>
         <span class="or-divider">or enter text details below</span>
       </div>
+      
       <input type="file" id="perfFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'perfData')">
 
       <div class="data-label-row">
@@ -634,10 +635,7 @@ Segment D	1.98	41.5</textarea>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" id="calcPerfBtn" onclick="processPerformanceStep()">
-          <span class="btn-text">Continue to Penalty Metrics &rarr;</span>
-          <span class="spinner-ring"></span>
-        </button>
+        <button class="btn btn-primary" onclick="processPerformanceStep()">Continue to Penalties &rarr;</button>
       </div>
     </div>
   </div>
@@ -646,32 +644,33 @@ Segment D	1.98	41.5</textarea>
     <div class="card">
       <div class="card-header">
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         </div>
         <div>
           <div class="card-step">Step 2</div>
-          <div class="card-title">Penalty Metrics</div>
-          <div class="card-desc">Metrics where lower values are better (e.g., Unsubscribe Rate, Bounce Rate etc.).</div>
+          <div class="card-title">Penalty & Cost Metrics</div>
+          <div class="card-desc">Metrics where lower values are better (e.g. Unsubscribe Rate, Cost Per Click, Bounce Rate).</div>
         </div>
       </div>
 
       <div class="upload-row">
         <button class="btn-upload" onclick="document.getElementById('costFile').click()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Upload Cost File
+          Upload CSV File
         </button>
         <span class="or-divider">or enter text details below</span>
       </div>
+      
       <input type="file" id="costFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'costData')">
 
       <div class="data-label-row">
-        <label class="data-label" for="costData">Cost Data Table</label>
+        <label class="data-label" for="costData">Penalty Metrics Table</label>
         <span class="paste-hint">Tab or Comma Separated Columns</span>
       </div>
-      <textarea id="costData">Segment	Unsubscribe Rate	Bounce Rate
-Segment A	0.20	5.48
-Segment B	0.50	0.62
-Segment C	0.45	0.35
+      <textarea id="costData">Segment	CPC	Unsubscribe Rate
+Segment A	0.24	1.12
+Segment B	0.89	3.14
+Segment C	0.35	0.94
 Segment D	0.73	2.45</textarea>
 
       <div id="costWeightsArea" class="weights-container-block">
@@ -724,39 +723,44 @@ Segment D	0.73	2.45</textarea>
           <div class="color-controls">
             <div class="color-item">
               <label for="colorBg">Positive Accent</label>
-              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" onchange="syncColor('colorBg','hexBg'); updateChartPresentation()">
-              <input type="text" id="hexBg" class="color-hex" value="#b8f53a" oninput="syncSwatch('hexBg','colorBg'); updateChartPresentation()">
+              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" oninput="syncColor('colorBg','hexBg'); renderOverallChart();">
+              <input type="text" id="hexBg" class="color-hex" value="#B8F53A" onchange="syncSwatch('hexBg','colorBg'); renderOverallChart();">
             </div>
             <div class="color-item">
-              <label for="colorAxes">Labels & Axes</label>
-              <input type="color" id="colorAxes" class="color-swatch" value="#9EA3AE" onchange="syncColor('colorAxes','hexAxes'); updateChartPresentation()">
-              <input type="text" id="hexAxes" class="color-hex" value="#9EA3AE" oninput="syncSwatch('hexAxes','colorAxes'); updateChartPresentation()">
+              <label for="colorAxes">Labels &amp; Axes</label>
+              <input type="color" id="colorAxes" class="color-swatch" value="#9ea3ae" oninput="syncColor('colorAxes','hexAxes'); renderOverallChart();">
+              <input type="text" id="hexAxes" class="color-hex" value="#9EA3AE" onchange="syncSwatch('hexAxes','colorAxes'); renderOverallChart();">
             </div>
             <div class="color-item">
-              <label for="colorChartBg">Chart Canvas Background</label>
-              <input type="color" id="colorChartBg" class="color-swatch" value="#111214" onchange="syncColor('colorChartBg','hexChartBg'); updateChartPresentation(); syncContainerCardBg()">
-              <input type="text" id="hexChartBg" class="color-hex" value="#111214" oninput="syncSwatch('hexChartBg','colorChartBg'); updateChartPresentation(); syncContainerCardBg()">
+              <label for="colorTitle">Chart Title</label>
+              <input type="color" id="colorTitle" class="color-swatch" value="#f5f5f7" oninput="syncColor('colorTitle','hexTitle'); renderOverallChart();">
+              <input type="text" id="hexTitle" class="color-hex" value="#F5F5F7" onchange="syncSwatch('hexTitle','colorTitle'); renderOverallChart();">
             </div>
           </div>
         </div>
 
-        <div class="chart-card" id="mainChartCard">
+        <div class="chart-card">
           <div class="chart-header">
             <div>
-              <div class="chart-title">Visual Score Spreads</div>
-              <div class="chart-sub">Comparative indexing metrics distribution map (Green = Positive / Above Average, Red = Below Average)</div>
+              <div class="chart-title" id="dynChartTitle">Performance Index Distribution Matrix</div>
+              <div class="chart-sub">Cohort tracking standard deviations visualization</div>
             </div>
           </div>
-          <div style="position:relative; height:280px; width:100%;">
+          <div style="position: relative; width: 100%; height: 320px;">
             <canvas id="overallChart"></canvas>
           </div>
         </div>
 
-        <div class="btn-row">
-          <div class="export-btns">
-            <button class="btn btn-ghost" onclick="downloadPNG()">Export Chart Image</button>
-            <button class="btn btn-ghost" onclick="exportCSV()">Export CSV Table</button>
-          </div>
+        <div class="export-btns">
+          <button class="btn btn-ghost" onclick="downloadPNG()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Save Chart Image (.png)
+          </button>
+          <button class="btn btn-ghost" onclick="exportCSV()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Export Complete Dataset (.csv)
+          </button>
+          <button class="btn btn-ghost" style="margin-left: auto;" onclick="switchView(2)">&larr; Refine Penalties</button>
         </div>
       </div>
     </div>
@@ -765,14 +769,12 @@ Segment D	0.73	2.45</textarea>
 </div>
 
 <script>
-  // --- Security Parameter (Lightweight Front-End Gating Gate) ---
-  const APP_PASSWORD = "unicorn"; // Modify as required for lightweight environment previews
+  // --- Embedded Client Access Security Phrase ---
+  const CONFIG_SALT_HASH = "RANKINGS2025"; 
 
   function checkSessionAuth() {
-    if (sessionStorage.getItem('ranking_tool_auth') === 'true') {
+    if (sessionStorage.getItem('tool_authenticated') === 'true') {
       document.body.classList.add('authenticated');
-    } else {
-      document.getElementById('appPassword').focus();
     }
   }
 
@@ -780,17 +782,15 @@ Segment D	0.73	2.45</textarea>
     e.preventDefault();
     const inputEl = document.getElementById('appPassword');
     const cardEl = document.getElementById('authCard');
-
-    if (inputEl.value === APP_PASSWORD) {
-      sessionStorage.setItem('ranking_tool_auth', 'true');
+    
+    if (inputEl.value === CONFIG_SALT_HASH) {
+      sessionStorage.setItem('tool_authenticated', 'true');
       document.body.classList.add('authenticated');
-      showToast("Access granted successfully.", "info");
+      showToast("Security access granted.", "info");
     } else {
-      // Input validation feedback sequences
       cardEl.classList.remove('shake');
-      void cardEl.offsetWidth; // Force element context layout reflow
+      void cardEl.offsetWidth; 
       cardEl.classList.add('shake');
-      
       inputEl.value = '';
       inputEl.focus();
       showToast("Invalid password credential entered.", "error");
@@ -806,13 +806,14 @@ Segment D	0.73	2.45</textarea>
     let iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
     if (type === 'error') {
       iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+    } else if (type === 'info') {
+      iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
     }
-
+    
     toast.innerHTML = `
       <div class="toast-icon-wrapper">${iconSvg}</div>
       <div class="toast-text">${message}</div>
     `;
-    
     container.appendChild(toast);
     setTimeout(() => toast.classList.add('show'), 40);
     setTimeout(() => {
@@ -822,71 +823,46 @@ Segment D	0.73	2.45</textarea>
   }
 
   // --- Global Application States ---
-  let perfScores = []; let costScores = []; let overallScores = [];
-  let perfWeights = []; let costWeights = [];
-  let perfInverted = []; let costInverted = [];
-  let perfHeaders = []; let costHeaders = [];
+  let perfScores = [];
+  let costScores = [];
+  let overallScores = [];
+  let perfWeights = [];
+  let costWeights = [];
+  let perfInverted = [];
+  let costInverted = [];
+  let perfHeaders = [];
+  let costHeaders = [];
   let currentViewMode = 'points';
   let chartInst = null;
   let unlockedStep = 1;
 
   // Table Sorting State Tracking
-  let activeSortColumn = 'score'; // 'rank', 'name', 'perf', 'cost', 'score'
-  let activeSortDirection = 'desc'; // 'asc', 'desc'
+  let activeSortColumn = 'score'; 
+  let activeSortDirection = 'desc'; 
 
   document.addEventListener('DOMContentLoaded', () => {
     checkSessionAuth();
-    setupWeights('perf'); setupWeights('cost');
+    setupWeights('perf');
+    setupWeights('cost');
     document.getElementById('perfData').addEventListener('input', () => setupWeights('perf'));
     document.getElementById('costData').addEventListener('input', () => setupWeights('cost'));
   });
 
-  // --- Strict RFC 4180 Standard CSV-Tab Custom Parser Tokenizer Engine ---
-  function parseDelimitedString(text) {
-    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    if (!lines.length) return [];
-
-    let delimiter = '';
-    if (lines[0].includes('\t')) delimiter = '\t';
-    else if (lines[0].includes(',')) delimiter = ',';
-    else throw new Error("Data parsing failure. Clean tab or comma separated tables are required.");
-
-    const parseLine = (line) => {
-      const tokens = [];
-      let i = 0, token = '', insideQuote = false;
-      while (i < line.length) {
-        const char = line[i];
-        if (char === '"') {
-          insideQuote = !insideQuote;
-        } else if (char === delimiter && !insideQuote) {
-          tokens.push(token.trim().replace(/^"|"$/g, ''));
-          token = '';
-        } else {
-          token += char;
-        }
-        i++;
-      }
-      tokens.push(token.trim().replace(/^"|"$/g, ''));
-      return tokens;
-    };
-
-    return lines.map(parseLine);
-  }
-
   function switchView(stepNum) {
     if (stepNum > unlockedStep) {
-      showToast("Calculate parameters inside your current view step before advancing further.");
+      showToast("Complete previous metrics steps to unlock this tab segment.");
       return;
     }
-
     document.querySelectorAll('.step-node').forEach(node => {
       const idx = parseInt(node.id.replace('tabNode', ''));
       node.classList.remove('active', 'done');
       node.setAttribute('aria-selected', 'false');
       if (idx < stepNum) node.classList.add('done');
-      else if (idx === stepNum) { node.classList.add('active'); node.setAttribute('aria-selected', 'true'); }
+      else if (idx === stepNum) {
+        node.classList.add('active');
+        node.setAttribute('aria-selected', 'true');
+      }
     });
-
     ['line1','line2'].forEach((lineId, i) => {
       const el = document.getElementById(lineId);
       if (el) el.classList.toggle('done', stepNum > i + 1);
@@ -895,7 +871,10 @@ Segment D	0.73	2.45</textarea>
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-view'));
     if (stepNum === 1) document.getElementById('viewPerf').classList.add('active-view');
     if (stepNum === 2) document.getElementById('viewCost').classList.add('active-view');
-    if (stepNum === 3) document.getElementById('viewOverall').classList.add('active-view');
+    if (stepNum === 3) {
+      document.getElementById('viewOverall').classList.add('active-view');
+      setTimeout(() => { renderOverallChart(); }, 50);
+    }
   }
 
   function setGlobalViewMode(mode) {
@@ -933,47 +912,48 @@ Segment D	0.73	2.45</textarea>
       const txt = document.getElementById(type === 'perf' ? 'perfData' : 'costData').value.trim();
       const area = document.getElementById(type === 'perf' ? 'perfWeightsArea' : 'costWeightsArea');
       const grid = document.getElementById(type === 'perf' ? 'perfWeightsGrid' : 'costWeightsGrid');
-      if (!txt) { area.classList.remove('revealed'); return; }
-
+      if (!txt) {
+        area.classList.remove('revealed');
+        return;
+      }
       const parsedMatrix = parseDelimitedString(txt);
-      if (parsedMatrix.length < 2) return;
-
-      const headers = parsedMatrix[0].slice(1);
-      if (type === 'perf') perfHeaders = headers; else costHeaders = headers;
-
-      let currentWeights = type === 'perf' ? perfWeights : costWeights;
-      let currentInverted = type === 'perf' ? perfInverted : costInverted;
-      let newWeights = [], newInverted = [];
-
-      headers.forEach((h, i) => {
-        newWeights[i] = currentWeights[i] !== undefined ? currentWeights[i] : 1;
-        newInverted[i] = currentInverted[i] !== undefined ? currentInverted[i] : (type === 'cost');
-      });
-
-      if (type === 'perf') { perfWeights = newWeights; perfInverted = newInverted; }
-      else { costWeights = newWeights; costInverted = newInverted; }
+      if (!parsedMatrix || !parsedMatrix.subHeaders.length) {
+        area.classList.remove('revealed');
+        return;
+      }
+      
+      const metrics = parsedMatrix.subHeaders;
+      if (type === 'perf') {
+        perfHeaders = metrics;
+        perfWeights = metrics.map((_, i) => perfWeights[i] !== undefined ? perfWeights[i] : 1);
+        perfInverted = metrics.map((_, i) => perfInverted[i] !== undefined ? perfInverted[i] : false);
+      } else {
+        costHeaders = metrics;
+        costWeights = metrics.map((_, i) => costWeights[i] !== undefined ? costWeights[i] : 1);
+        costInverted = metrics.map((_, i) => costInverted[i] !== undefined ? costInverted[i] : true);
+      }
 
       grid.innerHTML = '';
-      headers.forEach((h, i) => {
+      metrics.forEach((m, i) => {
         const item = document.createElement('div');
         item.className = 'weight-item';
         
         const left = document.createElement('div');
         left.className = 'weight-item-left';
-        const label = document.createElement('label');
-        label.textContent = h;
-        left.appendChild(label);
-
+        const lbl = document.createElement('label');
+        lbl.textContent = m;
+        lbl.title = m;
+        left.appendChild(lbl);
+        
         const ctrl = document.createElement('div');
         ctrl.className = 'weight-controls';
-
+        
         const dirBtn = document.createElement('button');
         dirBtn.className = 'weight-btn dir-toggle';
         dirBtn.type = "button";
-        let inv = type === 'perf' ? perfInverted[i] : costInverted[i];
-        dirBtn.textContent = inv ? 'MIN' : 'MAX';
-        dirBtn.style.color = inv ? 'var(--danger)' : 'var(--accent)';
-        
+        const isInverted = type === 'perf' ? perfInverted[i] : costInverted[i];
+        dirBtn.textContent = isInverted ? 'MIN' : 'MAX';
+        dirBtn.style.color = isInverted ? 'var(--danger)' : 'var(--accent)';
         dirBtn.onclick = () => {
           if (type === 'perf') {
             perfInverted[i] = !perfInverted[i];
@@ -988,28 +968,43 @@ Segment D	0.73	2.45</textarea>
         };
 
         const dec = document.createElement('button');
-        dec.className = 'weight-btn'; dec.textContent = '−'; dec.type = "button";
+        dec.className = 'weight-btn';
+        dec.textContent = '−';
+        dec.type = "button";
         dec.onclick = () => {
           let val = type === 'perf' ? perfWeights[i] : costWeights[i];
           if (val > 0) {
-            val--; if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
-            num.value = val; updateWeightChips(type);
+            val--;
+            if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
+            num.value = val;
+            updateWeightChips(type);
           }
         };
 
         const num = document.createElement('input');
-        num.type = 'number'; num.value = type === 'perf' ? perfWeights[i] : costWeights[i]; num.readOnly = true;
+        num.type = 'number';
+        num.value = type === 'perf' ? perfWeights[i] : costWeights[i];
+        num.readOnly = true;
 
         const inc = document.createElement('button');
-        inc.className = 'weight-btn'; inc.textContent = '+'; inc.type = "button";
+        inc.className = 'weight-btn';
+        inc.textContent = '+';
+        inc.type = "button";
         inc.onclick = () => {
           let val = type === 'perf' ? perfWeights[i] : costWeights[i];
-          val++; if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
-          num.value = val; updateWeightChips(type);
+          val++;
+          if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
+          num.value = val;
+          updateWeightChips(type);
         };
 
-        ctrl.appendChild(dirBtn); ctrl.appendChild(dec); ctrl.appendChild(num); ctrl.appendChild(inc);
-        item.appendChild(left); item.appendChild(ctrl); grid.appendChild(item);
+        ctrl.appendChild(dirBtn);
+        ctrl.appendChild(dec);
+        ctrl.appendChild(num);
+        ctrl.appendChild(inc);
+        item.appendChild(left);
+        item.appendChild(ctrl);
+        grid.appendChild(item);
       });
 
       area.classList.add('revealed');
@@ -1022,35 +1017,34 @@ Segment D	0.73	2.45</textarea>
     const headers = type === 'perf' ? perfHeaders : costHeaders;
     const weights = type === 'perf' ? perfWeights : costWeights;
     const inverted = type === 'perf' ? perfInverted : costInverted;
-
+    
     summary.innerHTML = '';
     headers.forEach((h, i) => {
-      if (weights[i] > 0) {
-        const chip = document.createElement('div');
-        chip.className = 'weight-chip';
-        chip.innerHTML = `<span>${h}:</span> <strong>${weights[i]}x (${inverted[i]?'Min':'Max'})</strong>`;
-        summary.appendChild(chip);
-      }
+      if (weights[i] <= 0) return;
+      const chip = document.createElement('span');
+      chip.className = 'weight-chip';
+      chip.innerHTML = `${h}: <strong>x${weights[i]}</strong> (${inverted[i] ? 'Minimise' : 'Maximise'})`;
+      summary.appendChild(chip);
     });
   }
 
-  function parseInputMatrix(id) {
-    const txt = document.getElementById(id).value.trim();
-    const matrix = parseDelimitedString(txt);
-    if (matrix.length < 2) throw new Error("Data rows must contain a header and assessment evaluations.");
-
-    const headers = matrix[0];
+  function parseDelimitedString(txt) {
+    const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    if (!lines.length) return null;
+    
+    const delim = lines[0].includes('\t') ? '\t' : (lines[0].includes(',') ? ',' : ' ');
+    const headers = lines[0].split(delim).map(h => h.trim()).filter(h => h.length > 0);
     const subHeaders = headers.slice(1);
-
+    
     let rows = [];
-    for (let i = 1; i < matrix.length; i++) {
-      const parts = matrix[i];
-      if (parts.length !== headers.length) throw new Error(`Row entry mismatch at row index line: ${i + 1}`);
-      const item = { entity: parts[0], values: {}, rawNormalizedKey: parts[0].trim().toLowerCase() };
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(delim).map(p => p.trim()).filter(p => p.length > 0);
+      if (parts.length < headers.length) continue;
+      
+      let item = { entity: parts[0], rawNormalizedKey: parts[0].toLowerCase().replace(/[^a-z0-9]/g, ''), values: {} };
       subHeaders.forEach((sh, idx) => {
-        let cleanVal = parts[idx + 1].replace(/[\$,]/g, '');
-        const val = parseFloat(cleanVal);
-        if (isNaN(val)) throw new Error(`Invalid non-numeric value "${parts[idx+1]}" found at row index line: ${i + 1}`);
+        const val = parseFloat(parts[idx + 1]);
+        if (isNaN(val)) throw new Error(`Non-numeric value structural exception detected inside matrix line: ${i + 1}`);
         item.values[sh] = val;
       });
       rows.push(item);
@@ -1058,11 +1052,17 @@ Segment D	0.73	2.45</textarea>
     return { subHeaders, rows };
   }
 
+  function parseInputMatrix(elemId) {
+    const val = document.getElementById(elemId).value.trim();
+    if (!val) throw new Error("Target input configuration dataset cannot be processed empty.");
+    return parseDelimitedString(val);
+  }
+
   function computeStandardZMatrix(data, weights, inverted) {
     const metrics = data.subHeaders;
     const elements = data.rows;
     let meta = {};
-
+    
     metrics.forEach(m => {
       const vals = elements.map(e => e.values[m]);
       const avg = vals.reduce((s, v) => s + v, 0) / vals.length;
@@ -1075,22 +1075,21 @@ Segment D	0.73	2.45</textarea>
       let contributions = {};
       
       metrics.forEach((m, idx) => {
-        const w = weights[idx]; if (w <= 0) return;
+        const w = weights[idx];
+        if (w <= 0) return;
+        
         let z = (e.values[m] - meta[m].avg) / meta[m].dev;
         if (inverted[idx]) z = -z;
         
         let weightedCont = z * w;
-        sumZ += weightedCont; weightSum += w;
+        sumZ += weightedCont;
+        weightSum += w;
         
-        contributions[m] = {
-          raw: e.values[m],
-          zScore: z,
-          weightedContribution: weightedCont
-        };
+        contributions[m] = { raw: e.values[m], zScore: z, weightedContribution: weightedCont };
       });
       
-      return { 
-        entity: e.entity, 
+      return {
+        entity: e.entity,
         rawNormalizedKey: e.rawNormalizedKey,
         scoreZ: weightSum > 0 ? (sumZ / weightSum) : 0,
         contributions: contributions
@@ -1104,7 +1103,9 @@ Segment D	0.73	2.45</textarea>
       perfScores = computeStandardZMatrix(data, perfWeights, perfInverted);
       if (unlockedStep < 2) unlockedStep = 2;
       switchView(2);
-    } catch (err) { showToast(err.message, "error"); }
+    } catch (err) {
+      showToast(err.message, "error");
+    }
   }
 
   function processCostStep() {
@@ -1112,70 +1113,80 @@ Segment D	0.73	2.45</textarea>
       const data = parseInputMatrix('costData');
       costScores = computeStandardZMatrix(data, costWeights, costInverted);
       executeUnifiedCalculation();
-    } catch (err) { showToast(err.message, "error"); }
+    } catch (err) {
+      showToast(err.message, "error");
+    }
   }
 
   function executeUnifiedCalculation() {
     const btn = document.getElementById('calcCostBtn');
     btn.classList.add('loading');
-
+    
     setTimeout(() => {
       try {
-        let costLookupMap = {}; 
+        let costLookupMap = {};
         costScores.forEach(c => costLookupMap[c.rawNormalizedKey] = c);
         
         let integrated = [];
         perfScores.forEach(p => {
           const costMatch = costLookupMap[p.rawNormalizedKey];
-          const cZ = costMatch !== undefined ? costMatch.scoreZ : 0;
-          let mergedContributions = Object.assign({}, p.contributions, costMatch ? costMatch.contributions : {});
+          if (!costMatch) return; 
           
-          integrated.push({ 
-            entity: p.entity, 
-            perfZ: p.scoreZ, 
-            costZ: cZ, 
-            combZ: (p.scoreZ + cZ) / 2,
-            contributions: mergedContributions
+          const compositeZ = p.scoreZ + costMatch.scoreZ;
+          
+          let combinedContributions = {};
+          Object.keys(p.contributions).forEach(k => combinedContributions[k] = p.contributions[k]);
+          Object.keys(costMatch.contributions).forEach(k => combinedContributions[k] = costMatch.contributions[k]);
+          
+          integrated.push({
+            entity: p.entity,
+            rawNormalizedKey: p.rawNormalizedKey,
+            performanceZ: p.scoreZ,
+            costZ: costMatch.scoreZ,
+            compositeRawZ: compositeZ,
+            contributions: combinedContributions
           });
         });
 
-        const combZVals = integrated.map(i => i.combZ);
-        const mean = combZVals.reduce((s, v) => s + v, 0) / combZVals.length;
-        const dev = Math.sqrt(combZVals.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / combZVals.length) || 1;
+        if (!integrated.length) {
+          throw new Error("No cross-matching entries discovered. Verify baseline primary labels match exactly.");
+        }
 
-        overallScores = integrated.map((i, defaultIdx) => {
-          const normZ = (i.combZ - mean) / dev;
-          const points = 100 / (1 + Math.exp(-0.7 * normZ));
-          return { 
-            entity: i.entity, 
-            performanceZ: i.perfZ, 
-            costZ: i.costZ, 
-            reStandardizedZ: normZ, 
-            pointsScale: points,
-            contributions: i.contributions,
-            defaultRank: 0, 
-            expanded: false  
-          };
+        const zValues = integrated.map(i => i.compositeRawZ);
+        const zAvg = zValues.reduce((s, v) => s + v, 0) / zValues.length;
+        const zDev = Math.sqrt(zValues.reduce((s, v) => s + Math.pow(v - zAvg, 2), 0) / zValues.length) || 1;
+
+        overallScores = integrated.map(row => {
+          const reStandardizedZ = (row.compositeRawZ - zAvg) / zDev;
+          let pointsScale = 50 + (reStandardizedZ * 15);
+          if (pointsScale > 100) pointsScale = 100;
+          if (pointsScale < 0) pointsScale = 0;
+          
+          return { ...row, reStandardizedZ, pointsScale, defaultRank: 0, expanded: false };
         });
 
         overallScores.sort((a, b) => b.pointsScale - a.pointsScale);
         overallScores.forEach((row, idx) => row.defaultRank = idx + 1);
-
+        
         activeSortColumn = 'score';
         activeSortDirection = 'desc';
+        
         sortDataMatrix();
-
         renderFinalOutputs();
-        unlockedStep = 3; switchView(3);
-      } catch (err) { showToast(err.message, "error"); }
-      finally { btn.classList.remove('loading'); }
+        
+        unlockedStep = 3;
+        switchView(3);
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        btn.classList.remove('loading');
+      }
     }, 250);
   }
 
   function sortDataMatrix() {
     overallScores.sort((a, b) => {
       let valA, valB;
-      
       if (activeSortColumn === 'rank') {
         valA = a.defaultRank; valB = b.defaultRank;
       } else if (activeSortColumn === 'name') {
@@ -1184,11 +1195,11 @@ Segment D	0.73	2.45</textarea>
         valA = a.performanceZ; valB = b.performanceZ;
       } else if (activeSortColumn === 'cost') {
         valA = a.costZ; valB = b.costZ;
-      } else { 
+      } else {
         valA = currentViewMode === 'points' ? a.pointsScale : a.reStandardizedZ;
         valB = currentViewMode === 'points' ? b.pointsScale : b.reStandardizedZ;
       }
-
+      
       if (valA < valB) return activeSortDirection === 'asc' ? -1 : 1;
       if (valA > valB) return activeSortDirection === 'asc' ? 1 : -1;
       return 0;
@@ -1200,7 +1211,7 @@ Segment D	0.73	2.45</textarea>
       activeSortDirection = activeSortDirection === 'desc' ? 'asc' : 'desc';
     } else {
       activeSortColumn = colKey;
-      activeSortDirection = 'desc'; 
+      activeSortDirection = 'desc';
     }
     sortDataMatrix();
     renderFinalOutputs();
@@ -1213,7 +1224,6 @@ Segment D	0.73	2.45</textarea>
 
   function toggleRowExpansion(index) {
     overallScores[index].expanded = !overallScores[index].expanded;
-    
     const mRow = document.getElementById(`master-row-${index}`);
     const dRow = document.getElementById(`detail-row-${index}`);
     
@@ -1230,28 +1240,24 @@ Segment D	0.73	2.45</textarea>
     const headers = document.getElementById('tableHeaders');
     const body = document.getElementById('overallTableBody');
     const scoreTitleLabel = currentViewMode === 'points' ? 'Points Index' : 'Z-Score Index';
-
+    
     headers.innerHTML = `
-      <th style="width: 30px;"></th>
-      <th class="sortable ${activeSortColumn === 'rank' ? 'active-sort' : ''}" style="width: 60px;" onclick="toggleColumnSort('rank')">Rank ${getSortIndicatorMarkup('rank')}</th>
-      <th class="sortable ${activeSortColumn === 'name' ? 'active-sort' : ''}" onclick="toggleColumnSort('name')">Entry Name ${getSortIndicatorMarkup('name')}</th>
-      <th class="sortable ${activeSortColumn === 'perf' ? 'active-sort' : ''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Performance Score ${getSortIndicatorMarkup('perf')}</th>
-      <th class="sortable ${activeSortColumn === 'cost' ? 'active-sort' : ''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Penalty Score ${getSortIndicatorMarkup('cost')}</th>
-      <th class="sortable ${activeSortColumn === 'score' ? 'active-sort' : ''}" style="text-align:center; min-width:180px;" onclick="toggleColumnSort('score')">${scoreTitleLabel} ${getSortIndicatorMarkup('score')}</th>
+      <th style="width:30px;"></th>
+      <th class="sortable ${activeSortColumn==='rank'?'active-sort':''}" onclick="toggleColumnSort('rank')">Rank ${getSortIndicatorMarkup('rank')}</th>
+      <th class="sortable ${activeSortColumn==='name'?'active-sort':''}" onclick="toggleColumnSort('name')">Entry Name ${getSortIndicatorMarkup('name')}</th>
+      <th class="sortable ${activeSortColumn==='perf'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Perf Quality ${getSortIndicatorMarkup('perf')}</th>
+      <th class="sortable ${activeSortColumn==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Penalty Offset ${getSortIndicatorMarkup('cost')}</th>
+      <th class="sortable ${activeSortColumn==='score'?'active-sort':''}" style="width:240px;" onclick="toggleColumnSort('score')">${scoreTitleLabel} ${getSortIndicatorMarkup('score')}</th>
     `;
 
     body.innerHTML = '';
-    
-    if (overallScores.length === 0) {
-      body.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: var(--text-muted);">No metrics computed.</td></tr>`;
-      return;
-    }
-
     overallScores.forEach((row, idx) => {
       const pos = row.defaultRank;
       let badge = "rank-other";
-      if (pos === 1) badge = "rank-1"; if (pos === 2) badge = "rank-2"; if (pos === 3) badge = "rank-3";
-
+      if (pos === 1) badge = "rank-1";
+      if (pos === 2) badge = "rank-2";
+      if (pos === 3) badge = "rank-3";
+      
       let valStr = '', barMarkup = '';
       if (currentViewMode === 'points') {
         valStr = row.pointsScale.toFixed(1);
@@ -1271,7 +1277,6 @@ Segment D	0.73	2.45</textarea>
       trMaster.className = `master-row ${row.expanded ? 'expanded' : ''}`;
       trMaster.id = `master-row-${idx}`;
       trMaster.setAttribute('onclick', `toggleRowExpansion(${idx})`);
-      
       trMaster.innerHTML = `
         <td class="row-toggle-cell"><i class="chevron-icon">▶</i></td>
         <td><span class="rank-badge ${badge}">${pos}</span></td>
@@ -1294,13 +1299,14 @@ Segment D	0.73	2.45</textarea>
       let contributionCardsMarkup = '';
       if (row.contributions) {
         Object.keys(row.contributions).forEach(mName => {
-          const c = row.contributions[mName];
-          const isPositive = c.zScore >= 0;
+          const item = row.contributions[mName];
+          const isPos = item.zScore >= 0;
+          
           contributionCardsMarkup += `
             <div class="breakdown-card">
               <div class="breakdown-lbl" title="${mName}">${mName}</div>
-              <div class="breakdown-val">${c.raw}</div>
-              <div class="breakdown-z ${isPositive ? 'pos' : 'neg'}">${isPositive ? '+' : ''}${c.zScore.toFixed(2)} σ</div>
+              <div class="breakdown-val">${item.raw}</div>
+              <div class="breakdown-z ${isPos ? 'pos' : 'neg'}">${isPos ? '▲' : '▼'} ${Math.abs(item.zScore).toFixed(2)} σ</div>
             </div>
           `;
         });
@@ -1308,64 +1314,56 @@ Segment D	0.73	2.45</textarea>
 
       trDetail.innerHTML = `
         <td colspan="6">
-          <div class="breakdown-title">Analytical Breakdown Metrics Deviation Map</div>
+          <div class="breakdown-title">Vector Deviation Contributions Breakdown</div>
           <div class="breakdown-grid">${contributionCardsMarkup}</div>
         </td>
       `;
       body.appendChild(trDetail);
     });
 
-    const stats = document.getElementById('overallStats');
-    const activeLeaderRow = overallScores.reduce((prev, current) => (prev.pointsScale > current.pointsScale) ? prev : current, overallScores[0]);
-
-    stats.innerHTML = `
+    // Generate descriptive metrics stats summaries
+    const statsContainer = document.getElementById('overallStats');
+    const totalCount = overallScores.length;
+    const topPerformer = overallScores.find(s => s.defaultRank === 1)?.entity || 'None';
+    
+    statsContainer.innerHTML = `
       <div class="stat-row">
-        <div class="stat-chip">Total Profiles: <strong>${overallScores.length}</strong></div>
-        <div class="stat-chip stat-chip-info">Top Leader: <strong>${activeLeaderRow.entity}</strong></div>
+        <div class="stat-chip">Total Tracked Elements: <strong>${totalCount}</strong></div>
+        <div class="stat-chip stat-chip-info">Top Rank Leader: <strong>${topPerformer}</strong></div>
+        <div class="stat-chip">Active Valuation Mode: <strong>${currentViewMode === 'points' ? 'Points Scale Index Model' : 'Raw standard deviations standard scale'}</strong></div>
       </div>
     `;
-    updateChartPresentation();
-    syncContainerCardBg();
+
+    renderOverallChart();
   }
 
-  function syncContainerCardBg() {
-    const colorVal = document.getElementById('hexChartBg').value;
-    const cardEl = document.getElementById('mainChartCard');
-    if (cardEl && /^#[0-9A-F]{6}$/i.test(colorVal)) {
-      cardEl.style.backgroundColor = colorVal;
-    }
-  }
+  function renderOverallChart() {
+    if (!overallScores.length) return;
+    
+    const canvas = document.getElementById('overallChart');
+    if (!canvas) return;
 
-  const customCanvasBgPlugin = {
-    id: 'customCanvasBgPlugin',
-    beforeDraw: (chart) => {
-      const { ctx, width, height } = chart;
-      ctx.save();
-      ctx.fillStyle = document.getElementById('hexChartBg').value || '#111214';
-      ctx.fillRect(0, 0, width, height);
-      ctx.restore();
-    }
-  };
-
-  function updateChartPresentation() {
-    const ctx = document.getElementById('overallChart');
-    if (!ctx) return;
+    // Synchronize global chart visual context headers dynamically
+    const titleLabelText = currentViewMode === 'points' ? 'Final Calculated Points Index Matrix Distribution' : 'Cohort Group Composite Z-Score Deviation Matrix';
+    document.getElementById('dynChartTitle').textContent = titleLabelText;
 
     const labels = overallScores.map(s => s.entity);
     const isPoints = currentViewMode === 'points';
     const dataVals = isPoints ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
     
+    // Custom color config hooks retrieval
     const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
     const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
+    const titleColor = document.getElementById('hexTitle').value || '#F5F5F7'; // Retrieved custom title color picker hex hook
+    
     const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
     const baselineValue = isPoints ? 50 : 0;
-
+    
     let minScaleValue = 0;
     let maxScaleValue = 100;
-    
     if (!isPoints) {
       const maxAbsDeviation = Math.max(...dataVals.map(v => Math.abs(v)), 1.0);
-      const balancedBoundary = Math.ceil(maxAbsDeviation * 1.2 * 10) / 10; 
+      const balancedBoundary = Math.ceil(maxAbsDeviation * 1.2 * 10) / 10;
       minScaleValue = -balancedBoundary;
       maxScaleValue = balancedBoundary;
     }
@@ -1378,22 +1376,25 @@ Segment D	0.73	2.45</textarea>
       chartInst.options.scales.y.ticks.color = axisColor;
       chartInst.options.scales.y.min = minScaleValue;
       chartInst.options.scales.y.max = maxScaleValue;
+      chartInst.options.plugins.title.color = titleColor; // Applied custom configuration title text color dynamically on update sequences
       chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMin = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMax = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.label.content = isPoints ? 'Average Baseline (50)' : 'Average Deviation (0.0)';
+      chartInst.options.plugins.annotation.annotations.line1.label.content = isPoints ? 'Cohort Median Centerline (50 pts)' : 'Group Absolute Standard Average Base (0.0 σ)';
       chartInst.update();
     } else {
+      const ctx = canvas.getContext('2d');
       chartInst = new Chart(ctx, {
         type: 'bar',
-        plugins: [customCanvasBgPlugin],
         data: {
           labels: labels,
           datasets: [{
             data: dataVals,
             backgroundColor: barColors,
-            borderRadius: 4,
-            maxBarThickness: 28
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.55,
+            categoryPercentage: 0.8
           }]
         },
         options: {
@@ -1401,70 +1402,45 @@ Segment D	0.73	2.45</textarea>
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
+            title: {
+              display: true,
+              text: isPoints ? 'Unified Points Distribution' : 'Standard Vector Deviations Balance Scale',
+              color: titleColor, // Inserted title text color styling on fresh initialization instances
+              font: { family: "'DM Sans', sans-serif", size: 13, weight: '600' },
+              padding: { bottom: 12 }
+            },
             annotation: {
               annotations: {
                 line1: {
                   type: 'line',
                   yMin: baselineValue,
                   yMax: baselineValue,
-                  borderColor: 'rgba(255, 255, 255, 0.25)',
+                  borderColor: 'rgba(255,255,255,0.15)',
                   borderWidth: 1.5,
                   borderDash: [5, 5],
                   label: {
                     display: true,
-                    content: isPoints ? 'Average Baseline (50)' : 'Average Deviation (0.0)',
+                    content: isPoints ? 'Cohort Median Centerline (50 pts)' : 'Group Absolute Standard Average Base (0.0 σ)',
                     position: 'end',
-                    backgroundColor: 'rgba(17,18,20,0.9)',
-                    color: '#9ea3ae',
-                    font: { family: 'DM Sans', size: 10, weight: '500' }
+                    backgroundColor: 'rgba(6,6,6,0.8)',
+                    color: axisColor,
+                    font: { family: 'DM Mono', size: 10, weight: '500' },
+                    padding: 4
                   }
-                }
-              }
-            },
-            tooltip: {
-              enabled: true,
-              backgroundColor: 'rgba(17, 18, 20, 0.95)',
-              titleColor: '#f5f5f7',
-              bodyColor: '#9ea3ae',
-              bodyFont: { family: 'DM Mono', size: 11 },
-              titleFont: { family: 'DM Sans', size: 13, weight: '600' },
-              borderColor: 'rgba(255,255,255,0.06)',
-              borderWidth: 1,
-              padding: 12,
-              cornerRadius: 8,
-              displayColors: false,
-              callbacks: {
-                label: function(context) {
-                  const itemIndex = context.dataIndex;
-                  const scoreObj = overallScores[itemIndex];
-                  const outputLines = [];
-                  
-                  if (currentViewMode === 'points') {
-                    outputLines.push(`Overall Index Score: ${scoreObj.pointsScale.toFixed(1)} pts`);
-                  } else {
-                    outputLines.push(`Composite Z-Score: ${scoreObj.reStandardizedZ.toFixed(2)} σ`);
-                  }
-                  outputLines.push('------------------------------------');
-                  outputLines.push('Analytical Deviation Split:');
-
-                  if (scoreObj.contributions) {
-                    Object.keys(scoreObj.contributions).forEach(mName => {
-                      const c = scoreObj.contributions[mName];
-                      outputLines.push(` • ${mName}: ${c.raw} (Z: ${c.zScore >= 0 ? '+' : ''}${c.zScore.toFixed(2)})`);
-                    });
-                  }
-                  return outputLines;
                 }
               }
             }
           },
           scales: {
-            x: { grid: { display: false }, ticks: { color: axisColor, font: { family: 'DM Sans', size: 12 } } },
-            y: { 
-              min: minScaleValue, 
-              max: maxScaleValue, 
-              grid: { color: 'rgba(255,255,255,0.02)' }, 
-              ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } } 
+            x: {
+              grid: { display: false },
+              ticks: { color: axisColor, font: { family: 'DM Sans', size: 12 } }
+            },
+            y: {
+              min: minScaleValue,
+              max: maxScaleValue,
+              grid: { color: 'rgba(255,255,255,0.02)' },
+              ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } }
             }
           }
         }
@@ -1472,8 +1448,8 @@ Segment D	0.73	2.45</textarea>
     }
   }
 
-  function syncColor(sId, tId) { 
-    document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase(); 
+  function syncColor(sId, tId) {
+    document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase();
   }
   function syncSwatch(tId, sId) {
     const val = document.getElementById(tId).value;
@@ -1482,23 +1458,29 @@ Segment D	0.73	2.45</textarea>
 
   function downloadPNG() {
     if (!chartInst) { showToast("Generate rankings before downloading charts."); return; }
-    const a = document.createElement('a'); a.href = chartInst.toBase64Image('image/png', 1);
-    a.download = 'performance_rankings_chart.png'; a.click();
+    const a = document.createElement('a');
+    a.href = chartInst.toBase64Image('image/png', 1);
+    a.download = 'performance_rankings_chart.png';
+    a.click();
   }
 
   function exportCSV() {
     if (!overallScores.length) { showToast("Generate rankings before exporting."); return; }
     
     const metricScoreLabel = currentViewMode === 'points' ? 'Unified Index Score (0-100)' : 'Composite Z-Score (Deviation)';
-    let lines = [`"Calculated Rank","Entry Name","Performance Quality Z","Cost Efficiency Z","${metricScoreLabel}"`];
+    let lines = [`\"Calculated Rank\",\"Entry Name\",\"Performance Quality Z\",\"Cost Efficiency Z\",\"${metricScoreLabel}\"`];
     
     overallScores.forEach(r => {
       const activeValueExport = currentViewMode === 'points' ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
-      lines.push(`${r.defaultRank},"${r.entity.replace(/"/g, '""')}",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
+      lines.push(`${r.defaultRank},\"${r.entity.replace(/\"/g, '\"\"')}\",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
     });
     
-    const b = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'rankings_export.csv'; a.click();
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'performance_multimetric_rankings_export.csv';
+    link.click();
+    showToast("CSV dataset exported successfully.", "info");
   }
 </script>
 </body>
