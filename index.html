@@ -47,6 +47,7 @@
     overflow-x: hidden;
   }
 
+  /* ── LOCK OVERLAY (cosmetic session lock, not a security boundary) ── */
   #authOverlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
@@ -56,11 +57,11 @@
     padding: 24px;
     transition: opacity 400ms cubic-bezier(0.25, 1, 0.5, 1), visibility 400ms;
   }
-  
+
   .auth-card {
     background: linear-gradient(180deg, rgba(17,18,20,0.8) 0%, rgba(10,10,11,0.9) 100%);
     backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255,255,255,0.05);
     box-shadow: 0 24px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.03);
     border-radius: var(--radius-xl);
     padding: 40px;
@@ -79,55 +80,23 @@
   }
   .auth-logo-badge svg { width: 20px; height: 20px; filter: drop-shadow(0 0 6px rgba(184,245,58,0.4)); }
 
-  .auth-card h2 {
-    font-size: 20px; font-weight: 600; letter-spacing: -.02em; color: var(--text-primary); margin-bottom: 6px;
-  }
-  .auth-card p {
-    font-size: 13px; color: var(--text-secondary); margin-bottom: 28px;
-  }
+  .auth-card h2 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; color: var(--text-primary); margin-bottom: 6px; }
+  .auth-card .auth-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+  .auth-note { font-size: 11px; color: var(--text-muted); margin-bottom: 24px; font-style: italic; }
 
-  .auth-form-group {
-    position: relative; text-align: left; margin-bottom: 16px;
-  }
-  .auth-form-group label {
-    display: block; font-size: 10px; font-weight: 600; color: var(--text-muted);
-    letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px;
-  }
+  .auth-form-group { position: relative; text-align: left; margin-bottom: 16px; }
+  .auth-form-group label { display: block; font-size: 10px; font-weight: 600; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
   .auth-input-wrapper { position: relative; }
-  .auth-input-wrapper svg {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    width: 14px; height: 14px; color: var(--text-muted); pointer-events: none;
-    transition: color var(--transition);
-  }
-  .auth-input {
-    width: 100%; border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius-md);
-    padding: 12px 14px 12px 38px; font-family: var(--font); font-size: 14px;
-    background: rgba(0,0,0,0.2); color: var(--text-primary); outline: none;
-    transition: all var(--transition);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-  }
-  .auth-input:focus {
-    border-color: rgba(184, 245, 58, 0.3);
-    background: rgba(0,0,0,0.4);
-    box-shadow: 0 0 0 3px rgba(184, 245, 58, 0.06), inset 0 2px 4px rgba(0,0,0,0.1);
-  }
-  .auth-input:focus + svg { color: var(--accent); }
+  .auth-input-wrapper svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted); pointer-events: none; transition: color var(--transition); }
+  .auth-input { width: 100%; border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius-md); padding: 12px 14px 12px 38px; font-family: var(--font); font-size: 14px; background: rgba(0,0,0,0.2); color: var(--text-primary); outline: none; transition: all var(--transition); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+  .auth-input:focus { border-color: rgba(184,245,58,0.3); background: rgba(0,0,0,0.4); box-shadow: 0 0 0 3px rgba(184,245,58,0.06), inset 0 2px 4px rgba(0,0,0,0.1); }
 
-  .btn-auth {
-    width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 24px; border-radius: var(--radius-md); font-family: inherit;
-    font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all var(--transition);
-    background: var(--text-primary); color: var(--bg);
-  }
+  .btn-auth { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: var(--radius-md); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all var(--transition); background: var(--text-primary); color: var(--bg); }
   .btn-auth:hover { background: #ffffff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,255,255,0.1); }
   .btn-auth:active { transform: translateY(0); }
   .btn-auth:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
-  }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
   .shake { animation: shake 350ms cubic-bezier(.36,.07,.19,.97) both; }
 
   .page-shell { max-width: 840px; margin: 0 auto; padding: 0 20px 80px; filter: blur(16px); opacity: 0; transition: filter 600ms ease, opacity 600ms ease; }
@@ -136,43 +105,18 @@
   body.authenticated #authOverlay .auth-card { transform: translateY(-16px); }
 
   .hero { padding: 56px 0 36px; text-align: center; }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--accent-dim); color: var(--accent);
-    font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    padding: 6px 14px; border-radius: 100px; margin-bottom: 18px;
-  }
+  .hero-badge { display: inline-flex; align-items: center; gap: 7px; background: var(--accent-dim); color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 18px; }
   .hero-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-  .hero h1 {
-    font-size: clamp(28px, 5vw, 40px); font-weight: 600; letter-spacing: -.03em;
-    line-height: 1.15; color: var(--text-primary); margin-bottom: 14px;
-  }
+  .hero h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; color: var(--text-primary); margin-bottom: 14px; }
   .hero h1 span { color: var(--accent); }
-  .hero-sub {
-    font-size: 15px; color: var(--text-secondary); max-width: 560px;
-    margin: 0 auto; line-height: 1.6; font-weight: 400;
-  }
+  .hero-sub { font-size: 15px; color: var(--text-secondary); max-width: 560px; margin: 0 auto; line-height: 1.6; font-weight: 400; }
 
-  .step-track {
-    display: flex; align-items: center; gap: 0;
-    margin-bottom: 36px; width: 100%;
-  }
-  .step-node { 
-    display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; 
-    background: transparent; border: none; outline: none; cursor: pointer;
-  }
-  .step-dot {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--bg-card);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 600; font-size: 12px; color: var(--text-muted);
-    transition: all var(--transition); position: relative;
-    font-family: var(--mono);
-  }
+  .step-track { display: flex; align-items: center; gap: 0; margin-bottom: 36px; width: 100%; }
+  .step-node { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; background: transparent; border: none; outline: none; cursor: pointer; }
+  .step-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; color: var(--text-muted); transition: all var(--transition); position: relative; font-family: var(--mono); }
   .step-dot svg { display: none; }
   .step-lbl { font-size: 12px; font-weight: 500; color: var(--text-muted); text-align: center; transition: color var(--transition); }
   .step-line { flex: 1; height: 2px; background: var(--bg-card); margin: 0 -4px 18px -4px; transition: background var(--transition); }
-  
   .step-node:focus-visible .step-dot { outline: 2px solid var(--accent); outline-offset: 3px; }
   .step-node.active .step-dot { background: var(--accent-dim); color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
   .step-node.active .step-lbl { color: var(--text-primary); font-weight: 600; }
@@ -182,42 +126,37 @@
   .step-node.done .step-lbl { color: var(--text-secondary); }
   .step-line.done { background: var(--accent-dim); }
 
-  .view-toggle-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
+  .view-toggle-wrap { display: flex; justify-content: center; margin-bottom: 12px; }
   .toggle-container { display: inline-flex; background: var(--bg-card); padding: 4px; border-radius: 100px; gap: 2px; }
-  .toggle-btn {
-    background: transparent; border: none; color: var(--text-secondary);
-    padding: 6px 16px; border-radius: 100px; font-family: var(--font);
-    font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--transition);
-  }
+  .toggle-btn { background: transparent; border: none; color: var(--text-secondary); padding: 6px 16px; border-radius: 100px; font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--transition); position: relative; display: inline-flex; align-items: center; gap: 6px; }
   .toggle-btn:focus-visible { outline: 2px solid var(--accent); }
   .toggle-btn.active { background: var(--bg-hover); color: var(--text-primary); font-weight: 600; }
 
-  .tab-panel {
-    display: none; opacity: 0; transform: translateY(8px);
-    transition: opacity 250ms cubic-bezier(.25, 1, .5, 1), transform 250ms cubic-bezier(.25, 1, .5, 1);
-  }
+  /* Tooltip for Z-Score mode */
+  .mode-tooltip-wrap { position: relative; display: inline-flex; align-items: center; }
+  .tooltip-trigger { width: 14px; height: 14px; border-radius: 50%; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.08); display: inline-flex; align-items: center; justify-content: center; font-size: 9px; color: var(--text-muted); cursor: help; font-family: var(--mono); font-weight: 600; flex-shrink: 0; }
+  .tooltip-box { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #1c1d22; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-md); padding: 10px 14px; width: 260px; font-size: 12px; color: var(--text-secondary); line-height: 1.6; pointer-events: none; opacity: 0; transition: opacity 150ms ease; z-index: 100; }
+  .tooltip-box::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #1c1d22; }
+  .tooltip-trigger:hover + .tooltip-box,
+  .tooltip-trigger:focus + .tooltip-box { opacity: 1; }
+
+  .mode-hint { text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+
+  .tab-panel { display: none; opacity: 0; transform: translateY(8px); transition: opacity 250ms cubic-bezier(.25, 1, .5, 1), transform 250ms cubic-bezier(.25, 1, .5, 1); }
   .tab-panel.active-view { display: block; opacity: 1; transform: translateY(0); }
-  .card {
-    background: var(--bg-card); box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
-    border-radius: var(--radius-xl); padding: 32px; margin-bottom: 20px;
-  }
+
+  .card { background: var(--bg-card); box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03); border-radius: var(--radius-xl); padding: 32px; margin-bottom: 20px; }
   .card-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
-  .card-icon {
-    width: 40px; height: 40px; border-radius: var(--radius-md);
-    background: var(--bg-input); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
+  .card-icon { width: 40px; height: 40px; border-radius: var(--radius-md); background: var(--bg-input); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .card-icon svg { width: 18px; height: 18px; color: var(--accent); }
   .card-step { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
   .card-title { font-size: 18px; font-weight: 600; letter-spacing: -.01em; color: var(--text-primary); }
   .card-desc { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
 
   .explainer { background: var(--bg-input); border-radius: var(--radius-lg); padding: 18px 22px; margin-bottom: 20px; }
-  .explainer h3 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-  .explainer p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-  .explainer-toggle {
-    font-size: 12px; color: var(--accent); cursor: pointer; border: none;
-    background: none; font-family: inherit; padding: 0; margin-top: 6px; font-weight: 500;
-  }
+  .explainer-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; }
+  .explainer h3 { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .explainer-toggle { font-size: 12px; color: var(--accent); cursor: pointer; border: 1px solid rgba(184,245,58,0.2); background: var(--accent-dim); font-family: inherit; padding: 4px 10px; border-radius: 100px; margin: 0; font-weight: 600; flex-shrink: 0; transition: opacity var(--transition); }
   .explainer-toggle:hover { opacity: 0.8; }
   .explainer-more { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.03); }
   .explainer-more.open { display: block; }
@@ -228,235 +167,128 @@
   .data-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .data-label { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; }
   .paste-hint { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
-  textarea {
-    width: 100%; border: none; border-radius: var(--radius-md); padding: 14px 16px;
-    font-family: var(--mono); font-size: 13px; background: var(--bg-input); color: var(--text-primary);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); resize: vertical; min-height: 140px; line-height: 1.7;
-    outline: none; transition: background var(--transition); white-space: pre; overflow-x: auto;
-  }
+
+  textarea { width: 100%; border: none; border-radius: var(--radius-md); padding: 14px 16px; font-family: var(--mono); font-size: 13px; background: var(--bg-input); color: var(--text-primary); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); resize: vertical; min-height: 140px; line-height: 1.7; outline: none; transition: background var(--transition); white-space: pre; overflow-x: auto; }
   textarea:focus { background: var(--bg-hover); }
 
   .upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-  .btn-upload {
-    display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
-    border: none; border-radius: var(--radius-sm); background: var(--bg-input);
-    color: var(--text-secondary); font-family: inherit; font-size: 12px; font-weight: 500;
-    cursor: pointer; transition: all var(--transition);
-  }
+  .btn-upload { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border: none; border-radius: var(--radius-sm); background: var(--bg-input); color: var(--text-secondary); font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; transition: all var(--transition); }
   .btn-upload:hover { color: var(--text-primary); background: var(--bg-hover); }
   .btn-upload:focus-visible { outline: 2px solid var(--accent); }
   .or-divider { font-size: 12px; color: var(--text-muted); }
 
-  .weights-container-block {
-    opacity: 0; max-height: 0; overflow: hidden;
-    transition: opacity 250ms ease, max-height 300ms cubic-bezier(0.4, 0, 0.2, 1), margin-top 250ms ease;
-    margin-top: 0;
-  }
+  .weights-container-block { opacity: 0; max-height: 0; overflow: hidden; transition: opacity 250ms ease, max-height 300ms cubic-bezier(0.4, 0, 0.2, 1), margin-top 250ms ease; margin-top: 0; }
   .weights-container-block.revealed { opacity: 1; max-height: 1200px; margin-top: 20px; }
   .weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
-  
-  .weight-item {
-    background: var(--bg-input); border-radius: var(--radius-md); padding: 12px 16px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  }
+
+  .weight-item { background: var(--bg-input); border-radius: var(--radius-md); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .weight-item-left { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
   .weight-item label { font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .weight-controls { display: flex; align-items: center; gap: 6px; }
-  
-  .weight-btn {
-    width: 26px; height: 26px; border-radius: 4px; background: var(--bg-hover);
-    border: none; color: var(--text-primary); cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 14px; transition: opacity var(--transition);
-  }
+
+  .weight-btn { width: 26px; height: 26px; border-radius: 4px; background: var(--bg-hover); border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: opacity var(--transition); }
   .weight-btn:hover { opacity: 0.8; }
   .weight-btn:focus-visible { outline: 2px solid var(--accent); }
   .weight-btn.dir-toggle { width: auto; padding: 0 8px; font-size: 11px; font-family: var(--mono); font-weight: 600; }
-  
-  .weight-item input[type=number] {
-    width: 36px; border: none; font-family: var(--mono); font-size: 13px;
-    font-weight: 500; background: transparent; color: var(--accent);
-    outline: none; text-align: center; -moz-appearance: textfield;
-  }
+
+  .weight-item input[type=number] { width: 36px; border: none; font-family: var(--mono); font-size: 13px; font-weight: 500; background: transparent; color: var(--accent); outline: none; text-align: center; -moz-appearance: textfield; }
   .weight-item input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  
+
   .weight-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-  .weight-chip {
-    font-size: 11px; background: var(--bg-input); border-radius: 100px; padding: 4px 12px;
-    display: flex; gap: 5px; align-items: center; color: var(--text-secondary);
-  }
+  .weight-chip { font-size: 11px; background: var(--bg-input); border-radius: 100px; padding: 4px 12px; display: flex; gap: 5px; align-items: center; color: var(--text-secondary); }
   .weight-chip strong { color: var(--accent); font-family: var(--mono); }
 
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    padding: 12px 24px; border-radius: var(--radius-md); font-family: inherit;
-    font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all var(--transition);
-  }
+  /* Cross-dataset balance strip */
+  .balance-strip { margin-top: 14px; background: var(--bg-input); border-radius: var(--radius-md); padding: 12px 16px; }
+  .balance-label { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
+  .balance-bar-track { height: 6px; border-radius: 3px; background: var(--bg-hover); overflow: hidden; display: flex; }
+  .balance-perf { height: 100%; background: var(--accent); transition: width .3s ease; }
+  .balance-cost { height: 100%; background: var(--info); transition: width .3s ease; }
+  .balance-legend { display: flex; gap: 14px; margin-top: 8px; }
+  .balance-item { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; font-family: var(--mono); }
+  .balance-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 12px 24px; border-radius: var(--radius-md); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all var(--transition); }
   .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 12px rgba(184,245,58,0.15); }
   .btn-primary:hover:not(:disabled) { background: #c8ff48; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(184,245,58,0.25); }
   .btn-primary:active:not(:disabled) { transform: translateY(0); }
   .btn-ghost { background: var(--bg-input); color: var(--text-secondary); }
   .btn-ghost:hover:not(:disabled) { color: var(--text-primary); background: var(--bg-hover); }
-  
   .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .btn:disabled { opacity: .3; cursor: not-allowed; transform: none !important; }
   .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; justify-content: flex-end; }
-  
-  .btn .spinner-ring { display: none; }
-  .btn.loading .btn-text { display: none; }
-  .btn.loading .spinner-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,.15); border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; }
 
   .notice { border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; }
   .notice-icon { flex-shrink: 0; margin-top: 2px; }
   .notice-accent { background: var(--accent-dim2); color: var(--text-secondary); }
+  .notice-warn { background: rgba(255,83,83,.06); color: #ff9999; border: 1px solid rgba(255,83,83,.12); }
 
-  #toast-container {
-    position: fixed; top: 24px; right: 24px; z-index: 999999;
-    display: flex; flex-direction: column; gap: 10px; pointer-events: none;
-  }
-  .toast {
-    background: rgba(23, 24, 28, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-    padding: 14px 20px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 12px;
-    color: var(--text-primary); font-size: 13px; font-weight: 500; pointer-events: auto;
-    transform: translateY(-20px) scale(0.95); opacity: 0; transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
+  #toast-container { position: fixed; top: 24px; right: 24px; z-index: 999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+  .toast { background: rgba(23,24,28,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); padding: 14px 20px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-size: 13px; font-weight: 500; pointer-events: auto; transform: translateY(-20px) scale(0.95); opacity: 0; transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1); }
   .toast.show { transform: translateY(0) scale(1); opacity: 1; }
   .toast-icon-wrapper { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
   .result-section { margin-top: 12px; }
-  .table-wrap { 
-    overflow-x: auto; 
-    border-radius: var(--radius-md); 
-    background: var(--bg-input); 
-    max-height: 480px; 
-    position: relative;
-    box-shadow: inset 0 0 0 1px var(--border-subtle);
-  }
+  .table-wrap { overflow-x: auto; border-radius: var(--radius-md); background: var(--bg-input); max-height: 480px; position: relative; box-shadow: inset 0 0 0 1px var(--border-subtle); }
+
   table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
-  
-  thead th {
-    background: #17181c; 
-    padding: 14px 16px; 
-    text-align: left;
-    font-size: 11px; 
-    font-weight: 600; 
-    letter-spacing: .05em; 
-    text-transform: uppercase;
-    color: var(--text-muted); 
-    white-space: nowrap;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    user-select: none;
-  }
-  
-  thead th.sortable {
-    cursor: pointer;
-    transition: color var(--transition), background var(--transition);
-  }
-  thead th.sortable:hover {
-    color: var(--text-primary);
-    background: var(--bg-hover);
-  }
-  .sort-icon {
-    display: inline-flex;
-    margin-left: 4px;
-    font-size: 10px;
-    vertical-align: middle;
-    color: var(--text-muted);
-    opacity: 0.5;
-    transition: opacity var(--transition), color var(--transition);
-  }
+  thead th { background: #17181c; padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.06); user-select: none; }
+  thead th.sortable { cursor: pointer; transition: color var(--transition), background var(--transition); }
+  thead th.sortable:hover { color: var(--text-primary); background: var(--bg-hover); }
+  .sort-icon { display: inline-flex; margin-left: 4px; font-size: 10px; vertical-align: middle; color: var(--text-muted); opacity: 0.5; transition: opacity var(--transition), color var(--transition); }
   thead th.sortable:hover .sort-icon { opacity: 1; }
   thead th.active-sort { color: var(--accent); }
   thead th.active-sort .sort-icon { opacity: 1; color: var(--accent); }
 
-  tbody tr.master-row {
-    cursor: pointer;
-    transition: background var(--transition);
-  }
-  tbody tr.master-row td { 
-    padding: 14px 16px; 
-    border-bottom: 1px solid var(--border-subtle); 
-    color: var(--text-primary); 
-    position: relative;
-  }
+  tbody tr.master-row { cursor: pointer; transition: background var(--transition); }
+  tbody tr.master-row td { padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); color: var(--text-primary); position: relative; }
   tbody tr.master-row:last-child:not(.expanded) td { border-bottom: none; }
   tbody tr.master-row:hover td { background: var(--bg-hover); }
   tbody tr.master-row.expanded td { background: rgba(184,245,58,0.02); border-bottom-color: transparent; }
-  
+
   .row-toggle-cell { width: 30px; text-align: center; color: var(--text-muted); }
-  .chevron-icon {
-    display: inline-block;
-    transition: transform var(--transition);
-    font-family: monospace;
-    font-size: 11px;
-    font-style: normal;
-  }
+  .chevron-icon { display: inline-block; transition: transform var(--transition); font-family: monospace; font-size: 11px; font-style: normal; }
   tr.expanded .chevron-icon { transform: rotate(90deg); color: var(--accent); }
 
   tbody tr.detail-row { display: none; }
   tbody tr.detail-row.open { display: table-row; }
-  tbody tr.detail-row td {
-    padding: 0 24px 20px 46px;
-    background: rgba(184,245,58,0.01);
-    border-bottom: 1px solid var(--border-subtle);
-  }
+  tbody tr.detail-row td { padding: 0 24px 20px 46px; background: rgba(184,245,58,0.01); border-bottom: 1px solid var(--border-subtle); }
   tbody tr.detail-row:last-child td { border-bottom: none; }
-  
-  .breakdown-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.03);
-  }
-  .breakdown-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    margin-bottom: 12px;
-    font-weight: 600;
-  }
-  .breakdown-card {
-    background: rgba(0,0,0,0.15);
-    padding: 10px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(255,255,255,0.01);
-  }
+
+  .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.03); }
+  .breakdown-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; }
+  .breakdown-card { background: rgba(0,0,0,0.15); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.01); }
   .breakdown-lbl { font-size: 12px; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
   .breakdown-val { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 2px 0; }
   .breakdown-z { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
   .breakdown-z.pos { color: #8cc22a; }
   .breakdown-z.neg { color: #ff7c7c; }
+  .breakdown-warn { font-size: 10px; color: #ff9999; font-family: var(--mono); margin-top: 2px; }
 
-  .rank-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 700; font-family: var(--mono);
-  }
+  .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 700; font-family: var(--mono); }
   .rank-1 { background: var(--accent-dim); color: var(--accent); }
   .rank-2 { background: rgba(255,255,255,.04); color: var(--text-secondary); }
   .rank-3 { background: rgba(255,255,255,.02); color: var(--text-muted); }
   .rank-other { background: transparent; color: var(--text-muted); }
-  
-  .score-bar-wrap { display: flex; align-items: center; gap: 10px; }
-  .score-bar { height: 4px; border-radius: 2px; background: var(--accent); transition: width .3s ease; min-width: 2px; }
+
+  /* Score bar — min-width prevents collapse on mobile */
+  .score-bar-wrap { display: flex; align-items: center; gap: 10px; min-width: 120px; }
+  .score-bar-track { flex: 1; height: 4px; border-radius: 2px; background: var(--bg-hover); overflow: hidden; min-width: 40px; }
+  .score-bar { height: 100%; border-radius: 2px; background: var(--accent); transition: width .3s ease; }
   .score-bar-neg { background: var(--danger); opacity: .7; }
   .score-val { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; }
-  
+
+  /* Dynamic tag colours controlled via JS */
   .tag { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; }
-  .tag-top { background: var(--accent-dim); color: var(--accent); }
-  .tag-up { background: rgba(184,245,58,.04); color: #8cc22a; }
-  .tag-avg { background: var(--bg-hover); color: var(--text-secondary); }
-  .tag-down { background: var(--danger-bg); color: #ff7c7c; }
+  .tag-top    { background: var(--tag-pos-bg, rgba(184,245,58,.08)); color: var(--tag-pos-fg, #8cc22a); }
+  .tag-up     { background: var(--tag-pos-bg, rgba(184,245,58,.04)); color: var(--tag-pos-fg, #8cc22a); }
+  .tag-avg    { background: var(--bg-hover); color: var(--text-secondary); }
+  .tag-down   { background: var(--danger-bg); color: #ff7c7c; }
 
   .chart-card { background: var(--bg-card); padding: 24px 28px; margin-top: 24px; border-radius: var(--radius-xl); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); transition: background var(--transition); }
   .chart-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
   .chart-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
   .chart-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  #overallChart { width: 100% !important; display: block; }
 
   .colors-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.03); }
   .colors-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: block; }
@@ -471,6 +303,13 @@
   .stat-chip strong { color: var(--text-primary); }
   .stat-chip-info { background: var(--accent-dim); color: var(--accent); }
 
+  /* Empty state */
+  .empty-state { padding: 60px 24px; text-align: center; }
+  .empty-state-icon { width: 48px; height: 48px; background: var(--bg-input); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  .empty-state-icon svg { width: 22px; height: 22px; color: var(--text-muted); }
+  .empty-state h3 { font-size: 15px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; color: var(--text-muted); max-width: 320px; margin: 0 auto 20px; }
+
   .hidden { display: none !important; }
   input[type=file] { display: none; }
   .export-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; width: 100%; justify-content: flex-start; }
@@ -480,11 +319,14 @@
   @media (max-width: 640px) {
     .card, .chart-card { padding: 22px; border-radius: var(--radius-lg); }
     .hero { padding: 36px 0 24px; }
-    .btn-row { flex-direction: column-reverse; }
+    .btn-row { flex-direction: column; }
+    .btn-row .btn-ghost { order: 2; }
+    .btn-row .btn-primary { order: 1; }
     .btn { width: 100%; }
     .export-btns .btn { flex: 1; min-width: 140px; }
     .step-lbl { font-size: 11px; }
     .auth-card { padding: 32px 24px; }
+    .score-bar-wrap { min-width: 80px; }
   }
 </style>
 </head>
@@ -492,23 +334,25 @@
 
 <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
+<!-- SESSION LOCK — cosmetic access control. Not a security boundary.
+     Shared tools: use server-side auth for genuine data protection. -->
 <div id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
   <div class="auth-card" id="authCard">
     <div class="auth-logo-badge">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
     </div>
     <h2 id="authTitle">Performance Ranking Tool</h2>
-    <p>Authorised Access Required</p>
-    
+    <p class="auth-sub">Session access required</p>
+    <p class="auth-note">Session lock only — not a security boundary.</p>
     <form onsubmit="handleAuthSubmit(event)">
       <div class="auth-form-group">
-        <label for="appPassword">Password</label>
+        <label for="appPassword">Access Code</label>
         <div class="auth-input-wrapper">
           <input type="password" id="appPassword" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
       </div>
-      <button type="submit" class="btn-auth">Confirm Access</button>
+      <button type="submit" class="btn-auth">Enter Tool</button>
     </form>
   </div>
 </div>
@@ -518,7 +362,7 @@
   <div class="hero">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      Multi Metric Ranking Tool
+      Multi-Metric Ranking Tool
     </div>
     <h1>Compare performance <span>fairly across</span> multiple metrics</h1>
     <p class="hero-sub">Upload performance datasets, customise metric weighting, and generate statistically standardised rankings instantly.</p>
@@ -553,24 +397,37 @@
   <div class="view-toggle-wrap">
     <div class="toggle-container">
       <button class="toggle-btn active" id="modePoints" onclick="setGlobalViewMode('points')">Points (0–100)</button>
-      <button class="toggle-btn" id="modeZScore" onclick="setGlobalViewMode('zscore')">Z-Score Deviation</button>
+      <button class="toggle-btn" id="modeZScore" onclick="setGlobalViewMode('zscore')">
+        Z-Score Deviation
+        <div class="mode-tooltip-wrap">
+          <span class="tooltip-trigger" tabindex="0" role="button" aria-label="What is Z-Score?">?</span>
+          <div class="tooltip-box" role="tooltip">
+            A Z-Score shows how many standard deviations above or below the group average each entry sits. 0 = exactly average. +1.5 = 1.5 standard deviations above average. Useful for spotting statistical outliers.
+          </div>
+        </div>
+      </button>
     </div>
   </div>
+  <div class="mode-hint" id="modeHint">Scores centred at 50 — above average scores above 50, below average below.</div>
 
   <div class="explainer">
-    <h3>How scoring works</h3>
-    <p>This tool standardises metrics relative to the group average so different performance indicators can be compared fairly on a consistent scale.</p>
-    <button class="explainer-toggle" onclick="toggleExplainer()">Show details</button>
+    <div class="explainer-header" onclick="toggleExplainer()" role="button" tabindex="0" aria-expanded="false" id="explainerHeader">
+      <h3>How scoring works</h3>
+      <button class="explainer-toggle" tabindex="-1">Show details</button>
+    </div>
     <div class="explainer-more" id="explainerMore">
-      <p>Each metric is compared against the overall dataset distribution:</p>
+      <p>Each metric is standardised relative to the group using <strong>sample standard deviation</strong> (Bessel's correction applied), so small datasets are handled accurately.</p>
       <ul>
         <li><strong>Baseline:</strong> Scores are centred around the dataset average (0 for Z-Scores, 50 for Points).</li>
-        <li><strong>Positive Metrics:</strong> Higher values improve ranking performance.</li>
-        <li><strong>Efficiency Metrics:</strong> Metrics such as CPA, bounce rate or unsubscribe rate can be inversely weighted so that lower values improve scoring automatically.</li>
+        <li><strong>Positive Metrics (MAX):</strong> Higher values improve ranking score.</li>
+        <li><strong>Efficiency Metrics (MIN):</strong> Lower values improve score — e.g. CPA, Bounce Rate, Unsubscribe Rate.</li>
+        <li><strong>Cross-dataset balance:</strong> Performance and efficiency metric groups are independently normalised before combining, so an unequal number of metrics in each group does not bias the composite.</li>
+        <li><strong>Zero-variance warning:</strong> If all entries share the same value for a metric, that metric is excluded and flagged — it carries no discriminating information.</li>
       </ul>
     </div>
   </div>
 
+  <!-- STEP 1 -->
   <div class="tab-panel active-view" id="viewPerf" role="tabpanel">
     <div class="card">
       <div class="card-header">
@@ -589,14 +446,13 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Upload CSV File
         </button>
-        <span class="or-divider">or enter text details below</span>
+        <span class="or-divider">or paste data below</span>
       </div>
-      
       <input type="file" id="perfFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'perfData')">
 
       <div class="data-label-row">
         <label class="data-label" for="perfData">Performance Metrics Table</label>
-        <span class="paste-hint">Tab or Comma Separated Columns</span>
+        <span class="paste-hint">Tab or comma separated</span>
       </div>
       <textarea id="perfData">Segment	CTR	Open Rate
 Segment A	0.54	45.2
@@ -607,7 +463,7 @@ Segment D	1.98	41.5</textarea>
       <div id="perfWeightsArea" class="weights-container-block">
         <div class="notice notice-accent">
           <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Adjust metric weighting and configure whether higher or lower values should improve scoring.</span>
+          <span>Adjust metric weighting and configure whether higher (MAX) or lower (MIN) values should improve scoring.</span>
         </div>
         <div class="weights-grid" id="perfWeightsGrid"></div>
         <div class="weight-summary" id="perfWeightSummary"></div>
@@ -619,6 +475,7 @@ Segment D	1.98	41.5</textarea>
     </div>
   </div>
 
+  <!-- STEP 2 -->
   <div class="tab-panel" id="viewCost" role="tabpanel">
     <div class="card">
       <div class="card-header">
@@ -637,14 +494,13 @@ Segment D	1.98	41.5</textarea>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Upload CSV File
         </button>
-        <span class="or-divider">or enter text details below</span>
+        <span class="or-divider">or paste data below</span>
       </div>
-      
       <input type="file" id="costFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'costData')">
 
       <div class="data-label-row">
         <label class="data-label" for="costData">Efficiency Metrics Table</label>
-        <span class="paste-hint">Tab or Comma Separated Columns</span>
+        <span class="paste-hint">Tab or comma separated</span>
       </div>
       <textarea id="costData">Segment	Bounce Rate	Unsubscribe Rate
 Segment A	1.24	0.12
@@ -655,22 +511,33 @@ Segment D	0.73	0.45</textarea>
       <div id="costWeightsArea" class="weights-container-block">
         <div class="notice notice-accent">
           <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Configure efficiency weighting. Metrics can automatically reward lower values where appropriate.</span>
+          <span>Configure efficiency weighting. Lower values reward better scores by default (MIN mode).</span>
         </div>
         <div class="weights-grid" id="costWeightsGrid"></div>
         <div class="weight-summary" id="costWeightSummary"></div>
+        <div class="balance-strip" id="balanceStrip">
+          <div class="balance-label">Cross-dataset weight balance</div>
+          <div class="balance-bar-track">
+            <div class="balance-perf" id="balancePerfBar" style="width:50%"></div>
+            <div class="balance-cost" id="balanceCostBar" style="width:50%"></div>
+          </div>
+          <div class="balance-legend">
+            <span class="balance-item"><span class="balance-dot" style="background:var(--accent)"></span><span id="balancePerfLabel">Performance 50%</span></span>
+            <span class="balance-item"><span class="balance-dot" style="background:var(--info)"></span><span id="balanceCostLabel">Efficiency 50%</span></span>
+          </div>
+        </div>
       </div>
 
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="switchView(1)">&larr; Back to Step 1</button>
         <button class="btn btn-primary" id="calcCostBtn" onclick="processCostStep()">
-          <span class="btn-text">Calculate Comparative Scores &rarr;</span>
-          <span class="spinner-ring"></span>
+          <span class="btn-text">Calculate Rankings &rarr;</span>
         </button>
       </div>
     </div>
   </div>
 
+  <!-- STEP 3 -->
   <div class="tab-panel" id="viewOverall" role="tabpanel">
     <div class="card">
       <div class="card-header">
@@ -684,13 +551,21 @@ Segment D	0.73	0.45</textarea>
         </div>
       </div>
 
-      <div id="overallResults">
+      <!-- Empty state shown before calculation -->
+      <div id="emptyState" class="empty-state">
+        <div class="empty-state-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <h3>No rankings yet</h3>
+        <p>Complete Steps 1 and 2 to generate your weighted leaderboard.</p>
+        <button class="btn btn-ghost" onclick="switchView(1)">Start from Step 1 &rarr;</button>
+      </div>
+
+      <div id="overallResults" class="hidden">
         <div class="result-section">
           <div class="table-wrap">
             <table id="resultsTable">
-              <thead>
-                <tr id="tableHeaders"></tr>
-              </thead>
+              <thead><tr id="tableHeaders"></tr></thead>
               <tbody id="overallTableBody"></tbody>
             </table>
           </div>
@@ -701,8 +576,8 @@ Segment D	0.73	0.45</textarea>
           <div class="color-controls">
             <div class="color-item">
               <label for="colorBg">Positive Accent</label>
-              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" oninput="syncColor('colorBg','hexBg'); renderOverallChart();">
-              <input type="text" id="hexBg" class="color-hex" value="#B8F53A" onchange="syncSwatch('hexBg','colorBg'); renderOverallChart();">
+              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" oninput="syncColor('colorBg','hexBg'); applyAccentColor(); renderOverallChart();">
+              <input type="text" id="hexBg" class="color-hex" value="#B8F53A" onchange="syncSwatch('hexBg','colorBg'); applyAccentColor(); renderOverallChart();">
             </div>
             <div class="color-item">
               <label for="colorAxes">Labels &amp; Axes</label>
@@ -729,7 +604,7 @@ Segment D	0.73	0.45</textarea>
       </div>
     </div>
 
-    <div class="chart-card">
+    <div class="chart-card" id="chartCard" style="display:none;">
       <div class="chart-header">
         <div>
           <div class="chart-title" id="dynChartTitle">Standardised Score Distribution</div>
@@ -741,738 +616,793 @@ Segment D	0.73	0.45</textarea>
       </div>
     </div>
 
-    <div class="export-btns">
+    <div class="export-btns" id="exportBtns" style="display:none;">
       <button class="btn btn-ghost" onclick="downloadPNG()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Save Chart Image (.png)
+        Save Chart (.png)
       </button>
       <button class="btn btn-ghost" onclick="exportCSV()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Export Rankings Dataset (.csv)
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Export Rankings (.csv)
       </button>
       <button class="btn btn-ghost" style="margin-left: auto;" onclick="switchView(2)">&larr; Refine Efficiency Metrics</button>
     </div>
   </div>
 
-</div>
+</div><!-- /page-shell -->
 
 <script>
-  const CONFIG_SALT_HASH = "unicorn"; 
+// ─────────────────────────────────────────────
+//  SINGLE SOURCE OF TRUTH — AppState
+//  All mutable application state lives here.
+// ─────────────────────────────────────────────
+const AppState = {
+  // weights stored by metric NAME, not index — survives column reordering
+  perfWeightsByName:   {},  // { "CTR": 1, "Open Rate": 2, ... }
+  perfInvertedByName:  {},  // { "CTR": false, ... }
+  costWeightsByName:   {},
+  costInvertedByName:  {},
 
-  function checkSessionAuth() {
-    if (sessionStorage.getItem('tool_authenticated') === 'true') {
-      document.body.classList.add('authenticated');
-    }
+  perfHeaders:    [],
+  costHeaders:    [],
+
+  perfScores:     [],
+  costScores:     [],
+  overallScores:  [],
+
+  currentViewMode:     'points',
+  unlockedStep:        1,
+  activeSortColumn:    'score',
+  activeSortDirection: 'desc',
+
+  zeroVarianceWarnings: [],  // metric names flagged during calculation
+};
+
+// ─────────────────────────────────────────────
+//  AUTH (cosmetic session lock)
+// ─────────────────────────────────────────────
+const ACCESS_CODE = "unicorn";
+
+function checkSessionAuth() {
+  if (sessionStorage.getItem('tool_authenticated') === 'true') {
+    document.body.classList.add('authenticated');
   }
+}
 
-  function handleAuthSubmit(e) {
-    e.preventDefault();
-    const inputEl = document.getElementById('appPassword');
-    const cardEl = document.getElementById('authCard');
-    
-    if (inputEl.value === CONFIG_SALT_HASH) {
-      sessionStorage.setItem('tool_authenticated', 'true');
-      document.body.classList.add('authenticated');
-      showToast("Access granted.", "info");
-    } else {
-      cardEl.classList.remove('shake');
-      void cardEl.offsetWidth; 
-      cardEl.classList.add('shake');
-      inputEl.value = '';
-      inputEl.focus();
-      showToast("Incorrect password.", "error");
-    }
+function handleAuthSubmit(e) {
+  e.preventDefault();
+  const inputEl = document.getElementById('appPassword');
+  const cardEl  = document.getElementById('authCard');
+  if (inputEl.value === ACCESS_CODE) {
+    sessionStorage.setItem('tool_authenticated', 'true');
+    document.body.classList.add('authenticated');
+    showToast("Access granted.", "info");
+  } else {
+    cardEl.classList.remove('shake');
+    void cardEl.offsetWidth;
+    cardEl.classList.add('shake');
+    inputEl.value = '';
+    inputEl.focus();
+    showToast("Incorrect access code.", "error");
   }
+}
 
-  function showToast(message, type = 'warning') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    
-    let iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
-    if (type === 'error') {
-      iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
-    } else if (type === 'info') {
-      iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
-    }
-    
-    toast.innerHTML = `
-      <div class="toast-icon-wrapper">${iconSvg}</div>
-      <div class="toast-text">${message}</div>
-    `;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 40);
-    setTimeout(() => {
-      toast.classList.remove('show');
-      toast.addEventListener('transitionend', () => toast.remove());
-    }, 4500);
+// ─────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────
+function showToast(message, type = 'warning') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  const icons = {
+    warning: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+    error:   `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    info:    `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  };
+  toast.innerHTML = `<div class="toast-icon-wrapper">${icons[type] || icons.warning}</div><div>${message}</div>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.classList.add('show'), 40);
+  setTimeout(() => { toast.classList.remove('show'); toast.addEventListener('transitionend', () => toast.remove()); }, 4500);
+}
+
+// ─────────────────────────────────────────────
+//  NAVIGATION
+// ─────────────────────────────────────────────
+function switchView(stepNum) {
+  if (stepNum > AppState.unlockedStep) { showToast("Complete the previous step to continue."); return; }
+  document.querySelectorAll('.step-node').forEach(node => {
+    const idx = parseInt(node.id.replace('tabNode', ''));
+    node.classList.remove('active', 'done');
+    node.setAttribute('aria-selected', 'false');
+    if (idx < stepNum) node.classList.add('done');
+    else if (idx === stepNum) { node.classList.add('active'); node.setAttribute('aria-selected', 'true'); }
+  });
+  ['line1','line2'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('done', stepNum > i + 1);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-view'));
+  const panels = { 1: 'viewPerf', 2: 'viewCost', 3: 'viewOverall' };
+  document.getElementById(panels[stepNum]).classList.add('active-view');
+  if (stepNum === 3) { setTimeout(() => renderOverallChart(), 50); }
+}
+
+function setGlobalViewMode(mode) {
+  if (AppState.currentViewMode === mode) return;
+  AppState.currentViewMode = mode;
+  document.getElementById('modePoints').classList.toggle('active', mode === 'points');
+  document.getElementById('modeZScore').classList.toggle('active', mode === 'zscore');
+  const hint = document.getElementById('modeHint');
+  hint.textContent = mode === 'points'
+    ? 'Scores centred at 50 — above average scores above 50, below average below.'
+    : 'Z-Score: 0 = group average. +1 = one standard deviation above average.';
+  if (AppState.overallScores.length > 0) { sortDataMatrix(); renderFinalOutputs(); }
+}
+
+function toggleExplainer() {
+  const el  = document.getElementById('explainerMore');
+  const hdr = document.getElementById('explainerHeader');
+  const btn = hdr.querySelector('.explainer-toggle');
+  const open = el.classList.toggle('open');
+  hdr.setAttribute('aria-expanded', open);
+  btn.textContent = open ? 'Hide details' : 'Show details';
+}
+
+// ─────────────────────────────────────────────
+//  FILE UPLOAD
+// ─────────────────────────────────────────────
+function handleUpload(event, targetId) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById(targetId).value = e.target.result.trim();
+    setupWeights(targetId === 'perfData' ? 'perf' : 'cost');
+    showToast("File uploaded successfully.", "info");
+  };
+  reader.readAsText(file);
+}
+
+// ─────────────────────────────────────────────
+//  WEIGHT SETUP — stored by metric name, not index
+// ─────────────────────────────────────────────
+function setupWeights(type) {
+  try {
+    const txtId  = type === 'perf' ? 'perfData'        : 'costData';
+    const areaId = type === 'perf' ? 'perfWeightsArea' : 'costWeightsArea';
+    const gridId = type === 'perf' ? 'perfWeightsGrid' : 'costWeightsGrid';
+    const summId = type === 'perf' ? 'perfWeightSummary': 'costWeightSummary';
+
+    const txt = document.getElementById(txtId).value.trim();
+    const area = document.getElementById(areaId);
+    if (!txt) { area.classList.remove('revealed'); return; }
+
+    const parsed = parseDelimitedString(txt);
+    if (!parsed || !parsed.subHeaders.length) { area.classList.remove('revealed'); return; }
+
+    const metrics      = parsed.subHeaders;
+    const weightsByName  = type === 'perf' ? AppState.perfWeightsByName  : AppState.costWeightsByName;
+    const invertedByName = type === 'perf' ? AppState.perfInvertedByName : AppState.costInvertedByName;
+    const defaultInvert  = type === 'cost';
+
+    if (type === 'perf') AppState.perfHeaders = metrics;
+    else AppState.costHeaders = metrics;
+
+    // Seed new metrics with defaults — preserves existing values by name
+    metrics.forEach(m => {
+      if (weightsByName[m]  === undefined) weightsByName[m]  = 1;
+      if (invertedByName[m] === undefined) invertedByName[m] = defaultInvert;
+    });
+
+    const grid = document.getElementById(gridId);
+    grid.innerHTML = '';
+
+    metrics.forEach(m => {
+      const item = document.createElement('div');
+      item.className = 'weight-item';
+
+      const left = document.createElement('div');
+      left.className = 'weight-item-left';
+      const lbl = document.createElement('label');
+      lbl.textContent = m; lbl.title = m;
+      left.appendChild(lbl);
+
+      const ctrl = document.createElement('div');
+      ctrl.className = 'weight-controls';
+
+      const dirBtn = document.createElement('button');
+      dirBtn.className = 'weight-btn dir-toggle';
+      dirBtn.type = 'button';
+      const refreshDir = () => {
+        dirBtn.textContent = invertedByName[m] ? 'MIN' : 'MAX';
+        dirBtn.style.color  = invertedByName[m] ? 'var(--danger)' : 'var(--accent)';
+      };
+      refreshDir();
+      dirBtn.onclick = () => {
+        invertedByName[m] = !invertedByName[m];
+        refreshDir();
+        updateWeightChips(type);
+        updateBalanceBar();
+      };
+
+      const dec = document.createElement('button');
+      dec.className = 'weight-btn'; dec.textContent = '−'; dec.type = 'button';
+      const num = document.createElement('input');
+      num.type = 'number'; num.readOnly = true; num.value = weightsByName[m];
+      const inc = document.createElement('button');
+      inc.className = 'weight-btn'; inc.textContent = '+'; inc.type = 'button';
+
+      dec.onclick = () => {
+        if (weightsByName[m] > 0) { weightsByName[m]--; num.value = weightsByName[m]; updateWeightChips(type); updateBalanceBar(); }
+      };
+      inc.onclick = () => {
+        weightsByName[m]++; num.value = weightsByName[m]; updateWeightChips(type); updateBalanceBar();
+      };
+
+      ctrl.append(dirBtn, dec, num, inc);
+      item.append(left, ctrl);
+      grid.appendChild(item);
+    });
+
+    area.classList.add('revealed');
+    updateWeightChips(type);
+    updateBalanceBar();
+  } catch(e) { /* silent — textarea may be mid-edit */ }
+}
+
+function updateWeightChips(type) {
+  const summId = type === 'perf' ? 'perfWeightSummary' : 'costWeightSummary';
+  const headers      = type === 'perf' ? AppState.perfHeaders        : AppState.costHeaders;
+  const weightsByName  = type === 'perf' ? AppState.perfWeightsByName  : AppState.costWeightsByName;
+  const invertedByName = type === 'perf' ? AppState.perfInvertedByName : AppState.costInvertedByName;
+
+  const summary = document.getElementById(summId);
+  summary.innerHTML = '';
+  headers.forEach(m => {
+    const w = weightsByName[m] || 0;
+    if (w <= 0) return;
+    const chip = document.createElement('span');
+    chip.className = 'weight-chip';
+    chip.innerHTML = `${m}: <strong>x${w}</strong> (${invertedByName[m] ? 'MIN' : 'MAX'})`;
+    summary.appendChild(chip);
+  });
+}
+
+function updateBalanceBar() {
+  const balanceStrip = document.getElementById('balanceStrip');
+  if (!balanceStrip) return;
+
+  const perfTotal = AppState.perfHeaders.reduce((s, m) => s + (AppState.perfWeightsByName[m] || 0), 0);
+  const costTotal = AppState.costHeaders.reduce((s, m) => s + (AppState.costWeightsByName[m] || 0), 0);
+  const grand = perfTotal + costTotal || 1;
+  const perfPct = Math.round((perfTotal / grand) * 100);
+  const costPct = 100 - perfPct;
+
+  document.getElementById('balancePerfBar').style.width = perfPct + '%';
+  document.getElementById('balanceCostBar').style.width = costPct + '%';
+  document.getElementById('balancePerfLabel').textContent = `Performance ${perfPct}%`;
+  document.getElementById('balanceCostLabel').textContent = `Efficiency ${costPct}%`;
+}
+
+// ─────────────────────────────────────────────
+//  PARSING
+// ─────────────────────────────────────────────
+function parseDelimitedString(txt) {
+  const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (!lines.length) return null;
+  const delim = lines[0].includes('\t') ? '\t' : (lines[0].includes(',') ? ',' : ' ');
+  const headers    = lines[0].split(delim).map(h => h.trim()).filter(h => h.length > 0);
+  const subHeaders = headers.slice(1);
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].split(delim).map(p => p.trim());
+    if (parts.length < headers.length) continue;
+    const item = {
+      entity: parts[0],
+      rawNormalizedKey: parts[0].toLowerCase().replace(/[^a-z0-9]/g, ''),
+      values: {}
+    };
+    subHeaders.forEach((sh, idx) => {
+      const val = parseFloat(parts[idx + 1]);
+      if (isNaN(val)) throw new Error(`Non-numeric value on row ${i + 1}, column "${sh}".`);
+      item.values[sh] = val;
+    });
+    rows.push(item);
   }
+  return { subHeaders, rows };
+}
 
-  let perfScores = [];
-  let costScores = [];
-  let overallScores = [];
-  let perfWeights = [];
-  let costWeights = [];
-  let perfInverted = [];
-  let costInverted = [];
-  let perfHeaders = [];
-  let costHeaders = [];
-  let currentViewMode = 'points';
-  let chartInst = null;
-  let unlockedStep = 1;
-  let activeSortColumn = 'score'; 
-  let activeSortDirection = 'desc'; 
+function parseInputMatrix(elemId) {
+  const val = document.getElementById(elemId).value.trim();
+  if (!val) throw new Error("Input dataset cannot be empty.");
+  return parseDelimitedString(val);
+}
 
-  document.addEventListener('DOMContentLoaded', () => {
-    checkSessionAuth();
-    setupWeights('perf');
-    setupWeights('cost');
-    document.getElementById('perfData').addEventListener('input', () => setupWeights('perf'));
-    document.getElementById('costData').addEventListener('input', () => setupWeights('cost'));
+// ─────────────────────────────────────────────
+//  STATISTICS
+//  Uses sample std (Bessel's correction: ÷(n-1)) for accuracy with small datasets.
+//  Zero-variance columns are excluded with a warning rather than silently zeroing.
+// ─────────────────────────────────────────────
+function computeStandardZMatrix(data, weightsByName, invertedByName) {
+  const metrics  = data.subHeaders;
+  const elements = data.rows;
+  const warnings = [];
+
+  // Per-metric statistics
+  const meta = {};
+  metrics.forEach(m => {
+    const vals = elements.map(e => e.values[m]);
+    const n    = vals.length;
+    const avg  = vals.reduce((s, v) => s + v, 0) / n;
+    // Bessel's correction: ÷(n-1) for sample std; guard n=1 edge case
+    const variance = n > 1
+      ? vals.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / (n - 1)
+      : 0;
+    const dev = Math.sqrt(variance);
+    const isZeroVariance = dev === 0;
+    if (isZeroVariance) warnings.push(m);
+    meta[m] = { avg, dev: isZeroVariance ? null : dev };  // null flags exclusion
   });
 
-  function switchView(stepNum) {
-    if (stepNum > unlockedStep) {
-      showToast("Complete the previous step to continue.");
-      return;
-    }
-    document.querySelectorAll('.step-node').forEach(node => {
-      const idx = parseInt(node.id.replace('tabNode', ''));
-      node.classList.remove('active', 'done');
-      node.setAttribute('aria-selected', 'false');
-      if (idx < stepNum) node.classList.add('done');
-      else if (idx === stepNum) {
-        node.classList.add('active');
-        node.setAttribute('aria-selected', 'true');
-      }
-    });
-    ['line1','line2'].forEach((lineId, i) => {
-      const el = document.getElementById(lineId);
-      if (el) el.classList.toggle('done', stepNum > i + 1);
-    });
+  const scored = elements.map(e => {
+    let sumWeightedZ = 0;
+    let totalWeight  = 0;
+    const contributions = {};
 
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-view'));
-    if (stepNum === 1) document.getElementById('viewPerf').classList.add('active-view');
-    if (stepNum === 2) document.getElementById('viewCost').classList.add('active-view');
-    if (stepNum === 3) {
-      document.getElementById('viewOverall').classList.add('active-view');
-      setTimeout(() => { renderOverallChart(); }, 50);
-    }
-  }
-
-  function setGlobalViewMode(mode) {
-    if (currentViewMode === mode) return;
-    currentViewMode = mode;
-    document.getElementById('modePoints').classList.toggle('active', mode === 'points');
-    document.getElementById('modeZScore').classList.toggle('active', mode === 'zscore');
-    if (overallScores.length > 0) {
-      sortDataMatrix();
-      renderFinalOutputs();
-    }
-  }
-
-  function toggleExplainer() {
-    const el = document.getElementById('explainerMore');
-    const btn = el.previousElementSibling;
-    const open = el.classList.toggle('open');
-    btn.textContent = open ? 'Hide details' : 'Show details';
-  }
-
-  function handleUpload(event, targetId) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById(targetId).value = e.target.result.trim();
-      setupWeights(targetId === 'perfData' ? 'perf' : 'cost');
-      showToast("File uploaded successfully.", "info");
-    };
-    reader.readAsText(file);
-  }
-
-  function setupWeights(type) {
-    try {
-      const txt = document.getElementById(type === 'perf' ? 'perfData' : 'costData').value.trim();
-      const area = document.getElementById(type === 'perf' ? 'perfWeightsArea' : 'costWeightsArea');
-      const grid = document.getElementById(type === 'perf' ? 'perfWeightsGrid' : 'costWeightsGrid');
-      if (!txt) {
-        area.classList.remove('revealed');
-        return;
-      }
-      const parsedMatrix = parseDelimitedString(txt);
-      if (!parsedMatrix || !parsedMatrix.subHeaders.length) {
-        area.classList.remove('revealed');
-        return;
-      }
-      
-      const metrics = parsedMatrix.subHeaders;
-      if (type === 'perf') {
-        perfHeaders = metrics;
-        perfWeights = metrics.map((_, i) => perfWeights[i] !== undefined ? perfWeights[i] : 1);
-        perfInverted = metrics.map((_, i) => perfInverted[i] !== undefined ? perfInverted[i] : false);
-      } else {
-        costHeaders = metrics;
-        costWeights = metrics.map((_, i) => costWeights[i] !== undefined ? costWeights[i] : 1);
-        costInverted = metrics.map((_, i) => costInverted[i] !== undefined ? costInverted[i] : true);
-      }
-
-      grid.innerHTML = '';
-      metrics.forEach((m, i) => {
-        const item = document.createElement('div');
-        item.className = 'weight-item';
-        
-        const left = document.createElement('div');
-        left.className = 'weight-item-left';
-        const lbl = document.createElement('label');
-        lbl.textContent = m;
-        lbl.title = m;
-        left.appendChild(lbl);
-        
-        const ctrl = document.createElement('div');
-        ctrl.className = 'weight-controls';
-        
-        const dirBtn = document.createElement('button');
-        dirBtn.className = 'weight-btn dir-toggle';
-        dirBtn.type = "button";
-        const isInverted = type === 'perf' ? perfInverted[i] : costInverted[i];
-        dirBtn.textContent = isInverted ? 'MIN' : 'MAX';
-        dirBtn.style.color = isInverted ? 'var(--danger)' : 'var(--accent)';
-        dirBtn.onclick = () => {
-          if (type === 'perf') {
-            perfInverted[i] = !perfInverted[i];
-            dirBtn.textContent = perfInverted[i] ? 'MIN' : 'MAX';
-            dirBtn.style.color = perfInverted[i] ? 'var(--danger)' : 'var(--accent)';
-          } else {
-            costInverted[i] = !costInverted[i];
-            dirBtn.textContent = costInverted[i] ? 'MIN' : 'MAX';
-            dirBtn.style.color = costInverted[i] ? 'var(--danger)' : 'var(--accent)';
-          }
-          updateWeightChips(type);
-        };
-
-        const dec = document.createElement('button');
-        dec.className = 'weight-btn';
-        dec.textContent = '−';
-        dec.type = "button";
-        dec.onclick = () => {
-          let val = type === 'perf' ? perfWeights[i] : costWeights[i];
-          if (val > 0) {
-            val--;
-            if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
-            num.value = val;
-            updateWeightChips(type);
-          }
-        };
-
-        const num = document.createElement('input');
-        num.type = 'number';
-        num.value = type === 'perf' ? perfWeights[i] : costWeights[i];
-        num.readOnly = true;
-
-        const inc = document.createElement('button');
-        inc.className = 'weight-btn';
-        inc.textContent = '+';
-        inc.type = "button";
-        inc.onclick = () => {
-          let val = type === 'perf' ? perfWeights[i] : costWeights[i];
-          val++;
-          if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
-          num.value = val;
-          updateWeightChips(type);
-        };
-
-        ctrl.appendChild(dirBtn);
-        ctrl.appendChild(dec);
-        ctrl.appendChild(num);
-        ctrl.appendChild(inc);
-        item.appendChild(left);
-        item.appendChild(ctrl);
-        grid.appendChild(item);
-      });
-
-      area.classList.add('revealed');
-      updateWeightChips(type);
-    } catch(e) {}
-  }
-
-  function updateWeightChips(type) {
-    const summary = document.getElementById(type === 'perf' ? 'perfWeightSummary' : 'costWeightSummary');
-    const headers = type === 'perf' ? perfHeaders : costHeaders;
-    const weights = type === 'perf' ? perfWeights : costWeights;
-    const inverted = type === 'perf' ? perfInverted : costInverted;
-    
-    summary.innerHTML = '';
-    headers.forEach((h, i) => {
-      if (weights[i] <= 0) return;
-      const chip = document.createElement('span');
-      chip.className = 'weight-chip';
-      chip.innerHTML = `${h}: <strong>x${weights[i]}</strong> (${inverted[i] ? 'Minimise' : 'Maximise'})`;
-      summary.appendChild(chip);
-    });
-  }
-
-  function parseDelimitedString(txt) {
-    const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    if (!lines.length) return null;
-    
-    const delim = lines[0].includes('\t') ? '\t' : (lines[0].includes(',') ? ',' : ' ');
-    const headers = lines[0].split(delim).map(h => h.trim()).filter(h => h.length > 0);
-    const subHeaders = headers.slice(1);
-    
-    let rows = [];
-    for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(delim).map(p => p.trim()).filter(p => p.length > 0);
-      if (parts.length < headers.length) continue;
-      
-      let item = { entity: parts[0], rawNormalizedKey: parts[0].toLowerCase().replace(/[^a-z0-9]/g, ''), values: {} };
-      subHeaders.forEach((sh, idx) => {
-        const val = parseFloat(parts[idx + 1]);
-        if (isNaN(val)) throw new Error(`Non-numeric value detected on row ${i + 1}.`);
-        item.values[sh] = val;
-      });
-      rows.push(item);
-    }
-    return { subHeaders, rows };
-  }
-
-  function parseInputMatrix(elemId) {
-    const val = document.getElementById(elemId).value.trim();
-    if (!val) throw new Error("Input dataset cannot be empty.");
-    return parseDelimitedString(val);
-  }
-
-  function computeStandardZMatrix(data, weights, inverted) {
-    const metrics = data.subHeaders;
-    const elements = data.rows;
-    let meta = {};
-    
     metrics.forEach(m => {
-      const vals = elements.map(e => e.values[m]);
-      const avg = vals.reduce((s, v) => s + v, 0) / vals.length;
-      const dev = Math.sqrt(vals.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / vals.length);
-      meta[m] = { avg, dev: dev || 1 };
+      const w = weightsByName[m] || 0;
+      if (w <= 0 || meta[m].dev === null) return;  // skip zero-weight and zero-variance
+
+      let z = (e.values[m] - meta[m].avg) / meta[m].dev;
+      if (invertedByName[m]) z = -z;
+
+      sumWeightedZ += z * w;
+      totalWeight  += w;
+      contributions[m] = { raw: e.values[m], zScore: z, weightedContribution: z * w };
     });
 
-    return elements.map(e => {
-      let sumZ = 0, weightSum = 0;
-      let contributions = {};
-      
-      metrics.forEach((m, idx) => {
-        const w = weights[idx];
-        if (w <= 0) return;
-        
-        let z = (e.values[m] - meta[m].avg) / meta[m].dev;
-        if (inverted[idx]) z = -z;
-        
-        let weightedCont = z * w;
-        sumZ += weightedCont;
-        weightSum += w;
-        
-        contributions[m] = { raw: e.values[m], zScore: z, weightedContribution: weightedCont };
+    return {
+      entity:             e.entity,
+      rawNormalizedKey:   e.rawNormalizedKey,
+      // scoreZ is the weighted mean z, NOT a raw sum —
+      // this makes it scale-independent of metric count.
+      scoreZ: totalWeight > 0 ? sumWeightedZ / totalWeight : 0,
+      contributions,
+    };
+  });
+
+  return { scored, warnings };
+}
+
+// ─────────────────────────────────────────────
+//  STEP HANDLERS
+// ─────────────────────────────────────────────
+function processPerformanceStep() {
+  try {
+    const data = parseInputMatrix('perfData');
+    const result = computeStandardZMatrix(data, AppState.perfWeightsByName, AppState.perfInvertedByName);
+    AppState.perfScores = result.scored;
+    AppState.zeroVarianceWarnings = result.warnings;
+    if (result.warnings.length) {
+      showToast(`"${result.warnings.join('", "')}" has no variation — excluded from scoring.`, 'warning');
+    }
+    if (AppState.unlockedStep < 2) AppState.unlockedStep = 2;
+    switchView(2);
+  } catch (err) { showToast(err.message, "error"); }
+}
+
+function processCostStep() {
+  try {
+    const data = parseInputMatrix('costData');
+    const result = computeStandardZMatrix(data, AppState.costWeightsByName, AppState.costInvertedByName);
+    AppState.costScores = result.scored;
+    AppState.zeroVarianceWarnings.push(...result.warnings);
+    if (result.warnings.length) {
+      showToast(`"${result.warnings.join('", "')}" has no variation — excluded from scoring.`, 'warning');
+    }
+    executeUnifiedCalculation();
+  } catch (err) { showToast(err.message, "error"); }
+}
+
+// ─────────────────────────────────────────────
+//  COMPOSITE CALCULATION
+//  Each dataset's scoreZ is already a weighted MEAN z (normalised by metric count).
+//  Combining two means is fair regardless of how many metrics are in each group.
+// ─────────────────────────────────────────────
+function executeUnifiedCalculation() {
+  try {
+    const costMap = {};
+    AppState.costScores.forEach(c => { costMap[c.rawNormalizedKey] = c; });
+
+    const integrated = [];
+    AppState.perfScores.forEach(p => {
+      const c = costMap[p.rawNormalizedKey];
+      if (!c) return;
+
+      // Average of two already-normalised z-scores — fair regardless of metric count per group
+      const compositeZ = (p.scoreZ + c.scoreZ) / 2;
+
+      integrated.push({
+        entity:           p.entity,
+        rawNormalizedKey: p.rawNormalizedKey,
+        performanceZ:     p.scoreZ,
+        costZ:            c.scoreZ,
+        compositeRawZ:    compositeZ,
+        contributions:    { ...p.contributions, ...c.contributions },
       });
-      
-      return {
-        entity: e.entity,
-        rawNormalizedKey: e.rawNormalizedKey,
-        scoreZ: weightSum > 0 ? (sumZ / weightSum) : 0,
-        contributions: contributions
-      };
     });
-  }
 
-  function processPerformanceStep() {
-    try {
-      const data = parseInputMatrix('perfData');
-      perfScores = computeStandardZMatrix(data, perfWeights, perfInverted);
-      if (unlockedStep < 2) unlockedStep = 2;
-      switchView(2);
-    } catch (err) {
-      showToast(err.message, "error");
+    if (!integrated.length) {
+      throw new Error("No matching entities found between datasets. Ensure entity names match exactly.");
     }
-  }
 
-  function processCostStep() {
-    try {
-      const data = parseInputMatrix('costData');
-      costScores = computeStandardZMatrix(data, costWeights, costInverted);
-      executeUnifiedCalculation();
-    } catch (err) {
-      showToast(err.message, "error");
-    }
-  }
+    // Re-standardise composite across the group (sample std)
+    const zVals = integrated.map(i => i.compositeRawZ);
+    const n      = zVals.length;
+    const zAvg   = zVals.reduce((s, v) => s + v, 0) / n;
+    const zDev   = n > 1
+      ? Math.sqrt(zVals.reduce((s, v) => s + Math.pow(v - zAvg, 2), 0) / (n - 1))
+      : 1;
+    const safeZDev = zDev === 0 ? 1 : zDev;
 
-  function executeUnifiedCalculation() {
-    const btn = document.getElementById('calcCostBtn');
-    btn.classList.add('loading');
-    
-    setTimeout(() => {
-      try {
-        let costLookupMap = {};
-        costScores.forEach(c => costLookupMap[c.rawNormalizedKey] = c);
-        
-        let integrated = [];
-        perfScores.forEach(p => {
-          const costMatch = costLookupMap[p.rawNormalizedKey];
-          if (!costMatch) return; 
-          
-          const compositeZ = p.scoreZ + costMatch.scoreZ;
-          
-          let combinedContributions = {};
-          Object.keys(p.contributions).forEach(k => combinedContributions[k] = p.contributions[k]);
-          Object.keys(costMatch.contributions).forEach(k => combinedContributions[k] = costMatch.contributions[k]);
-          
-          integrated.push({
-            entity: p.entity,
-            rawNormalizedKey: p.rawNormalizedKey,
-            performanceZ: p.scoreZ,
-            costZ: costMatch.scoreZ,
-            compositeRawZ: compositeZ,
-            contributions: combinedContributions
-          });
-        });
+    AppState.overallScores = integrated.map(row => {
+      const reStandardizedZ = (row.compositeRawZ - zAvg) / safeZDev;
 
-        if (!integrated.length) {
-          throw new Error("No matching entities were found between datasets. Ensure entity names match exactly across both tables.");
-        }
+      // Points: logistic-inspired soft mapping — avoids hard clamp, preserves outlier separation.
+      // Centred at 50, scaled so ±2σ ≈ 20–80 pts. Asymptotes to ~100/0 at extremes.
+      const pointsScale = Math.round(100 / (1 + Math.exp(-reStandardizedZ * 0.9)) * 10) / 10;
 
-        const zValues = integrated.map(i => i.compositeRawZ);
-        const zAvg = zValues.reduce((s, v) => s + v, 0) / zValues.length;
-        const zDev = Math.sqrt(zValues.reduce((s, v) => s + Math.pow(v - zAvg, 2), 0) / zValues.length) || 1;
-
-        overallScores = integrated.map(row => {
-          const reStandardizedZ = (row.compositeRawZ - zAvg) / zDev;
-          let pointsScale = 50 + (reStandardizedZ * 15);
-          if (pointsScale > 100) pointsScale = 100;
-          if (pointsScale < 0) pointsScale = 0;
-          
-          return { ...row, reStandardizedZ, pointsScale, defaultRank: 0, expanded: false };
-        });
-
-        overallScores.sort((a, b) => b.pointsScale - a.pointsScale);
-        overallScores.forEach((row, idx) => row.defaultRank = idx + 1);
-        
-        activeSortColumn = 'score';
-        activeSortDirection = 'desc';
-        
-        sortDataMatrix();
-        renderFinalOutputs();
-        
-        unlockedStep = 3;
-        switchView(3);
-      } catch (err) {
-        showToast(err.message, "error");
-      } finally {
-        btn.classList.remove('loading');
-      }
-    }, 250);
-  }
-
-  function sortDataMatrix() {
-    overallScores.sort((a, b) => {
-      let valA, valB;
-      if (activeSortColumn === 'rank') {
-        valA = a.defaultRank; valB = b.defaultRank;
-      } else if (activeSortColumn === 'name') {
-        valA = a.entity.toLowerCase(); valB = b.entity.toLowerCase();
-      } else if (activeSortColumn === 'perf') {
-        valA = a.performanceZ; valB = b.performanceZ;
-      } else if (activeSortColumn === 'cost') {
-        valA = a.costZ; valB = b.costZ;
-      } else {
-        valA = currentViewMode === 'points' ? a.pointsScale : a.reStandardizedZ;
-        valB = currentViewMode === 'points' ? b.pointsScale : b.reStandardizedZ;
-      }
-      
-      if (valA < valB) return activeSortDirection === 'asc' ? -1 : 1;
-      if (valA > valB) return activeSortDirection === 'asc' ? 1 : -1;
-      return 0;
+      return { ...row, reStandardizedZ, pointsScale, defaultRank: 0, expanded: false };
     });
-  }
 
-  function toggleColumnSort(colKey) {
-    if (activeSortColumn === colKey) {
-      activeSortDirection = activeSortDirection === 'desc' ? 'asc' : 'desc';
-    } else {
-      activeSortColumn = colKey;
-      activeSortDirection = 'desc';
-    }
+    // Default sort: descending by points
+    AppState.overallScores.sort((a, b) => b.pointsScale - a.pointsScale);
+    AppState.overallScores.forEach((row, idx) => { row.defaultRank = idx + 1; });
+
+    AppState.activeSortColumn    = 'score';
+    AppState.activeSortDirection = 'desc';
+
     sortDataMatrix();
     renderFinalOutputs();
-  }
+    AppState.unlockedStep = 3;
+    switchView(3);
 
-  function getSortIndicatorMarkup(colKey) {
-    if (activeSortColumn !== colKey) return `<span class="sort-icon">↕</span>`;
-    return activeSortDirection === 'desc' ? `<span class="sort-icon">↓</span>` : `<span class="sort-icon">↑</span>`;
-  }
+  } catch (err) { showToast(err.message, "error"); }
+}
 
-  function toggleRowExpansion(index) {
-    overallScores[index].expanded = !overallScores[index].expanded;
-    const mRow = document.getElementById(`master-row-${index}`);
-    const dRow = document.getElementById(`detail-row-${index}`);
-    
-    if(overallScores[index].expanded) {
-      mRow.classList.add('expanded');
-      dRow.classList.add('open');
-    } else {
-      mRow.classList.remove('expanded');
-      dRow.classList.remove('open');
+// ─────────────────────────────────────────────
+//  SORTING
+// ─────────────────────────────────────────────
+function sortDataMatrix() {
+  AppState.overallScores.sort((a, b) => {
+    let vA, vB;
+    switch (AppState.activeSortColumn) {
+      case 'rank': vA = a.defaultRank;              vB = b.defaultRank;              break;
+      case 'name': vA = a.entity.toLowerCase();     vB = b.entity.toLowerCase();     break;
+      case 'perf': vA = a.performanceZ;             vB = b.performanceZ;             break;
+      case 'cost': vA = a.costZ;                    vB = b.costZ;                    break;
+      default:     vA = AppState.currentViewMode === 'points' ? a.pointsScale : a.reStandardizedZ;
+                   vB = AppState.currentViewMode === 'points' ? b.pointsScale : b.reStandardizedZ;
     }
+    if (vA < vB) return AppState.activeSortDirection === 'asc' ? -1 : 1;
+    if (vA > vB) return AppState.activeSortDirection === 'asc' ?  1 : -1;
+    return 0;
+  });
+}
+
+function toggleColumnSort(colKey) {
+  if (AppState.activeSortColumn === colKey) {
+    AppState.activeSortDirection = AppState.activeSortDirection === 'desc' ? 'asc' : 'desc';
+  } else {
+    AppState.activeSortColumn    = colKey;
+    AppState.activeSortDirection = 'desc';
   }
+  sortDataMatrix();
+  renderFinalOutputs();
+}
 
-  function renderFinalOutputs() {
-    const headers = document.getElementById('tableHeaders');
-    const body = document.getElementById('overallTableBody');
-    const scoreTitleLabel = currentViewMode === 'points' ? 'Points Index' : 'Z-Score Index';
-    
-    headers.innerHTML = `
-      <th style="width:30px;"></th>
-      <th class="sortable ${activeSortColumn==='rank'?'active-sort':''}" onclick="toggleColumnSort('rank')">Rank ${getSortIndicatorMarkup('rank')}</th>
-      <th class="sortable ${activeSortColumn==='name'?'active-sort':''}" onclick="toggleColumnSort('name')">Entry Name ${getSortIndicatorMarkup('name')}</th>
-      <th class="sortable ${activeSortColumn==='perf'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Performance ${getSortIndicatorMarkup('perf')}</th>
-      <th class="sortable ${activeSortColumn==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Efficiency ${getSortIndicatorMarkup('cost')}</th>
-      <th class="sortable ${activeSortColumn==='score'?'active-sort':''}" style="width:240px;" onclick="toggleColumnSort('score')">${scoreTitleLabel} ${getSortIndicatorMarkup('score')}</th>
-    `;
+function getSortIcon(colKey) {
+  if (AppState.activeSortColumn !== colKey) return `<span class="sort-icon">↕</span>`;
+  return AppState.activeSortDirection === 'desc'
+    ? `<span class="sort-icon">↓</span>`
+    : `<span class="sort-icon">↑</span>`;
+}
 
-    body.innerHTML = '';
-    overallScores.forEach((row, idx) => {
-      const pos = row.defaultRank;
-      let badge = "rank-other";
-      if (pos === 1) badge = "rank-1";
-      if (pos === 2) badge = "rank-2";
-      if (pos === 3) badge = "rank-3";
-      
-      let valStr = '', barMarkup = '';
-      if (currentViewMode === 'points') {
-        valStr = row.pointsScale.toFixed(1);
-        barMarkup = `<div class="score-bar" style="width: ${row.pointsScale}%"></div>`;
-      } else {
-        valStr = row.reStandardizedZ.toFixed(2);
-        const w = Math.min(Math.abs(row.reStandardizedZ) * 25, 100);
-        barMarkup = `<div class="score-bar ${row.reStandardizedZ < 0 ? 'score-bar-neg' : ''}" style="width: ${w}%"></div>`;
-      }
+// ─────────────────────────────────────────────
+//  ROW EXPANSION — update only affected rows, not full table rebuild
+// ─────────────────────────────────────────────
+function toggleRowExpansion(index) {
+  AppState.overallScores[index].expanded = !AppState.overallScores[index].expanded;
+  const mRow = document.getElementById(`master-row-${index}`);
+  const dRow = document.getElementById(`detail-row-${index}`);
+  mRow.classList.toggle('expanded', AppState.overallScores[index].expanded);
+  dRow.classList.toggle('open',     AppState.overallScores[index].expanded);
+}
 
-      const pTag = row.performanceZ > 0.25 ? 'tag-top' : (row.performanceZ >= -0.25 ? 'tag-avg' : 'tag-down');
-      const pLbl = row.performanceZ > 0.25 ? 'Strong' : (row.performanceZ >= -0.25 ? 'Average' : 'Weak');
-      const cTag = row.costZ > 0.25 ? 'tag-top' : (row.costZ >= -0.25 ? 'tag-avg' : 'tag-down');
-      const cLbl = row.costZ > 0.25 ? 'Efficient' : (row.costZ >= -0.25 ? 'Moderate' : 'High');
+// ─────────────────────────────────────────────
+//  ACCENT COLOUR — propagate to CSS custom props so tags update too
+// ─────────────────────────────────────────────
+function applyAccentColor() {
+  const hex = document.getElementById('hexBg').value;
+  if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
+  // Derive a dimmed version for tag backgrounds
+  document.documentElement.style.setProperty('--accent', hex);
+  document.documentElement.style.setProperty('--tag-pos-bg', hex + '14');  // ~8% opacity
+  document.documentElement.style.setProperty('--tag-pos-fg', hex);
+}
 
-      const trMaster = document.createElement('tr');
-      trMaster.className = `master-row ${row.expanded ? 'expanded' : ''}`;
-      trMaster.id = `master-row-${idx}`;
-      trMaster.setAttribute('onclick', `toggleRowExpansion(${idx})`);
-      trMaster.innerHTML = `
-        <td class="row-toggle-cell"><i class="chevron-icon">▶</i></td>
-        <td><span class="rank-badge ${badge}">${pos}</span></td>
-        <td><strong>${row.entity}</strong></td>
-        <td style="text-align:right;"><span class="tag ${pTag}">${pLbl}</span></td>
-        <td style="text-align:right;"><span class="tag ${cTag}">${cLbl}</span></td>
-        <td>
-          <div class="score-bar-wrap">
-            ${barMarkup}
-            <span class="score-val">${valStr}</span>
+// ─────────────────────────────────────────────
+//  RENDER — full table rebuild (happens on sort, mode switch, recalc)
+// ─────────────────────────────────────────────
+let chartInst = null;
+
+function renderFinalOutputs() {
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('overallResults').classList.remove('hidden');
+  document.getElementById('chartCard').style.display  = '';
+  document.getElementById('exportBtns').style.display = '';
+
+  const isPoints = AppState.currentViewMode === 'points';
+  const scoreLbl = isPoints ? 'Points Index' : 'Z-Score Index';
+
+  const headers = document.getElementById('tableHeaders');
+  const sc      = AppState.activeSortColumn;
+
+  headers.innerHTML = `
+    <th style="width:30px;"></th>
+    <th class="sortable ${sc==='rank'?'active-sort':''}" onclick="toggleColumnSort('rank')">Rank ${getSortIcon('rank')}</th>
+    <th class="sortable ${sc==='name'?'active-sort':''}" onclick="toggleColumnSort('name')">Name ${getSortIcon('name')}</th>
+    <th class="sortable ${sc==='perf'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Performance ${getSortIcon('perf')}</th>
+    <th class="sortable ${sc==='cost'?'active-sort':''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Efficiency ${getSortIcon('cost')}</th>
+    <th class="sortable ${sc==='score'?'active-sort':''}" style="min-width:160px;" onclick="toggleColumnSort('score')">${scoreLbl} ${getSortIcon('score')}</th>
+  `;
+
+  const body = document.getElementById('overallTableBody');
+  body.innerHTML = '';
+
+  AppState.overallScores.forEach((row, idx) => {
+    const pos    = row.defaultRank;
+    const badge  = pos === 1 ? 'rank-1' : pos === 2 ? 'rank-2' : pos === 3 ? 'rank-3' : 'rank-other';
+    const val    = isPoints ? row.pointsScale.toFixed(1) : row.reStandardizedZ.toFixed(2);
+
+    // Score bar: relative to best score in set
+    const allVals    = AppState.overallScores.map(s => isPoints ? s.pointsScale : s.reStandardizedZ);
+    const maxAbsVal  = Math.max(...allVals.map(Math.abs), 0.01);
+    const barW       = isPoints
+      ? Math.max((row.pointsScale / 100) * 100, 2)
+      : Math.min((Math.abs(row.reStandardizedZ) / maxAbsVal) * 100, 100);
+    const barNeg     = !isPoints && row.reStandardizedZ < 0;
+
+    const pTag = row.performanceZ > 0.25 ? 'tag-top' : (row.performanceZ >= -0.25 ? 'tag-avg' : 'tag-down');
+    const pLbl = row.performanceZ > 0.25 ? 'Strong'  : (row.performanceZ >= -0.25 ? 'Average'  : 'Weak');
+    const cTag = row.costZ > 0.25 ? 'tag-top' : (row.costZ >= -0.25 ? 'tag-avg' : 'tag-down');
+    const cLbl = row.costZ > 0.25 ? 'Efficient' : (row.costZ >= -0.25 ? 'Moderate' : 'High cost');
+
+    const trM = document.createElement('tr');
+    trM.className = `master-row ${row.expanded ? 'expanded' : ''}`;
+    trM.id = `master-row-${idx}`;
+    trM.setAttribute('onclick', `toggleRowExpansion(${idx})`);
+    trM.innerHTML = `
+      <td class="row-toggle-cell"><i class="chevron-icon">▶</i></td>
+      <td><span class="rank-badge ${badge}">${pos}</span></td>
+      <td><strong>${row.entity}</strong></td>
+      <td style="text-align:right;"><span class="tag ${pTag}">${pLbl}</span></td>
+      <td style="text-align:right;"><span class="tag ${cTag}">${cLbl}</span></td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track">
+            <div class="score-bar ${barNeg ? 'score-bar-neg' : ''}" style="width:${barW}%"></div>
           </div>
-        </td>
-      `;
-      body.appendChild(trMaster);
+          <span class="score-val">${val}</span>
+        </div>
+      </td>
+    `;
+    body.appendChild(trM);
 
-      const trDetail = document.createElement('tr');
-      trDetail.className = `detail-row ${row.expanded ? 'open' : ''}`;
-      trDetail.id = `detail-row-${idx}`;
-      
-      let contributionCardsMarkup = '';
-      if (row.contributions) {
-        Object.keys(row.contributions).forEach(mName => {
-          const item = row.contributions[mName];
-          const isPos = item.zScore >= 0;
-          
-          contributionCardsMarkup += `
-            <div class="breakdown-card">
-              <div class="breakdown-lbl" title="${mName}">${mName}</div>
-              <div class="breakdown-val">${item.raw}</div>
-              <div class="breakdown-z ${isPos ? 'pos' : 'neg'}">${isPos ? '▲' : '▼'} ${Math.abs(item.zScore).toFixed(2)} σ</div>
-            </div>
-          `;
-        });
-      }
-
-      trDetail.innerHTML = `
-        <td colspan="6">
-          <div class="breakdown-title">Metric Contributions</div>
-          <div class="breakdown-grid">${contributionCardsMarkup}</div>
-        </td>
-      `;
-      body.appendChild(trDetail);
+    // Detail row — metric breakdown
+    let cards = '';
+    Object.entries(row.contributions).forEach(([mName, item]) => {
+      const isZeroVar = AppState.zeroVarianceWarnings.includes(mName);
+      const pos       = item.zScore >= 0;
+      cards += `
+        <div class="breakdown-card">
+          <div class="breakdown-lbl" title="${mName}">${mName}</div>
+          <div class="breakdown-val">${item.raw}</div>
+          ${isZeroVar
+            ? `<div class="breakdown-warn">⚠ no variation — excluded</div>`
+            : `<div class="breakdown-z ${pos ? 'pos' : 'neg'}">${pos ? '▲' : '▼'} ${Math.abs(item.zScore).toFixed(2)} σ</div>`
+          }
+        </div>`;
     });
 
-    const statsContainer = document.getElementById('overallStats');
-    const totalCount = overallScores.length;
-    const topPerformer = overallScores.find(s => s.defaultRank === 1)?.entity || 'None';
-    
-    statsContainer.innerHTML = `
-      <div class="stat-row">
-        <div class="stat-chip">Total entries: <strong>${totalCount}</strong></div>
-        <div class="stat-chip stat-chip-info">Top ranked: <strong>${topPerformer}</strong></div>
-        <div class="stat-chip">Scoring mode: <strong>${currentViewMode === 'points' ? 'Points (0–100)' : 'Z-Score'}</strong></div>
-      </div>
-    `;
+    const trD = document.createElement('tr');
+    trD.className = `detail-row ${row.expanded ? 'open' : ''}`;
+    trD.id = `detail-row-${idx}`;
+    trD.innerHTML = `
+      <td colspan="6">
+        <div class="breakdown-title">Metric Contributions</div>
+        <div class="breakdown-grid">${cards}</div>
+      </td>`;
+    body.appendChild(trD);
+  });
 
-    renderOverallChart();
+  // Stats strip
+  const top   = AppState.overallScores.find(s => s.defaultRank === 1)?.entity || '—';
+  const mode  = isPoints ? 'Points (0–100)' : 'Z-Score deviation';
+  const warns = AppState.zeroVarianceWarnings.length;
+  document.getElementById('overallStats').innerHTML = `
+    <div class="stat-row">
+      <div class="stat-chip">Entries: <strong>${AppState.overallScores.length}</strong></div>
+      <div class="stat-chip stat-chip-info">Top ranked: <strong>${top}</strong></div>
+      <div class="stat-chip">Mode: <strong>${mode}</strong></div>
+      ${warns ? `<div class="stat-chip" style="background:rgba(255,83,83,.06);color:#ff9999;">${warns} metric${warns>1?'s':''} excluded (no variation)</div>` : ''}
+    </div>`;
+
+  renderOverallChart();
+}
+
+// ─────────────────────────────────────────────
+//  CHART
+// ─────────────────────────────────────────────
+function renderOverallChart() {
+  if (!AppState.overallScores.length) return;
+  const canvas = document.getElementById('overallChart');
+  if (!canvas) return;
+
+  const isPoints        = AppState.currentViewMode === 'points';
+  const accentColor     = document.getElementById('hexBg').value      || '#b8f53a';
+  const axisColor       = document.getElementById('hexAxes').value    || '#9EA3AE';
+  const titleColor      = document.getElementById('hexTitle').value   || '#F5F5F7';
+  const baselineColor   = document.getElementById('hexBaseline').value || '#FFFFFF';
+
+  const labels   = AppState.overallScores.map(s => s.entity);
+  const dataVals = isPoints
+    ? AppState.overallScores.map(s => s.pointsScale)
+    : AppState.overallScores.map(s => +s.reStandardizedZ.toFixed(2));
+
+  const baselineVal = isPoints ? 50 : 0;
+  const barColors   = dataVals.map(v => (isPoints ? v >= 50 : v >= 0) ? accentColor : '#ff5353');
+
+  let minY = 0, maxY = 100;
+  if (!isPoints) {
+    const maxAbs = Math.max(...dataVals.map(v => Math.abs(v)), 1.0);
+    const bound  = Math.ceil(maxAbs * 1.2 * 10) / 10;
+    minY = -bound; maxY = bound;
   }
 
-  function renderOverallChart() {
-    if (!overallScores.length) return;
-    
-    const canvas = document.getElementById('overallChart');
-    if (!canvas) return;
+  const baselineLbl = isPoints ? 'Dataset average (50 pts)' : 'Dataset average (0.0 σ)';
+  const titleLbl    = isPoints ? 'Points Index' : 'Composite Z-Score';
 
-    const titleLabelText = currentViewMode === 'points' ? 'Points Index' : 'Composite Z-Score';
-    document.getElementById('dynChartTitle').textContent = 'Standardised Score Distribution';
+  if (chartInst) {
+    chartInst.data.labels                      = labels;
+    chartInst.data.datasets[0].data            = dataVals;
+    chartInst.data.datasets[0].backgroundColor = barColors;
+    chartInst.options.scales.x.ticks.color     = axisColor;
+    chartInst.options.scales.y.ticks.color     = axisColor;
+    chartInst.options.scales.y.min             = minY;
+    chartInst.options.scales.y.max             = maxY;
+    chartInst.options.plugins.title.color      = titleColor;
+    chartInst.options.plugins.title.text       = titleLbl;
+    const ann = chartInst.options.plugins.annotation.annotations.line1;
+    ann.borderColor     = baselineColor;
+    ann.yMin = ann.yMax = ann.value = baselineVal;
+    ann.label.content   = baselineLbl;
+    ann.label.color     = axisColor;
+    chartInst.update();
+    return;
+  }
 
-    const labels = overallScores.map(s => s.entity);
-    const isPoints = currentViewMode === 'points';
-    const dataVals = isPoints ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
-    
-    const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
-    const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
-    const titleColor = document.getElementById('hexTitle').value || '#F5F5F7';
-    const baselineColor = document.getElementById('hexBaseline').value || '#FFFFFF';
-    
-    const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
-    const baselineValue = isPoints ? 50 : 0;
-    
-    let minScaleValue = 0;
-    let maxScaleValue = 100;
-    if (!isPoints) {
-      const maxAbsDeviation = Math.max(...dataVals.map(v => Math.abs(v)), 1.0);
-      const balancedBoundary = Math.ceil(maxAbsDeviation * 1.2 * 10) / 10;
-      minScaleValue = -balancedBoundary;
-      maxScaleValue = balancedBoundary;
-    }
-
-    if (chartInst) {
-      chartInst.data.labels = labels;
-      chartInst.data.datasets[0].data = dataVals;
-      chartInst.data.datasets[0].backgroundColor = barColors;
-      chartInst.options.scales.x.ticks.color = axisColor;
-      chartInst.options.scales.y.ticks.color = axisColor;
-      chartInst.options.scales.y.min = minScaleValue;
-      chartInst.options.scales.y.max = maxScaleValue;
-      chartInst.options.plugins.title.color = titleColor;
-      chartInst.options.plugins.annotation.annotations.line1.borderColor = baselineColor;
-      chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.yMin = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.yMax = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.label.content = isPoints ? 'Dataset average (50 pts)' : 'Dataset average (0.0 σ)';
-      chartInst.update();
-    } else {
-      const ctx = canvas.getContext('2d');
-      chartInst = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: dataVals,
-            backgroundColor: barColors,
-            borderRadius: 6,
-            borderSkipped: false,
-            barPercentage: 0.55,
-            categoryPercentage: 0.8
-          }]
+  const ctx = canvas.getContext('2d');
+  chartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: dataVals,
+        backgroundColor: barColors,
+        borderRadius: 6,
+        borderSkipped: false,
+        barPercentage: 0.55,
+        categoryPercentage: 0.8,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: titleLbl,
+          color: titleColor,
+          font: { family: "'DM Sans', sans-serif", size: 13, weight: '600' },
+          padding: { bottom: 12 }
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            title: {
-              display: true,
-              text: titleLabelText,
-              color: titleColor,
-              font: { family: "'DM Sans', sans-serif", size: 13, weight: '600' },
-              padding: { bottom: 12 }
-            },
-            annotation: {
-              annotations: {
-                line1: {
-                  type: 'line',
-                  yMin: baselineValue,
-                  yMax: baselineValue,
-                  borderColor: baselineColor,
-                  borderWidth: 1.5,
-                  borderDash: [5, 5],
-                  label: {
-                    display: true,
-                    content: isPoints ? 'Dataset average (50 pts)' : 'Dataset average (0.0 σ)',
-                    position: 'end',
-                    backgroundColor: 'rgba(6,6,6,0.8)',
-                    color: axisColor,
-                    font: { family: 'DM Mono', size: 10, weight: '500' },
-                    padding: 4
-                  }
-                }
+        annotation: {
+          annotations: {
+            line1: {
+              type: 'line',
+              yMin: baselineVal, yMax: baselineVal,
+              borderColor: baselineColor,
+              borderWidth: 1.5,
+              borderDash: [5, 5],
+              label: {
+                display: true, content: baselineLbl, position: 'end',
+                backgroundColor: 'rgba(6,6,6,0.8)', color: axisColor,
+                font: { family: 'DM Mono', size: 10, weight: '500' }, padding: 4,
               }
-            }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { color: axisColor, font: { family: 'DM Sans', size: 12 } }
-            },
-            y: {
-              min: minScaleValue,
-              max: maxScaleValue,
-              grid: { color: 'rgba(255,255,255,0.02)' },
-              ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } }
             }
           }
         }
-      });
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: axisColor, font: { family: 'DM Sans', size: 12 } } },
+        y: { min: minY, max: maxY, grid: { color: 'rgba(255,255,255,0.02)' }, ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } } }
+      }
     }
-  }
+  });
+}
 
-  function syncColor(sId, tId) {
-    document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase();
+// ─────────────────────────────────────────────
+//  COLOUR SYNC
+// ─────────────────────────────────────────────
+function syncColor(sId, tId) {
+  document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase();
+}
+function syncSwatch(tId, sId) {
+  const val = document.getElementById(tId).value;
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) document.getElementById(sId).value = val;
+}
+function updateLayoutBackgrounds() {
+  const hex = document.getElementById('hexBgCard').value;
+  if (/^#[0-9A-Fa-f]{6}$/i.test(hex)) {
+    document.documentElement.style.setProperty('--bg-card', hex);
+    renderOverallChart();
   }
+}
 
-  function updateLayoutBackgrounds() {
-    const cardColor = document.getElementById('hexBgCard').value;
-    if (/^#[0-9A-F]{6}$/i.test(cardColor)) {
-      document.documentElement.style.setProperty('--bg-card', cardColor);
-      if (chartInst) { renderOverallChart(); }
-    }
-  }
+// ─────────────────────────────────────────────
+//  EXPORT
+// ─────────────────────────────────────────────
+function downloadPNG() {
+  if (!chartInst) { showToast("Generate rankings before downloading the chart."); return; }
+  const a = document.createElement('a');
+  a.href     = chartInst.toBase64Image('image/png', 1);
+  a.download = 'performance_rankings_chart.png';
+  a.click();
+}
 
-  function syncSwatch(tId, sId) {
-    const val = document.getElementById(tId).value;
-    if (/^#[0-9A-F]{6}$/i.test(val)) document.getElementById(sId).value = val;
-  }
+function exportCSV() {
+  if (!AppState.overallScores.length) { showToast("Generate rankings before exporting."); return; }
+  const isPoints = AppState.currentViewMode === 'points';
+  const scoreLbl = isPoints ? 'Score (0–100)' : 'Z-Score';
+  const lines    = [`"Rank","Name","Performance Z","Efficiency Z","${scoreLbl}"`];
+  AppState.overallScores.forEach(r => {
+    const val = isPoints ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
+    lines.push(`${r.defaultRank},"${r.entity.replace(/"/g,'""')}",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${val}`);
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href     = URL.createObjectURL(blob);
+  link.download = 'performance_rankings_export.csv';
+  link.click();
+  showToast("Rankings exported successfully.", "info");
+}
 
-  function downloadPNG() {
-    if (!chartInst) { showToast("Generate rankings before downloading the chart."); return; }
-    const a = document.createElement('a');
-    a.href = chartInst.toBase64Image('image/png', 1);
-    a.download = 'performance_rankings_chart.png';
-    a.click();
-  }
-
-  function exportCSV() {
-    if (!overallScores.length) { showToast("Generate rankings before exporting."); return; }
-    
-    const metricScoreLabel = currentViewMode === 'points' ? 'Score (0–100)' : 'Z-Score';
-    let lines = [`\"Rank\",\"Name\",\"Performance Z\",\"Efficiency Z\",\"${metricScoreLabel}\"`];
-    
-    overallScores.forEach(r => {
-      const activeValueExport = currentViewMode === 'points' ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
-      lines.push(`${r.defaultRank},\"${r.entity.replace(/\"/g, '\"\"')}\",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
-    });
-    
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'performance_rankings_export.csv';
-    link.click();
-    showToast("Rankings exported successfully.", "info");
-  }
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  checkSessionAuth();
+  setupWeights('perf');
+  setupWeights('cost');
+  document.getElementById('perfData').addEventListener('input', () => setupWeights('perf'));
+  document.getElementById('costData').addEventListener('input', () => setupWeights('cost'));
+  // Keyboard support for explainer header
+  document.getElementById('explainerHeader').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExplainer(); }
+  });
+});
 </script>
 </body>
 </html>
