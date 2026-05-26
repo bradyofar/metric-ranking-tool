@@ -5,34 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Performance Ranking Tool</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --accent: #b8f53a;
-    --accent-dim: rgba(184,245,58,.12);
-    --accent-dim2: rgba(184,245,58,.06);
-    --accent-text: #8cc22a;
-    --text-primary: #f0f0f0;
-    --text-secondary: #909090;
-    --text-muted: #555;
-    --border: #222;
-    --border-strong: #333;
-    --bg: #0a0a0a;
-    --bg-card: #111;
-    --bg-input: #0e0e0e;
-    --bg-hover: #161616;
-    --danger: #ff5e5e;
-    --danger-bg: rgba(255,94,94,.1);
-    --info: #5b9cf6;
-    --info-bg: rgba(91,156,246,.1);
+    --accent-dim: rgba(184,245,58,.08);
+    --accent-dim2: rgba(184,245,58,.04);
+    --text-primary: #f5f5f7;
+    --text-secondary: #9ea3ae;
+    --text-muted: #626771;
+    --border: #1a1a1a;
+    --bg: #060606;
+    --bg-card: #111214;
+    --bg-input: #17181c;
+    --bg-hover: #1c1d22;
+    --danger: #ff5353;
+    --danger-bg: rgba(255,83,83,.08);
+    --info: #4facfe;
     --radius-sm: 6px;
     --radius-md: 10px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
+    --radius-lg: 14px;
+    --radius-xl: 22px;
     --font: 'DM Sans', sans-serif;
     --mono: 'DM Mono', monospace;
-    --transition: 160ms cubic-bezier(.4,0,.2,1);
+    --transition: 200ms cubic-bezier(.25, 1, .5, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,168 +42,166 @@
     min-height: 100vh;
     font-size: 15px;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
   .page-shell { max-width: 840px; margin: 0 auto; padding: 0 20px 80px; }
 
   /* HERO */
-  .hero { padding: 60px 0 44px; text-align: center; }
+  .hero { padding: 56px 0 36px; text-align: center; }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 7px;
     background: var(--accent-dim); color: var(--accent);
-    font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-    padding: 5px 14px; border-radius: 100px; margin-bottom: 22px;
-    border: 1px solid rgba(184,245,58,.2);
+    font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 18px;
   }
-  .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .hero-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
   .hero h1 {
-    font-size: clamp(26px, 5vw, 42px); font-weight: 600; letter-spacing: -.03em;
-    line-height: 1.1; color: var(--text-primary); margin-bottom: 16px;
+    font-size: clamp(28px, 5vw, 40px); font-weight: 600; letter-spacing: -.03em;
+    line-height: 1.15; color: var(--text-primary); margin-bottom: 14px;
   }
   .hero h1 span { color: var(--accent); }
   .hero-sub {
-    font-size: 15px; color: var(--text-secondary); max-width: 500px;
-    margin: 0 auto; line-height: 1.75;
+    font-size: 15px; color: var(--text-secondary); max-width: 560px;
+    margin: 0 auto; line-height: 1.6; font-weight: 400;
   }
 
-  /* STEP TRACKER */
+  /* WORKFLOW TABS */
   .step-track {
     display: flex; align-items: center; gap: 0;
-    margin-bottom: 36px; padding: 0 4px;
+    margin-bottom: 36px; width: 100%;
   }
-  .step-node { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; }
+  .step-node { 
+    display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; 
+    background: transparent; border: none; outline: none; cursor: pointer;
+  }
   .step-dot {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--bg-card); border: 1px solid var(--border-strong);
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--bg-card);
     display: flex; align-items: center; justify-content: center;
     font-weight: 600; font-size: 12px; color: var(--text-muted);
-    transition: all var(--transition); position: relative; z-index: 1;
+    transition: all var(--transition); position: relative;
     font-family: var(--mono);
   }
   .step-dot svg { display: none; }
-  .step-lbl { font-size: 11px; font-weight: 500; color: var(--text-muted); text-align: center; letter-spacing: .02em; white-space: nowrap; }
-  .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 -2px; margin-bottom: 24px; transition: background var(--transition); }
-  .step-node.active .step-dot { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
-  .step-node.active .step-lbl { color: var(--accent); font-weight: 600; }
-  .step-node.done .step-dot { border-color: var(--accent); background: var(--accent); color: #000; }
+  .step-lbl { font-size: 12px; font-weight: 500; color: var(--text-muted); text-align: center; transition: color var(--transition); }
+  .step-line { flex: 1; height: 2px; background: var(--bg-card); margin: 0 -4px 18px -4px; transition: background var(--transition); }
+  
+  .step-node:focus-visible .step-dot { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .step-node.active .step-dot { background: var(--accent-dim); color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .step-node.active .step-lbl { color: var(--text-primary); font-weight: 600; }
+  .step-node.done .step-dot { background: var(--accent); color: #000; }
   .step-node.done .step-dot span { display: none; }
   .step-node.done .step-dot svg { display: block; }
   .step-node.done .step-lbl { color: var(--text-secondary); }
-  .step-line.done { background: var(--accent); }
+  .step-line.done { background: var(--accent-dim); }
 
-  /* VIEW CONTROLLER TOGGLE */
-  .view-toggle-wrap {
-    display: flex; justify-content: center; margin-bottom: 24px;
-  }
-  .toggle-container {
-    display: inline-flex; align-items: center; background: var(--bg-card);
-    border: 1px solid var(--border-strong); padding: 4px; border-radius: 100px; gap: 4px;
-  }
+  /* DISPLAY TOGGLE */
+  .view-toggle-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
+  .toggle-container { display: inline-flex; background: var(--bg-card); padding: 4px; border-radius: 100px; gap: 2px; }
   .toggle-btn {
     background: transparent; border: none; color: var(--text-secondary);
     padding: 6px 16px; border-radius: 100px; font-family: var(--font);
     font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--transition);
   }
-  .toggle-btn.active {
-    background: var(--accent); color: #000; font-weight: 600;
-  }
+  .toggle-btn:focus-visible { outline: 2px solid var(--accent); }
+  .toggle-btn.active { background: var(--bg-hover); color: var(--text-primary); font-weight: 600; }
 
-  /* CARDS */
-  .card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius-xl); padding: 28px 32px;
-    margin-bottom: 16px; transition: border-color var(--transition);
+  /* CARDS & TAB PANELS */
+  .tab-panel {
+    display: none; opacity: 0; transform: translateY(8px);
+    transition: opacity 250ms cubic-bezier(.25, 1, .5, 1), transform 250ms cubic-bezier(.25, 1, .5, 1);
   }
-  .card-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 22px; }
+  .tab-panel.active-view { display: block; opacity: 1; transform: translateY(0); }
+  .card {
+    background: var(--bg-card); box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+    border-radius: var(--radius-xl); padding: 32px; margin-bottom: 20px;
+  }
+  .card-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
   .card-icon {
-    width: 38px; height: 38px; border-radius: var(--radius-sm);
-    background: var(--accent-dim); border: 1px solid rgba(184,245,58,.15);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 40px; height: 40px; border-radius: var(--radius-md);
+    background: var(--bg-input); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .card-icon svg { width: 18px; height: 18px; color: var(--accent); }
-  .card-step { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
-  .card-title { font-size: 17px; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; color: var(--text-primary); }
+  .card-step { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+  .card-title { font-size: 18px; font-weight: 600; letter-spacing: -.01em; color: var(--text-primary); }
   .card-desc { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
 
   /* EXPLAINER */
-  .explainer {
-    background: var(--accent-dim2); border-radius: var(--radius-lg);
-    padding: 18px 22px; margin-bottom: 16px;
-    border: 1px solid rgba(184,245,58,.12);
-  }
-  .explainer h3 { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 5px; letter-spacing: .01em; }
-  .explainer p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+  .explainer { background: var(--bg-input); border-radius: var(--radius-lg); padding: 18px 22px; margin-bottom: 20px; }
+  .explainer h3 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .explainer p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
   .explainer-toggle {
-    font-size: 12px; color: var(--text-muted); cursor: pointer; border: none;
-    background: none; font-family: inherit; padding: 0; margin-top: 8px;
-    font-weight: 500; letter-spacing: .02em; text-decoration: underline; text-underline-offset: 3px;
+    font-size: 12px; color: var(--accent); cursor: pointer; border: none;
+    background: none; font-family: inherit; padding: 0; margin-top: 6px; font-weight: 500;
   }
-  .explainer-toggle:hover { color: var(--text-secondary); }
-  .explainer-more { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(184,245,58,.1); }
+  .explainer-toggle:hover { opacity: 0.8; }
+  .explainer-more { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.03); }
   .explainer-more.open { display: block; }
   .explainer-more p { margin-bottom: 8px; font-size: 13px; color: var(--text-secondary); }
   .explainer-more ul { padding-left: 18px; }
-  .explainer-more li { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; line-height: 1.6; }
-  .explainer-more li strong { color: var(--text-primary); font-weight: 600; }
+  .explainer-more li { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; }
 
-  /* TEXTAREA */
-  .data-label {
-    font-size: 11px; font-weight: 600; color: var(--text-muted);
-    letter-spacing: .07em; text-transform: uppercase; display: block; margin-bottom: 8px;
-  }
+  /* TEXTAREAS */
+  .data-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .data-label { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; }
+  .paste-hint { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
   textarea {
-    width: 100%; border: 1px solid var(--border);
-    border-radius: var(--radius-md); padding: 13px 15px;
-    font-family: var(--mono); font-size: 12.5px;
-    background: var(--bg-input); color: var(--text-primary);
-    resize: vertical; min-height: 155px; line-height: 1.75;
-    outline: none; transition: border-color var(--transition);
+    width: 100%; border: none; border-radius: var(--radius-md); padding: 14px 16px;
+    font-family: var(--mono); font-size: 13px; background: var(--bg-input); color: var(--text-primary);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); resize: vertical; min-height: 140px; line-height: 1.7;
+    outline: none; transition: background var(--transition); white-space: pre; overflow-x: auto;
   }
-  textarea:focus { border-color: rgba(184,245,58,.4); box-shadow: 0 0 0 3px rgba(184,245,58,.06); }
-  textarea::placeholder { color: var(--text-muted); }
+  textarea:focus { background: var(--bg-hover); }
 
-  /* UPLOAD */
-  .upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  /* UPLOAD ROW */
+  .upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
   .btn-upload {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 7px 14px; border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-sm); background: transparent;
-    color: var(--text-muted); font-family: inherit; font-size: 12px;
-    font-weight: 500; cursor: pointer; transition: all var(--transition);
-    letter-spacing: .01em;
+    display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+    border: none; border-radius: var(--radius-sm); background: var(--bg-input);
+    color: var(--text-secondary); font-family: inherit; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all var(--transition);
   }
-  .btn-upload:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim2); }
+  .btn-upload:hover { color: var(--text-primary); background: var(--bg-hover); }
+  .btn-upload:focus-visible { outline: 2px solid var(--accent); }
   .or-divider { font-size: 12px; color: var(--text-muted); }
 
-  /* WEIGHTS STEPPER UX */
-  .weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 14px; }
+  /* WEIGHTS HOOKS */
+  .weights-container-block {
+    opacity: 0; max-height: 0; overflow: hidden;
+    transition: opacity 250ms ease, max-height 300ms cubic-bezier(0.4, 0, 0.2, 1), margin-top 250ms ease;
+    margin-top: 0;
+  }
+  .weights-container-block.revealed { opacity: 1; max-height: 1200px; margin-top: 20px; }
+  .weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  
   .weight-item {
-    background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-md); padding: 10px 14px;
+    background: var(--bg-input); border-radius: var(--radius-md); padding: 12px 16px;
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
   .weight-item-left { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-  .weight-item label { font-size: 12px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .weight-item label { font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .weight-controls { display: flex; align-items: center; gap: 6px; }
+  
   .weight-btn {
-    width: 22px; height: 22px; border-radius: 4px; background: var(--border-strong);
+    width: 26px; height: 26px; border-radius: 4px; background: var(--bg-hover);
     border: none; color: var(--text-primary); cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 13px; font-weight: 600;
-    transition: background var(--transition);
+    align-items: center; justify-content: center; font-size: 14px; transition: opacity var(--transition);
   }
-  .weight-btn:hover { background: var(--border); }
-  .weight-btn.dir-toggle { width: auto; padding: 0 6px; font-size: 11px; }
+  .weight-btn:hover { opacity: 0.8; }
+  .weight-btn:focus-visible { outline: 2px solid var(--accent); }
+  .weight-btn.dir-toggle { width: auto; padding: 0 8px; font-size: 11px; font-family: var(--mono); font-weight: 600; }
+  
   .weight-item input[type=number] {
-    width: 44px; padding: 4px 0; border: none; font-family: var(--mono);
-    font-size: 12px; font-weight: 500; background: transparent; color: var(--accent);
+    width: 36px; border: none; font-family: var(--mono); font-size: 13px;
+    font-weight: 500; background: transparent; color: var(--accent);
     outline: none; text-align: center; -moz-appearance: textfield;
   }
   .weight-item input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   
-  .weight-summary { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .weight-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
   .weight-chip {
-    font-size: 11px; background: var(--bg-input); border: 1px solid var(--border-strong);
-    border-radius: 100px; padding: 3px 10px;
+    font-size: 11px; background: var(--bg-input); border-radius: 100px; padding: 4px 12px;
     display: flex; gap: 5px; align-items: center; color: var(--text-secondary);
   }
   .weight-chip strong { color: var(--accent); font-family: var(--mono); }
@@ -213,1264 +209,910 @@
   /* BUTTONS */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    padding: 11px 22px; border-radius: var(--radius-md);
-    font-family: inherit; font-size: 13px; font-weight: 600;
-    cursor: pointer; border: none; transition: all var(--transition);
-    letter-spacing: .01em; white-space: nowrap;
+    padding: 12px 24px; border-radius: var(--radius-md); font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all var(--transition);
   }
-  .btn-primary { background: var(--accent); color: #0a0a0a; }
-  .btn-primary:hover:not(:disabled) { background: #c8ff48; transform: translateY(-1px); }
+  .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 12px rgba(184,245,58,0.15); }
+  .btn-primary:hover:not(:disabled) { background: #c8ff48; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(184,245,58,0.25); }
   .btn-primary:active:not(:disabled) { transform: translateY(0); }
-  .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-strong); }
-  .btn-ghost:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-dim2); }
-  .btn:disabled { opacity: .35; cursor: not-allowed; }
-  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
-  .btn-full { width: 100%; }
+  .btn-ghost { background: var(--bg-input); color: var(--text-secondary); }
+  .btn-ghost:hover:not(:disabled) { color: var(--text-primary); background: var(--bg-hover); }
+  
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn:disabled { opacity: .3; cursor: not-allowed; transform: none !important; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; justify-content: flex-end; }
+  
   .btn .spinner-ring { display: none; }
   .btn.loading .btn-text { display: none; }
-  .btn.loading .spinner-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,.2); border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; }
-  .btn-ghost.loading .spinner-ring { border-color: rgba(184,245,58,.2); border-top-color: var(--accent); }
+  .btn.loading .spinner-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,.15); border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* NOTICES / ERRORS */
-  .notice {
-    border-radius: var(--radius-sm); padding: 10px 14px;
-    font-size: 12.5px; display: flex; gap: 9px; align-items: flex-start;
-    margin-top: 12px; line-height: 1.6;
-  }
-  .notice-icon { flex-shrink: 0; margin-top: 1px; }
-  .notice-info { background: var(--info-bg); color: var(--info); border: 1px solid rgba(91,156,246,.2); }
-  .notice-warn { background: rgba(255,180,50,.08); color: #e0a832; border: 1px solid rgba(255,180,50,.18); }
-  .notice-error { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(255,94,94,.2); }
-  .notice-accent { background: var(--accent-dim2); color: var(--accent); border: 1px solid rgba(184,245,58,.15); }
+  /* NOTIFICATIONS & TOASTS */
+  .notice { border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; }
+  .notice-icon { flex-shrink: 0; margin-top: 2px; }
+  .notice-accent { background: var(--accent-dim2); color: var(--text-secondary); }
 
-  /* RESULT TABLE */
-  .result-section { margin-top: 24px; }
-  .result-section h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text-secondary); letter-spacing: .04em; text-transform: uppercase; }
-  .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead th {
-    background: var(--bg-input); padding: 9px 14px; text-align: left;
-    font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
-    color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap;
+  #toast-container {
+    position: fixed; top: 24px; right: 24px; z-index: 9999;
+    display: flex; flex-direction: column; gap: 10px; pointer-events: none;
   }
-  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-primary); }
+  .toast {
+    background: rgba(23, 24, 28, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+    padding: 14px 20px; border-radius: var(--radius-lg); display: flex; align-items: center; gap: 12px;
+    color: var(--text-primary); font-size: 13px; font-weight: 500; pointer-events: auto;
+    transform: translateY(-20px) scale(0.95); opacity: 0; transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .toast.show { transform: translateY(0) scale(1); opacity: 1; }
+  .toast-icon-wrapper { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* LEADERBOARD TABLE */
+  .result-section { margin-top: 12px; }
+  .table-wrap { overflow-x: auto; border-radius: var(--radius-md); background: var(--bg-input); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    background: rgba(0,0,0,0.15); padding: 12px 16px; text-align: left;
+    font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text-muted); white-space: nowrap;
+  }
+  tbody td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.01); color: var(--text-primary); }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr:hover td { background: var(--bg-hover); }
+  
   .rank-badge {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 5px;
-    font-size: 10px; font-weight: 700; font-family: var(--mono);
+    width: 22px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 700; font-family: var(--mono);
   }
-  .rank-1 { background: rgba(184,245,58,.15); color: var(--accent); border: 1px solid rgba(184,245,58,.3); }
-  .rank-2 { background: rgba(255,255,255,.06); color: var(--text-secondary); border: 1px solid var(--border-strong); }
-  .rank-3 { background: rgba(255,255,255,.04); color: var(--text-muted); border: 1px solid var(--border); }
-  .rank-other { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-  .score-bar-wrap { display: flex; align-items: center; gap: 9px; }
+  .rank-1 { background: var(--accent-dim); color: var(--accent); }
+  .rank-2 { background: rgba(255,255,255,.04); color: var(--text-secondary); }
+  .rank-3 { background: rgba(255,255,255,.02); color: var(--text-muted); }
+  .rank-other { background: transparent; color: var(--text-muted); }
+  
+  .score-bar-wrap { display: flex; align-items: center; gap: 10px; }
   .score-bar { height: 4px; border-radius: 2px; background: var(--accent); transition: width .3s ease; min-width: 2px; }
-  .score-bar-neg { background: var(--danger); opacity: .6; }
+  .score-bar-neg { background: var(--danger); opacity: .7; }
   .score-val { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; }
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 500; font-family: var(--mono); letter-spacing: .02em; }
-  .tag-top { background: rgba(184,245,58,.12); color: var(--accent); border: 1px solid rgba(184,245,58,.25); }
-  .tag-up { background: rgba(184,245,58,.07); color: #8cc22a; border: 1px solid rgba(184,245,58,.15); }
-  .tag-avg { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-  .tag-down { background: rgba(255,94,94,.08); color: #ff7c7c; border: 1px solid rgba(255,94,94,.18); }
+  
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; }
+  .tag-top { background: var(--accent-dim); color: var(--accent); }
+  .tag-up { background: rgba(184,245,58,.04); color: #8cc22a; }
+  .tag-avg { background: var(--bg-hover); color: var(--text-secondary); }
+  .tag-down { background: var(--danger-bg); color: #ff7c7c; }
 
-  /* CHART */
-  .chart-card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius-xl); padding: 28px 32px; margin-bottom: 16px;
-  }
-  .chart-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
-  .chart-title { font-size: 16px; font-weight: 600; letter-spacing: -.01em; color: var(--text-primary); }
-  .chart-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  /* CHART DISPLAY */
+  .chart-card { background: var(--bg-card); padding: 24px 28px; margin-top: 24px; border-radius: var(--radius-xl); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+  .chart-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .chart-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .chart-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   #overallChart { width: 100% !important; display: block; }
 
-  /* COLOUR CONTROLS */
-  .colors-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
-  .colors-label { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: block; }
-  .color-controls { display: flex; flex-wrap: wrap; gap: 10px; }
+  /* CONFIGURATION PALETTES */
+  .colors-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.03); }
+  .colors-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: block; }
+  .color-controls { display: flex; flex-wrap: wrap; gap: 12px; }
   .color-item { display: flex; align-items: center; gap: 8px; }
-  .color-item label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
-  .color-swatch { width: 26px; height: 26px; border-radius: 5px; border: 1px solid var(--border-strong); cursor: pointer; background: transparent; padding: 0; }
-  .color-hex { font-family: var(--mono); font-size: 11px; width: 80px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; color: var(--text-primary); background: var(--bg-input); }
-  .color-hex:focus { border-color: rgba(184,245,58,.4); }
-  .metric-colors { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .color-item label { font-size: 12px; color: var(--text-secondary); }
+  .color-swatch { width: 24px; height: 24px; border-radius: 5px; border: none; cursor: pointer; background: transparent; }
+  .color-hex { font-family: var(--mono); font-size: 12px; width: 82px; padding: 4px 8px; border: none; border-radius: var(--radius-sm); color: var(--text-primary); background: var(--bg-input); }
 
-  /* STAT CHIPS */
-  .stat-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
-  .stat-chip {
-    background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 5px 11px;
-    font-size: 11px; color: var(--text-muted); font-family: var(--mono);
-  }
-  .stat-chip strong { color: var(--text-secondary); }
-  .stat-chip-warn { background: rgba(255,180,50,.06); border-color: rgba(255,180,50,.2); color: #e0a832; }
-  .stat-chip-info { background: var(--info-bg); border-color: rgba(91,156,246,.2); color: var(--info); }
+  /* STATS CHIPS */
+  .stat-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .stat-chip { background: var(--bg-input); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 11.5px; color: var(--text-secondary); font-family: var(--mono); }
+  .stat-chip strong { color: var(--text-primary); }
+  .stat-chip-info { background: var(--accent-dim); color: var(--accent); }
 
-  /* UTILS */
   .hidden { display: none !important; }
   input[type=file] { display: none; }
-  .export-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .export-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; width: 100%; justify-content: flex-start; }
 
   @media (max-width: 640px) {
-    .card, .chart-card { padding: 20px; border-radius: var(--radius-lg); }
-    .hero { padding: 40px 0 32px; }
-    .btn-row { flex-direction: column; }
-    .btn { width: 100%; justify-content: center; }
-    .chart-header { flex-direction: column; }
-    .export-btns { width: 100%; }
-    .export-btns .btn { flex: 1; }
-  }
-
-  @media print {
-    body { background: #fff; color: #000; }
-    .no-print { display: none !important; }
+    .card, .chart-card { padding: 22px; border-radius: var(--radius-lg); }
+    .hero { padding: 36px 0 24px; }
+    .btn-row { flex-direction: column-reverse; }
+    .btn { width: 100%; }
+    .export-btns .btn { flex: 1; min-width: 140px; }
+    .step-lbl { font-size: 11px; }
   }
 </style>
 </head>
 <body>
+
+<div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 <div class="page-shell">
 
   <div class="hero">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      Performance Ranking Tool
+      Data Intelligence Engine
     </div>
     <h1>Find your <span>best performers</span> at a glance</h1>
-    <p class="hero-sub">Paste your data, set what matters most, and get a clear ranking that combines performance and cost structures.</p>
+    <p class="hero-sub">Upload performance data, adjust metric importance, and generate standardized rankings instantly.</p>
   </div>
 
-  <div class="step-track" id="stepTrack">
-    <div class="step-node active" data-step="1">
+  <nav class="step-track" id="stepTrack" role="tablist">
+    <button class="step-node active" id="tabNode1" role="tab" aria-selected="true" onclick="switchView(1)">
       <div class="step-dot">
         <span>1</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div class="step-lbl">Performance</div>
-    </div>
+    </button>
     <div class="step-line" id="line1"></div>
-    <div class="step-node" data-step="2">
+    <button class="step-node" id="tabNode2" role="tab" aria-selected="false" onclick="switchView(2)">
       <div class="step-dot">
         <span>2</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div class="step-lbl">Cost</div>
-    </div>
+      <div class="step-lbl">Costs</div>
+    </button>
     <div class="step-line" id="line2"></div>
-    <div class="step-node" data-step="3">
+    <button class="step-node" id="tabNode3" role="tab" aria-selected="false" onclick="switchView(3)">
       <div class="step-dot">
         <span>3</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div class="step-lbl">Final Ranking</div>
-    </div>
-  </div>
+      <div class="step-lbl">Final Leaderboard</div>
+    </button>
+  </nav>
 
   <div class="view-toggle-wrap">
     <div class="toggle-container">
       <button class="toggle-btn active" id="modePoints" onclick="setGlobalViewMode('points')">Points (0–100)</button>
-      <button class="toggle-btn" id="modeZScore" onclick="setGlobalViewMode('zscore')">Z-Score View</button>
+      <button class="toggle-btn" id="modeZScore" onclick="setGlobalViewMode('zscore')">Z-Score Deviation</button>
     </div>
   </div>
 
   <div class="explainer">
-    <h3>How this works</h3>
-    <p>This tool scores your data fairly using an advanced <strong>Re-standardized Logistic Sigmoid pipeline</strong>. It standardizes each component metric against its group average, compounds them based on your custom weight configuration, and runs a secondary standardization over the final composite values. This allows us to map every cohort cleanly onto an intuitive, bounded <strong>0 to 100 Performance Index Scale</strong>.</p>
-    <button class="explainer-toggle" onclick="toggleExplainer()">Show methodology details</button>
+    <h3>Mathematical Scoring System</h3>
+    <p>This system standardizes uneven metrics using normalized relative distance calculation models, neutralizing structural skewing trends across wide group variations.</p>
+    <button class="explainer-toggle" onclick="toggleExplainer()">Show math details</button>
     <div class="explainer-more" id="explainerMore">
-      <p>Each individual metric component is isolated by calculating its distance from the cohort average via Standard Deviations ($Z$-scores):</p>
+      <p>Standard deviations isolate tracking records against group variations:</p>
       <ul>
-        <li><strong>Index Score of 50</strong> — Represents the absolute cohort mathematical average.</li>
-        <li><strong>Index Score above 50</strong> — Above-average performance ($>0$ standardized composite deviations).</li>
-        <li><strong>Index Score below 50</strong> — Below-average performance ($<0$ standardized composite deviations).</li>
-        <li><strong>Weights</strong> determine the proportional balance. Modifying total value spans does not break performance curves (e.g., 1:2:3 outputs identically to 10:20:30).</li>
-        <li><strong>Cost inversion handles expenses</strong> — Lower monetary raw values systematically elevate baseline component score structures.</li>
-        <li><strong>Consistent Bounding</strong> — The logistic transformation mathematically caps boundaries to protect presentation tables from blowing out due to severe outlier anomalies while entirely preserving intra-cohort scaling gaps.</li>
+        <li><strong>Index Baseline:</strong> Reflects the precise cohort geometric average (0 for Z-Scores, 50 for Points).</li>
+        <li><strong>Higher Values Preferred:</strong> Optimizes metrics where bigger scales signify success.</li>
+        <li><strong>Minimized Costs:</strong> Low cost data points are safely converted into positive performance attributes.</li>
       </ul>
     </div>
   </div>
 
-  <div class="card" id="perfCard">
-    <div class="card-header">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+  <div class="tab-panel active-view" id="viewPerf" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div>
+          <div class="card-step">Step 1</div>
+          <div class="card-title">Performance Metrics</div>
+          <div class="card-desc">Metrics where higher values are better (e.g., conversion outputs, traffic scales, revenue indexes).</div>
+        </div>
       </div>
-      <div>
-        <div class="card-step">Step 1</div>
-        <div class="card-title">Performance metrics</div>
-        <div class="card-desc">Metrics you want to be high — click-through rate, engagement, conversions</div>
+
+      <div class="upload-row">
+        <button class="btn-upload" onclick="document.getElementById('perfFile').click()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Upload CSV File
+        </button>
+        <span class="or-divider">or enter text details below</span>
       </div>
-    </div>
+      <input type="file" id="perfFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'perfData')">
 
-    <div class="upload-row no-print">
-      <button class="btn-upload" onclick="document.getElementById('perfFile').click()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Upload CSV / TSV
-      </button>
-      <span class="or-divider">or paste below</span>
-    </div>
-    <input type="file" id="perfFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'perfData')">
-
-    <label class="data-label" for="perfData">Data</label>
-    <textarea id="perfData">Country	CTR	Engagement Rate
-France	2.5	45.2
+      <div class="data-label-row">
+        <label class="data-label" for="perfData">Performance Metrics Table</label>
+        <span class="paste-hint">Tab or Comma Separated Columns</span>
+      </div>
+      <textarea id="perfData">Country	CTR	Engagement Rate
+"United States"	2.5	45.2
 Germany	1.8	52.1
 Italy	3.1	38.9
 Spain	2.2	41.5</textarea>
 
-    <div id="perfWeightsArea" class="hidden">
-      <div class="notice notice-accent" style="margin-top:14px;">
-        <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Set the relative importance and directional polarity of each performance metric.</span>
+      <div id="perfWeightsArea" class="weights-container-block">
+        <div class="notice notice-accent">
+          <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Adjust individual metric weight importances and tracking polarity limits.</span>
+        </div>
+        <div class="weights-grid" id="perfWeightsGrid"></div>
+        <div class="weight-summary" id="perfWeightSummary"></div>
       </div>
-      <div class="weights-grid" id="perfWeightsGrid"></div>
-      <div class="weight-summary" id="perfWeightSummary"></div>
-    </div>
 
-    <div class="btn-row">
-      <button class="btn btn-ghost no-print" onclick="setupWeights('perf')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-        Configure Metrics
-      </button>
-      <button class="btn btn-primary" id="calcPerfBtn" onclick="calcPerf()">
-        <span class="btn-text">Calculate performance scores</span>
-        <span class="spinner-ring"></span>
-      </button>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="calcPerfBtn" onclick="processPerformanceStep()">
+          <span class="btn-text">Continue to Costs &rarr;</span>
+          <span class="spinner-ring"></span>
+        </button>
+      </div>
     </div>
-
-    <div id="perfError"></div>
-    <div id="perfResults"></div>
   </div>
 
-  <div class="card" id="costCard">
-    <div class="card-header">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+  <div class="tab-panel" id="viewCost" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>
+          <div class="card-step">Step 2</div>
+          <div class="card-title">Cost Metrics</div>
+          <div class="card-desc">Metrics where lower values are better (e.g., ad spends, overhead expenses, processing lags).</div>
+        </div>
       </div>
-      <div>
-        <div class="card-step">Step 2</div>
-        <div class="card-title">Cost metrics</div>
-        <div class="card-desc">Metrics you want to be low — CPM, CPC, cost per acquisition. Lower cost = higher score, automatically.</div>
+
+      <div class="upload-row">
+        <button class="btn-upload" onclick="document.getElementById('costFile').click()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Upload Cost File
+        </button>
+        <span class="or-divider">or enter text details below</span>
       </div>
-    </div>
+      <input type="file" id="costFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'costData')">
 
-    <div class="upload-row no-print">
-      <button class="btn-upload" onclick="document.getElementById('costFile').click()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Upload CSV / TSV
-      </button>
-      <span class="or-divider">or paste below</span>
-    </div>
-    <input type="file" id="costFile" accept=".csv,.tsv,.txt" onchange="handleUpload(event,'costData')">
-
-    <label class="data-label" for="costData">Data</label>
-    <textarea id="costData">Country	CPM	CPC
-France	1.20	0.48
+      <div class="data-label-row">
+        <label class="data-label" for="costData">Cost Data Table</label>
+        <span class="paste-hint">Tab or Comma Separated Columns</span>
+      </div>
+      <textarea id="costData">Country	CPM	CPC
+"United States"	1.20	0.48
 Germany	1.50	0.62
 Italy	0.95	0.35
 Spain	1.10	0.45</textarea>
 
-    <div id="costWeightsArea" class="hidden">
-      <div class="notice notice-accent" style="margin-top:14px;">
-        <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Set the relative importance and directional polarity of each cost metric.</span>
+      <div id="costWeightsArea" class="weights-container-block">
+        <div class="notice notice-accent">
+          <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Configure cost metric balances. Lower values naturally boost points results.</span>
+        </div>
+        <div class="weights-grid" id="costWeightsGrid"></div>
+        <div class="weight-summary" id="costWeightSummary"></div>
       </div>
-      <div class="weights-grid" id="costWeightsGrid"></div>
-      <div class="weight-summary" id="costWeightSummary"></div>
-    </div>
 
-    <div class="btn-row">
-      <button class="btn btn-ghost no-print" onclick="setupWeights('cost')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-        Configure Metrics
-      </button>
-      <button class="btn btn-primary" id="calcCostBtn" onclick="calcCost()">
-        <span class="btn-text">Calculate cost scores</span>
-        <span class="spinner-ring"></span>
-      </button>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="switchView(1)">&larr; Back to Step 1</button>
+        <button class="btn btn-primary" id="calcCostBtn" onclick="processCostStep()">
+          <span class="btn-text">Generate Rankings &rarr;</span>
+          <span class="spinner-ring"></span>
+        </button>
+      </div>
     </div>
-
-    <div id="costError"></div>
-    <div id="costResults"></div>
   </div>
 
-  <div class="card" id="overallCard">
-    <div class="card-header">
-      <div class="card-icon" style="background:rgba(184,245,58,.08); border-color:rgba(184,245,58,.2);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#b8f53a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>
-      <div>
-        <div class="card-step">Step 3</div>
-        <div class="card-title">Final ranking</div>
-        <div class="card-desc">The unified index combining performance and cost configurations fairly.</div>
-      </div>
-    </div>
-
-    <button class="btn btn-primary btn-full" id="calcOverallBtn" onclick="calcOverall()">
-      <span class="btn-text">Generate final ranking & index</span>
-      <span class="spinner-ring"></span>
-    </button>
-
-    <div id="overallError"></div>
-
-    <div id="overallResults" class="hidden">
-      <div class="result-section">
-        <h3 id="tableTitle">Unified Cohort Leaderboard</h3>
-        <div class="table-wrap">
-          <table id="resultsTable">
-            <thead>
-              <tr id="tableHeaders"></tr>
-            </thead>
-            <tbody id="overallTableBody"></tbody>
-          </table>
+  <div class="tab-panel" id="viewOverall" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:var(--accent-dim);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#b8f53a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <div id="overallStats"></div>
+        <div>
+          <div class="card-step">Step 3</div>
+          <div class="card-title">Final Leaderboard</div>
+          <div class="card-desc">Weighted rankings across combined performance and cost datasets.</div>
+        </div>
       </div>
 
-      <div class="colors-section no-print">
-        <span class="colors-label">Customize chart visualization palettes</span>
-        <div class="color-controls">
-          <div class="color-item">
-            <label for="colorBg">Chart Fill</label>
-            <input type="color" id="colorBg" class="color-swatch" value="#111111" onchange="syncColor('colorBg','hexBg'); refreshChart()">
-            <input type="text" id="hexBg" class="color-hex" value="#111111" oninput="syncSwatch('hexBg','colorBg'); refreshChart()">
+      <div id="overallResults">
+        <div class="result-section">
+          <div class="table-wrap">
+            <table id="resultsTable">
+              <thead>
+                <tr id="tableHeaders"></tr>
+              </thead>
+              <tbody id="overallTableBody"></tbody>
+            </table>
           </div>
-          <div class="color-item">
-            <label for="colorAxes">Text/Axes</label>
-            <input type="color" id="colorAxes" class="color-swatch" value="#909090" onchange="syncColor('colorAxes','hexAxes'); refreshChart()">
-            <input type="text" id="hexAxes" class="color-hex" value="#909090" oninput="syncSwatch('hexAxes','colorAxes'); refreshChart()">
+          <div id="overallStats"></div>
+        </div>
+
+        <div class="colors-section">
+          <span class="colors-label">Customize Presentation Palettes</span>
+          <div class="color-controls">
+            <div class="color-item">
+              <label for="colorBg">Chart Positive Accent</label>
+              <input type="color" id="colorBg" class="color-swatch" value="#b8f53a" onchange="syncColor('colorBg','hexBg'); updateChartPresentation()">
+              <input type="text" id="hexBg" class="color-hex" value="#b8f53a" oninput="syncSwatch('hexBg','colorBg'); updateChartPresentation()">
+            </div>
+            <div class="color-item">
+              <label for="colorAxes">Labels & Axes</label>
+              <input type="color" id="colorAxes" class="color-swatch" value="#9EA3AE" onchange="syncColor('colorAxes','hexAxes'); updateChartPresentation()">
+              <input type="text" id="hexAxes" class="color-hex" value="#9EA3AE" oninput="syncSwatch('hexAxes','colorAxes'); updateChartPresentation()">
+            </div>
           </div>
         </div>
-        <div class="metric-colors" id="metricColorsContainer"></div>
-      </div>
 
-      <div class="chart-card" style="margin-top:24px;">
-        <div class="chart-header">
-          <div>
-            <div class="chart-title" id="chartLabelHeader">Performance Index Breakdown</div>
-            <div class="chart-sub" id="chartLabelSub">Comparative index scores</div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Visual Score Spreads</div>
+              <div class="chart-sub">Comparative indexing metrics distribution map (Green = Positive / Above Average, Red = Below Average)</div>
+            </div>
+          </div>
+          <div style="position:relative; height:280px; width:100%;">
+            <canvas id="overallChart"></canvas>
           </div>
         </div>
-        <div style="position:relative; width:100%;">
-          <canvas id="overallChart"></canvas>
+
+        <div class="btn-row">
+          <div class="export-btns">
+            <button class="btn btn-ghost" onclick="downloadPNG()">Export Chart Image</button>
+            <button class="btn btn-ghost" onclick="exportCSV()">Export CSV Table</button>
+          </div>
         </div>
       </div>
-
-      <div class="btn-row no-print">
-        <div class="export-btns">
-          <button class="btn btn-ghost" onclick="downloadPNG()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export PNG Chart
-          </button>
-          <button class="btn btn-ghost" onclick="exportCSV()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            Export CSV Dataset
-          </button>
-          <button class="btn btn-ghost" onclick="exportHTML()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            Export Web Report (HTML)
-          </button>
-        </div>
-      </div>
-
     </div>
   </div>
 
 </div>
 
 <script>
-// --- Global State Management ---
-let perfScores = [];
-let costScores = [];
-let overallScores = [];
-let perfWeights = [];
-let costWeights = [];
-let perfInverted = []; 
-let costInverted = []; 
-let perfHeaders = [], costHeaders = [];
-let currentViewMode = 'points'; 
-
-const PALETTE = ['#b8f53a','#5b9cf6','#ff8c5a','#c77dff','#ffca3a','#06d6a0','#ff6b9d','#a8dadc','#f4a261','#8ecae6'];
-let metricColors = {};
-let chartInst = null;
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('perfData').addEventListener('input', () => { if(!document.getElementById('perfWeightsArea').classList.contains('hidden')) setupWeights('perf'); });
-  document.getElementById('costData').addEventListener('input', () => { if(!document.getElementById('costWeightsArea').classList.contains('hidden')) setupWeights('cost'); });
-});
-
-function setGlobalViewMode(mode) {
-  if (currentViewMode === mode) return;
-  currentViewMode = mode;
-  
-  document.getElementById('modePoints').classList.toggle('active', mode === 'points');
-  document.getElementById('modeZScore').classList.toggle('active', mode === 'zscore');
-  
-  if (overallScores.length > 0) {
-    renderFinalOutputs();
-    setStep(4);
-  }
-}
-
-function toggleExplainer() {
-  const el = document.getElementById('explainerMore');
-  const btn = el.previousElementSibling;
-  const open = el.classList.toggle('open');
-  btn.textContent = open ? 'Hide details' : 'Show methodology details';
-}
-
-function setStep(n) {
-  document.querySelectorAll('.step-node').forEach(node => {
-    const s = parseInt(node.dataset.step);
-    node.classList.remove('active','done');
-    if (s < n) node.classList.add('done');
-    else if (s === n) node.classList.add('active');
-  });
-  ['line1','line2'].forEach((id,i) => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('done', n > i+1);
-  });
-}
-
-function handleUpload(e, textareaId) {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 5*1024*1024) { alert('File too large (max 5 MB)'); return; }
-  const reader = new FileReader();
-  reader.onload = ev => {
-    document.getElementById(textareaId).value = ev.target.result.trim();
-    const type = textareaId === 'perfData' ? 'perf' : 'cost';
-    setupWeights(type);
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-}
-
-// 1) REPLACED: parseData() implementation
-function parseData(textareaId, errorId) {
-  clearErr(errorId);
-
-  const raw = (document.getElementById(textareaId).value || '').trim();
-  if (!raw) {
-    showErr(errorId, 'Please paste some data first.');
-    return null;
-  }
-
-  const delimiter = raw.includes('\t') ? '\t' : (raw.includes(',') ? ',' : null);
-  if (!delimiter) {
-    showErr(errorId, 'Couldn’t detect columns. Make sure your data uses tabs or commas.');
-    return null;
-  }
-
-  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  if (lines.length < 2) {
-    showErr(errorId, 'Need at least one header row and one data row.');
-    return null;
-  }
-
-  const headers = lines[0]
-    .split(delimiter)
-    .map(h => h.replace(/^["']|["']$/g, '').trim())
-    .filter(Boolean);
-
-  if (headers.length < 2) {
-    showErr(errorId, 'Need at least two columns: one for names and at least one metric.');
-    return null;
-  }
-
-  const entities = [];
-  const metrics = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    const parts = lines[i]
-      .split(delimiter)
-      .map(p => p.replace(/^["']|["']$/g, '').trim());
-
-    if (parts.length !== headers.length) continue;
-
-    const ent = parts[0];
-    const rowVals = [];
-    let valid = true;
-
-    for (let j = 1; j < parts.length; j++) {
-      const original = parts[j];
-      let cleaned = String(original).trim();
-
-      if (cleaned.includes(',') && !cleaned.includes('.')) cleaned = cleaned.replace(',', '.');
-      cleaned = cleaned.replace('%', '').replace(/[^\d.-]/g, '');
-
-      const parsed = cleaned === '' ? NaN : parseFloat(cleaned);
-      if (Number.isNaN(parsed)) { valid = false; break; }
-
-      rowVals.push(parsed);
+  // --- UI Toast Engine ---
+  function showToast(message, type = 'warning') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    
+    let iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    if (type === 'error') {
+      iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
     }
 
-    if (valid && ent) {
-      entities.push(ent);
-      metrics.push(rowVals);
-    }
-  }
-
-  if (!entities.length) {
-    showErr(errorId, 'No valid numeric rows found. Check your metric columns contain numbers.');
-    return null;
-  }
-
-  return { headers, entities, metrics };
-}
-
-// 2) REPLACED: showErr() and clearErr() logic
-function showErr(id, msg) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = 'notice notice-error';
-  el.innerHTML = `<span>${msg}</span>`;
-}
-
-function clearErr(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = '';
-  el.innerHTML = '';
-}
-
-function setupWeights(type) {
-  const id = type === 'perf' ? 'perfData' : 'costData';
-  const errId = type === 'perf' ? 'perfError' : 'costError';
-  const parsed = parseData(id, errId);
-  if (!parsed) return;
-  
-  const hdrs = parsed.headers;
-  const weightsArr = type === 'perf' ? perfWeights : costWeights;
-  const invertArr = type === 'perf' ? perfInverted : costInverted;
-  const areaId = type + 'WeightsArea';
-  
-  if (type === 'perf') perfHeaders = hdrs; else costHeaders = hdrs;
-  
-  weightsArr.length = 0;
-  invertArr.length = 0;
-  
-  const metrics = hdrs.slice(1);
-  metrics.forEach((m) => {
-    weightsArr.push(1);
-    const lm = m.toLowerCase();
-    const invertedDefault = lm.includes('churn') || lm.includes('error') || lm.includes('cost') || lm.includes('loss') || lm.includes('fail') || lm.includes('cpm') || lm.includes('cpc') || lm.includes('cpa') || lm.includes('spend');
-    invertArr.push(invertedDefault);
-  });
-  
-  renderWeightsGridUI(type, metrics);
-  document.getElementById(areaId).classList.remove('hidden');
-  renderWeightSummary(type);
-}
-
-function renderWeightsGridUI(type, metrics) {
-  const grid = document.getElementById(type + 'WeightsGrid');
-  grid.innerHTML = '';
-  
-  const weightsArr = type === 'perf' ? perfWeights : costWeights;
-  const invertArr = type === 'perf' ? perfInverted : costInverted;
-
-  metrics.forEach((m, i) => {
-    const item = document.createElement('div');
-    item.className = 'weight-item';
-    
-    const leftPart = document.createElement('div');
-    leftPart.className = 'weight-item-left';
-    const lbl = document.createElement('label');
-    lbl.innerText = m;
-    lbl.title = m;
-    leftPart.appendChild(lbl);
-    item.appendChild(leftPart);
-
-    const controls = document.createElement('div');
-    controls.className = 'weight-controls';
-
-    const dirBtn = document.createElement('button');
-    dirBtn.className = 'weight-btn dir-toggle';
-    dirBtn.style.color = invertArr[i] ? 'var(--danger)' : 'var(--accent)';
-    dirBtn.innerText = invertArr[i] ? 'High (−)' : 'High (+)';
-    dirBtn.onclick = () => {
-      invertArr[i] = !invertArr[i];
-      dirBtn.innerText = invertArr[i] ? 'High (−)' : 'High (+)';
-      dirBtn.style.color = invertArr[i] ? 'var(--danger)' : 'var(--accent)';
-      renderWeightSummary(type);
-    };
-
-    const decBtn = document.createElement('button');
-    decBtn.className = 'weight-btn';
-    decBtn.innerText = '−';
-    decBtn.onclick = () => {
-      let numInput = item.querySelector('input[type=number]');
-      let currentVal = parseFloat(numInput.value) || 0;
-      if (currentVal > 0) {
-        let newVal = Math.max(0, currentVal - 1);
-        numInput.value = newVal;
-        weightsArr[i] = newVal;
-        renderWeightSummary(type);
-      }
-    };
-
-    const inp = document.createElement('input');
-    inp.type = 'number';
-    inp.value = weightsArr[i];
-    inp.min = '0';
-    inp.step = '0.5';
-    inp.oninput = (e) => {
-      weightsArr[i] = Math.max(0, parseFloat(e.target.value) || 0);
-      renderWeightSummary(type);
-    };
-
-    const incBtn = document.createElement('button');
-    incBtn.className = 'weight-btn';
-    incBtn.innerText = '+';
-    incBtn.onclick = () => {
-      let numInput = item.querySelector('input[type=number]');
-      let currentVal = parseFloat(numInput.value) || 0;
-      let newVal = currentVal + 1;
-      numInput.value = newVal;
-      weightsArr[i] = newVal;
-      renderWeightSummary(type);
-    };
-
-    controls.appendChild(dirBtn);
-    controls.appendChild(decBtn);
-    controls.appendChild(inp);
-    controls.appendChild(incBtn);
-    item.appendChild(controls);
-    grid.appendChild(item);
-  });
-}
-
-function renderWeightSummary(type) {
-  const arr = type === 'perf' ? perfWeights : costWeights;
-  const invertArr = type === 'perf' ? perfInverted : costInverted;
-  const hdrs = type === 'perf' ? perfHeaders : costHeaders;
-  if (!hdrs.length) return;
-  const metrics = hdrs.slice(1);
-  const total = arr.reduce((s,w)=>s+w,0);
-  const norm = total > 0 ? arr.map(w => w/total) : arr.map(()=> 1/arr.length);
-  const el = document.getElementById(type + 'WeightSummary');
-  el.innerHTML = metrics.map((m,i) => `<div class="weight-chip">${m}&nbsp;(${invertArr[i] ? '−' : '+'}) <strong>${(norm[i]*100).toFixed(0)}%</strong></div>`).join('');
-}
-
-function normalizeWeights(w) {
-  const s = w.reduce((a,b)=>a+b,0);
-  return s > 0 ? w.map(v => v/s) : w.map(()=>1/w.length);
-}
-
-function meanStd(arr) {
-  if (!arr.length) return { mean: 0, std: 1 };
-  const mean = arr.reduce((s,v)=>s+v,0)/arr.length;
-  if (arr.length < 2) return { mean, std: 0 };
-  const sumSq = arr.reduce((s,v)=>s+Math.pow(v-mean,2),0);
-  const std = Math.sqrt(sumSq / (arr.length - 1));
-  return { mean, std };
-}
-
-function calcZScores(matrix, weights, isInvertedArray) {
-  const cols = matrix[0].length;
-  const rows = matrix.length;
-  const zByMetric = [];
-  
-  for (let c = 0; c < cols; c++) {
-    const colVals = [];
-    for (let r = 0; r < rows; r++) colVals.push(matrix[r][c]);
-    const { mean, std } = meanStd(colVals);
-    const normW = normalizeWeights(weights)[c];
-    const metricZ = [];
-    
-    for (let r = 0; r < rows; r++) {
-      let z = std === 0 ? 0 : (colVals[r] - mean) / std;
-      if (isInvertedArray[c]) z = -z; 
-      metricZ.push(z * normW);
-    }
-    zByMetric.push(metricZ);
-  }
-  return zByMetric;
-}
-
-function calcPerf() {
-  setLoading('calcPerfBtn', true);
-  setTimeout(() => { _calcPerf(); setLoading('calcPerfBtn', false); }, 50);
-}
-
-function _calcPerf() {
-  const parsed = parseData('perfData','perfError');
-  if (!parsed) return;
-  const {headers, entities, metrics} = parsed;
-  perfHeaders = headers;
-  if (perfWeights.length !== headers.slice(1).length) setupWeights('perf');
-  const metHdrs = headers.slice(1);
-  const normW = normalizeWeights(perfWeights);
-  const zByMetric = calcZScores(metrics, perfWeights, perfInverted);
-  
-  perfScores = entities.map((entity, ri) => {
-    const contrib = {};
-    metHdrs.forEach((m, ci) => {
-      contrib[m] = { contribution: zByMetric[ci][ri], rawValue: metrics[ri][ci], weight: normW[ci]*100 };
-    });
-    return { entity, totalZ: metHdrs.reduce((s,m)=>s+contrib[m].contribution,0), contributions: contrib };
-  }).sort((a,b)=>b.totalZ - a.totalZ);
-  
-  renderIntermediateTable('perfResults', headers[0], perfScores, 'Performance score (Z)');
-  setStep(2);
-  clearErr('perfError');
-}
-
-function calcCost() {
-  setLoading('calcCostBtn', true);
-  setTimeout(() => { _calcCost(); setLoading('calcCostBtn', false); }, 50);
-}
-
-function _calcCost() {
-  const parsed = parseData('costData','costError');
-  if (!parsed) return;
-  const {headers, entities, metrics} = parsed;
-  costHeaders = headers;
-  if (costWeights.length !== headers.slice(1).length) setupWeights('cost');
-  const metHdrs = headers.slice(1);
-  const normW = normalizeWeights(costWeights);
-  const zByMetric = calcZScores(metrics, costWeights, costInverted);
-  
-  costScores = entities.map((entity, ri) => {
-    const contrib = {};
-    metHdrs.forEach((m, ci) => {
-      contrib[m] = { contribution: zByMetric[ci][ri], rawValue: metrics[ri][ci], weight: normW[ci]*100 };
-    });
-    return { entity, totalZ: metHdrs.reduce((s,m)=>s+contrib[m].contribution,0), contributions: contrib };
-  }).sort((a,b)=>b.totalZ - a.totalZ);
-  
-  renderIntermediateTable('costResults', headers[0], costScores, 'Cost score (Z)');
-  setStep(3);
-  clearErr('costError');
-}
-
-function renderIntermediateTable(containerId, entityLabel, scores, scoreLabel) {
-  const container = document.getElementById(containerId);
-  if (!scores.length) { container.innerHTML = ''; return; }
-  
-  let rows = scores.map((s, i) => {
-    const cls = i===0?'rank-1':(i===1?'rank-2':(i===2?'rank-3':'rank-other'));
-    const sign = s.totalZ >= 0 ? '+' : '';
-    const barCls = s.totalZ < 0 ? 'score-bar score-bar-neg' : 'score-bar';
-    const w = Math.min(100, Math.abs(s.totalZ) * 35);
-    return `<tr>
-      <td style="width:50px;"><span class="rank-badge ${cls}">${i+1}</span></td>
-      <td><strong>${s.entity}</strong></td>
-      <td style="width:60%;"><div class="score-bar-wrap"><div class="${barCls}" style="width:${w}%"></div><span class="score-val">${sign}${s.totalZ.toFixed(3)}</span></div></td>
-    </tr>`;
-  }).join('');
-  
-  container.innerHTML = `<div class="result-section"><h3>Calculated Components</h3><div class="table-wrap"><table><thead><tr><th>Rank</th><th>${entityLabel}</th><th>${scoreLabel}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-}
-
-function calcOverall() {
-  setLoading('calcOverallBtn', true);
-  setTimeout(() => { _calcOverall(); setLoading('calcOverallBtn', false); }, 50);
-}
-
-function _calcOverall() {
-  if (!perfScores.length && !costScores.length) { showErr('overallError', 'Calculate performance or cost scores first.'); return; }
-  clearErr('overallError');
-  
-  const entities = [...new Set([...perfScores.map(s=>s.entity), ...costScores.map(s=>s.entity)])];
-  
-  let combined = entities.map(entity => {
-    const p = perfScores.find(s=>s.entity===entity);
-    const c = costScores.find(s=>s.entity===entity);
-    const contrib = { ...(p?.contributions||{}), ...(c?.contributions||{}) };
-    const rawCompositeZ = (p?.totalZ||0) + (c?.totalZ||0);
-    return { entity, performanceZ: p?.totalZ||0, costZ: c?.totalZ||0, rawCompositeZ, contributions: contrib };
-  });
-  
-  const compositeVals = combined.map(s => s.rawCompositeZ);
-  const { mean: compMean, std: compStd } = meanStd(compositeVals);
-  
-  combined = combined.map(s => {
-    const reStandardizedZ = compStd === 0 ? 0 : (s.rawCompositeZ - compMean) / compStd;
-    const pointsScale = 100 / (1 + Math.exp(-reStandardizedZ));
-    return { ...s, reStandardizedZ, pointsScale };
-  });
-  
-  overallScores = combined;
-  renderFinalOutputs();
-  document.getElementById('overallResults').classList.remove('hidden');
-}
-
-function renderFinalOutputs() {
-  if (currentViewMode === 'points') {
-    overallScores.sort((a,b) => b.pointsScale - a.pointsScale);
-  } else {
-    overallScores.sort((a,b) => b.reStandardizedZ - a.reStandardizedZ);
-  }
-  
-  renderTableHeaders();
-  renderLeaderboardTable();
-  renderCohortStatChips();
-  refreshChart();
-}
-
-function renderTableHeaders() {
-  const tr = document.getElementById('tableHeaders');
-  const primaryHeader = currentViewMode === 'points' ? 'Overall Score' : 'Composite Z-Score';
-  const secondaryHeader = currentViewMode === 'points' ? 'Composite (Z)' : 'Index Points';
-  
-  tr.innerHTML = `
-    <th style="width:50px;">Rank</th>
-    <th>Entity Name</th>
-    <th style="width:130px; text-align:right;">${primaryHeader}</th>
-    <th style="width:120px; text-align:right;">${secondaryHeader}</th>
-    <th style="width:110px; text-align:center;">Cohort Status</th>
-  `;
-}
-
-function renderLeaderboardTable() {
-  const tbody = document.getElementById('overallTableBody');
-  tbody.innerHTML = '';
-  
-  overallScores.forEach((s, i) => {
-    const tr = document.createElement('tr');
-    const badgeCls = i===0?'rank-1':(i===1?'rank-2':(i===2?'rank-3':'rank-other'));
-    
-    let tag = '<span class="tag tag-avg">Average</span>';
-    if (s.reStandardizedZ > 1.2) tag = '<span class="tag tag-top">Top Tier</span>';
-    else if (s.reStandardizedZ > 0.3) tag = '<span class="tag tag-up">Above Avg</span>';
-    else if (s.reStandardizedZ < -0.3) tag = '<span class="tag tag-down">Below Avg</span>';
-    
-    const primaryText = currentViewMode === 'points' 
-      ? s.pointsScale.toFixed(1) + ' pts' 
-      : (s.reStandardizedZ >= 0 ? '+' : '') + s.reStandardizedZ.toFixed(3);
-      
-    const secondaryText = currentViewMode === 'points'
-      ? (s.reStandardizedZ >= 0 ? '+' : '') + s.reStandardizedZ.toFixed(3)
-      : s.pointsScale.toFixed(1) + ' pts';
-
-    tr.innerHTML = `
-      <td><span class="rank-badge ${badgeCls}">${i+1}</span></td>
-      <td><strong>${s.entity}</strong></td>
-      <td style="text-align:right; font-family:var(--mono); font-weight:600; color:var(--accent);">${primaryText}</td>
-      <td style="text-align:right; font-family:var(--mono); color:var(--text-secondary);">${secondaryText}</td>
-      <td style="text-align:center;">${tag}</td>
+    toast.innerHTML = `
+      <div class="toast-icon-wrapper">${iconSvg}</div>
+      <div class="toast-text">${message}</div>
     `;
-    tbody.appendChild(tr);
-  });
-}
-
-// 3) REPLACED: renderCohortStatChips() math and tokens
-function renderCohortStatChips() {
-  const el = document.getElementById('overallStats');
-  const n = overallScores.length;
-
-  const vals = overallScores.map(s => s.rawCompositeZ);
-  const minV = Math.min(...vals);
-  const maxV = Math.max(...vals);
-  const range = maxV - minV;
-
-  const { std } = meanStd(vals);
-
-  el.innerHTML = `
-    <div class="stat-row">
-      <div class="stat-chip">n = <strong>${n}</strong></div>
-      <div class="stat-chip">range <strong>${range.toFixed(2)}</strong></div>
-      <div class="stat-chip">std dev <strong>${std.toFixed(2)}</strong></div>
-      ${n < 10 ? `<div class="stat-chip stat-chip-warn">Small sample — results are indicative</div>` : ''}
-      ${range < 1 ? `<div class="stat-chip stat-chip-info">Tight clustering — differences are modest</div>` : ''}
-    </div>
-  `;
-}
-
-// 4) REPLACED: Core refreshChart Engine & Visual Sub-layers
-function refreshChart() {
-  const canvas = document.getElementById('overallChart');
-  if (!canvas) return;
-  
-  const allMetrics = [];
-  overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
-  
-  allMetrics.forEach((m, i) => { if (!metricColors[m]) metricColors[m] = PALETTE[i % PALETTE.length]; });
-  renderMetricColorPickers(allMetrics);
-  
-  const h = Math.max(300, overallScores.length * 52 + 100);
-  canvas.height = h;
-  canvas.style.height = h + 'px';
-  
-  const colors = getChartColors();
-  let datasets = [];
-  
-  if (currentViewMode === 'zscore') {
-    document.getElementById('chartLabelHeader').innerText = "Composite Structural Breakdown";
-    document.getElementById('chartLabelSub').innerText = "Additive dimensional contributions stacked by component standard deviations (Z)";
     
-    datasets = allMetrics.map(m => ({
-      label: m,
-      data: overallScores.map(s => { const c = (s.contributions||{})[m]; return c ? c.contribution : 0; }),
-      backgroundColor: metricColors[m],
-      borderColor: metricColors[m],
-      borderWidth: 0,
-      stack: 'combined',
-      borderRadius: 2,
-      _metric: m
-    }));
-  } else {
-    // 4A) REPLACED: Points datasets branch with condition-based custom coloring pairs
-    document.getElementById('chartLabelHeader').innerText = "Performance Index Leaderboard";
-    document.getElementById('chartLabelSub').innerText = "0–100 index score (higher is better). Hover for metric breakdown.";
-
-    const barColors = overallScores.map(s => s.pointsScale >= 50 ? 'rgba(184,245,58,0.75)' : 'rgba(255,94,94,0.65)');
-    const borderColors = overallScores.map(s => s.pointsScale >= 50 ? '#b8f53a' : '#ff5e5e');
-
-    datasets = [{
-      label: 'Index Score (0–100)',
-      data: overallScores.map(s => s.pointsScale),
-      backgroundColor: barColors,
-      borderColor: borderColors,
-      borderWidth: 1,
-      borderRadius: 4,
-      barThickness: 24
-    }];
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 40);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      toast.addEventListener('transitionend', () => toast.remove());
+    }, 4500);
   }
-  
-  if (chartInst) { chartInst.destroy(); }
-  
-  chartInst = new Chart(canvas.getContext('2d'), {
-    type: 'bar',
-    data: { labels: overallScores.map(s=>s.entity), datasets },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          stacked: currentViewMode === 'zscore',
-          min: currentViewMode === 'points' ? 0 : undefined,
-          max: currentViewMode === 'points' ? 100 : undefined,
-          grid: { color: 'rgba(255,255,255,.05)' },
-          ticks: { color: colors.axes, font: { family: "'DM Mono'" } },
-          border: { display: false }
-        },
-        y: {
-          stacked: currentViewMode === 'zscore',
-          grid: { display: false },
-          ticks: { color: colors.axes, font: { family: "'DM Sans'", weight: '500' }, padding: 8 },
-          border: { display: false }
-        }
-      },
-      plugins: {
-        legend: {
-          display: currentViewMode === 'zscore',
-          position: 'bottom',
-          labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 16, color: colors.axes, font: { family: "'DM Sans'" } }
-        },
-        tooltip: {
-          backgroundColor: 'rgba(10,10,10,.96)',
-          padding: 14,
-          cornerRadius: 8,
-          borderColor: 'rgba(255,255,255,.1)',
-          borderWidth: 1,
-          titleFont: { size: 13, weight: '600', family: "'DM Sans'" },
-          bodyFont: { size: 12, family: "'DM Mono'" },
-          // 4B) REPLACED: Tooltip callbacks context dispatcher
-          callbacks: {
-            title: items => items.length ? overallScores[items[0].dataIndex].entity : '',
-            label: item => {
-              const s = overallScores[item.dataIndex];
 
-              if (currentViewMode === 'points') {
-                const lines = [];
-                lines.push(`Index Score: ${s.pointsScale.toFixed(1)} / 100`);
-                lines.push(`Composite Z: ${(s.reStandardizedZ >= 0 ? '+' : '')}${s.reStandardizedZ.toFixed(3)}`);
-                lines.push(`Performance Z: ${(s.performanceZ >= 0 ? '+' : '')}${s.performanceZ.toFixed(3)}`);
-                lines.push(`Cost Z: ${(s.costZ >= 0 ? '+' : '')}${s.costZ.toFixed(3)}`);
-                lines.push(''); 
+  // --- Global Application States ---
+  let perfScores = []; let costScores = []; let overallScores = [];
+  let perfWeights = []; let costWeights = [];
+  let perfInverted = []; let costInverted = [];
+  let perfHeaders = []; let costHeaders = [];
+  let currentViewMode = 'points';
+  let chartInst = null;
+  let unlockedStep = 1;
 
-                Object.keys(s.contributions || {}).forEach(m => {
-                  const c = s.contributions[m];
-                  if (!c) return;
-                  const sign = c.contribution >= 0 ? '+' : '';
-                  lines.push(`${m}: ${sign}${c.contribution.toFixed(3)} (raw: ${c.rawValue}, wt: ${c.weight.toFixed(0)}%)`);
-                });
-
-                return lines;
-              }
-
-              const m = item.dataset._metric;
-              const c = (s.contributions || {})[m];
-              if (!c || Math.abs(c.contribution) < 0.001) return null;
-              return `${m}: ${(c.contribution >= 0 ? '+' : '')}${c.contribution.toFixed(3)} (Raw: ${c.rawValue})`;
-            }
-          }
-        }
-      },
-      layout: { padding: { top: 8, right: 16, bottom: 8, left: 0 } }
-    },
-    // 4C) REPLACED: Canvas internal extensions (Background + Dashed AVG Baseline)
-    plugins: [
-      {
-        id: 'custom_bg',
-        beforeDraw(chart) {
-          const {ctx, chartArea: {top, left, width, height}} = chart;
-          ctx.fillStyle = colors.bg;
-          ctx.fillRect(left, top, width, height);
-        }
-      },
-      {
-        id: 'avgLine50',
-        afterDraw(chart) {
-          if (currentViewMode !== 'points') return;
-          const xScale = chart.scales.x;
-          const x50 = xScale.getPixelForValue(50);
-          const ctx = chart.ctx;
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.setLineDash([6, 4]);
-          ctx.strokeStyle = 'rgba(255,255,255,.25)';
-          ctx.lineWidth = 1;
-          ctx.moveTo(x50, chart.chartArea.top);
-          ctx.lineTo(x50, chart.chartArea.bottom);
-          ctx.stroke();
-
-          ctx.setLineDash([]);
-          ctx.fillStyle = 'rgba(255,255,255,.35)';
-          ctx.font = "500 10px 'DM Mono', monospace";
-          ctx.textAlign = 'center';
-          ctx.fillText('AVG', x50, chart.chartArea.top - 6);
-          ctx.restore();
-        }
-      }
-    ]
+  document.addEventListener('DOMContentLoaded', () => {
+    setupWeights('perf'); setupWeights('cost');
+    document.getElementById('perfData').addEventListener('input', () => setupWeights('perf'));
+    document.getElementById('costData').addEventListener('input', () => setupWeights('cost'));
   });
-}
 
-function renderMetricColorPickers(metrics) {
-  const container = document.getElementById('metricColorsContainer');
-  if (currentViewMode === 'points') { container.innerHTML = ''; return; }
-  
-  container.innerHTML = metrics.map((m, i) => {
-    const id = `cp_${i}`;
-    const hexId = `ch_${i}`;
-    return `<div class="color-item" style="margin-bottom:6px;">
-      <label style="font-size:11px; width:110px; overflow:hidden; text-overflow:ellipsis;">${m}</label>
-      <input type="color" id="${id}" class="color-swatch" value="${metricColors[m]}" onchange="syncColor('${id}','${hexId}'); updateMetricColor('${m}', this.value)">
-      <input type="text" id="${hexId}" class="color-hex" style="width:70px; padding:2px 6px; font-size:10px;" value="${metricColors[m]}" oninput="syncSwatch('${hexId}','${id}'); updateMetricColor('${m}', this.value)">
-    </div>`;
-  }).join('');
-}
+  // --- Strict RFC 4180 Standard CSV-Tab Custom Parser Tokenizer Engine ---
+  function parseDelimitedString(text) {
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if (!lines.length) return [];
 
-function updateMetricColor(metric, val) {
-  if (!/^#[0-9a-f]{3,6}$/i.test(val.trim())) return;
-  metricColors[metric] = val.trim();
-  refreshChart();
-}
+    // Explicitly check for valid tabs or commas; fallback if missing to enforce validation safety
+    let delimiter = '';
+    if (lines[0].includes('\t')) delimiter = '\t';
+    else if (lines[0].includes(',')) delimiter = ',';
+    else throw new Error("Data parsing failure. The application requires clean tab or comma separated tables.");
 
-function syncColor(pickerId, hexId) { document.getElementById(hexId).value = document.getElementById(pickerId).value; }
-function syncSwatch(hexId, pickerId) {
-  const v = document.getElementById(hexId).value.trim();
-  if (/^#[0-9a-f]{3,6}$/i.test(v)) document.getElementById(pickerId).value = v;
-}
+    const parseLine = (line) => {
+      const tokens = [];
+      let i = 0, token = '', insideQuote = false;
+      while (i < line.length) {
+        const char = line[i];
+        if (char === '"') {
+          insideQuote = !insideQuote;
+        } else if (char === delimiter && !insideQuote) {
+          tokens.push(token.trim().replace(/^"|"$/g, ''));
+          token = '';
+        } else {
+          token += char;
+        }
+        i++;
+      }
+      tokens.push(token.trim().replace(/^"|"$/g, ''));
+      return tokens;
+    };
 
-function getChartColors() {
-  return { bg: document.getElementById('colorBg').value, axes: document.getElementById('colorAxes').value };
-}
+    return lines.map(parseLine);
+  }
 
-function setLoading(id, show) {
-  const btn = document.getElementById(id);
-  if (show) { btn.classList.add('loading'); btn.disabled = true; }
-  else { btn.classList.remove('loading'); btn.disabled = false; }
-}
+  function switchView(stepNum) {
+    if (stepNum > unlockedStep) {
+      showToast("Calculate parameters inside your current view step before advancing further.");
+      return;
+    }
 
-// 5) REPLACED: exportHTML() full implementation
-function exportHTML() {
-  if (!overallScores.length) { alert('Generate the ranking first.'); return; }
-  const allMetrics = [];
-  overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
-  
-  // 5A) Snapshot active display layout style
-  const viewMode = currentViewMode; 
-  
-  const tableRows = overallScores.map((s, i) => {
-    return `<tr>
-      <td>${i+1}</td>
-      <td class="bold">${s.entity}</td>
-      <td>${s.performanceZ.toFixed(3)}</td>
-      <td>${s.costZ.toFixed(3)}</td>
-      <td>${s.reStandardizedZ.toFixed(3)}</td>
-      <td class="bold color">${s.pointsScale.toFixed(1)}</td>
-    </tr>`;
-  }).join('');
-  
-  const canvasH = Math.max(300, overallScores.length * 40 + 100);
-  const chartColors = getChartColors();
-  
-  // 5B) Conditional Data Serialization
-  const exportedChartData = (viewMode === 'points')
-    ? JSON.stringify({
-        labels: overallScores.map(s => s.entity),
-        datasets: [{
-          label: 'Index Score (0–100)',
-          data: overallScores.map(s => s.pointsScale),
-          backgroundColor: overallScores.map(s => s.pointsScale >= 50 ? 'rgba(184,245,58,0.75)' : 'rgba(255,94,94,0.65)'),
-          borderColor: overallScores.map(s => s.pointsScale >= 50 ? '#b8f53a' : '#ff5e5e'),
-          borderWidth: 1,
-          borderRadius: 4
-        }]
-      })
-    : JSON.stringify({
-        labels: overallScores.map(s => s.entity),
-        datasets: allMetrics.map(m => ({
-          label: m,
-          data: overallScores.map(s => { const c = (s.contributions||{})[m]; return c ? c.contribution : 0; }),
-          backgroundColor: metricColors[m],
-          borderColor: metricColors[m],
-          borderWidth: 0,
-          stack: 'combined',
-          borderRadius: 2
-        }))
+    document.querySelectorAll('.step-node').forEach(node => {
+      const idx = parseInt(node.id.replace('tabNode', ''));
+      node.classList.remove('active', 'done');
+      node.setAttribute('aria-selected', 'false');
+      if (idx < stepNum) node.classList.add('done');
+      else if (idx === stepNum) { node.classList.add('active'); node.setAttribute('aria-selected', 'true'); }
+    });
+
+    ['line1','line2'].forEach((lineId, i) => {
+      const el = document.getElementById(lineId);
+      if (el) el.classList.toggle('done', stepNum > i + 1);
+    });
+
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-view'));
+    if (stepNum === 1) document.getElementById('viewPerf').classList.add('active-view');
+    if (stepNum === 2) document.getElementById('viewCost').classList.add('active-view');
+    if (stepNum === 3) document.getElementById('viewOverall').classList.add('active-view');
+  }
+
+  function setGlobalViewMode(mode) {
+    if (currentViewMode === mode) return;
+    currentViewMode = mode;
+    document.getElementById('modePoints').classList.toggle('active', mode === 'points');
+    document.getElementById('modeZScore').classList.toggle('active', mode === 'zscore');
+    if (overallScores.length > 0) {
+      renderFinalOutputs();
+    }
+  }
+
+  function toggleExplainer() {
+    const el = document.getElementById('explainerMore');
+    const btn = el.previousElementSibling;
+    const open = el.classList.toggle('open');
+    btn.textContent = open ? 'Hide math details' : 'Show math details';
+  }
+
+  function handleUpload(e, id) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      document.getElementById(id).value = ev.target.result.trim();
+      setupWeights(id === 'perfData' ? 'perf' : 'cost');
+      showToast("File uploaded and read successfully.", "info");
+    };
+    r.readAsText(file);
+  }
+
+  function setupWeights(type) {
+    try {
+      const txt = document.getElementById(type === 'perf' ? 'perfData' : 'costData').value.trim();
+      const area = document.getElementById(type === 'perf' ? 'perfWeightsArea' : 'costWeightsArea');
+      const grid = document.getElementById(type === 'perf' ? 'perfWeightsGrid' : 'costWeightsGrid');
+      if (!txt) { area.classList.remove('revealed'); return; }
+
+      const parsedMatrix = parseDelimitedString(txt);
+      if (parsedMatrix.length < 2) return;
+
+      const headers = parsedMatrix[0].slice(1);
+      if (type === 'perf') perfHeaders = headers; else costHeaders = headers;
+
+      let currentWeights = type === 'perf' ? perfWeights : costWeights;
+      let currentInverted = type === 'perf' ? perfInverted : costInverted;
+      let newWeights = [], newInverted = [];
+
+      headers.forEach((h, i) => {
+        newWeights[i] = currentWeights[i] !== undefined ? currentWeights[i] : 1;
+        newInverted[i] = currentInverted[i] !== undefined ? currentInverted[i] : (type === 'cost');
       });
 
-  // 5C) Conditional Scale Mapping Options Definition
-  const exportedOptions = (viewMode === 'points')
-    ? {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        scales: {
-          x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: chartColors.axes } },
-          y: { grid: { display: false }, ticks: { color: chartColors.axes } }
-        },
-        plugins: { legend: { display: false } }
+      if (type === 'perf') { perfWeights = newWeights; perfInverted = newInverted; }
+      else { costWeights = newWeights; costInverted = newInverted; }
+
+      grid.innerHTML = '';
+      headers.forEach((h, i) => {
+        const item = document.createElement('div');
+        item.className = 'weight-item';
+        
+        const left = document.createElement('div');
+        left.className = 'weight-item-left';
+        const label = document.createElement('label');
+        label.textContent = h;
+        left.appendChild(label);
+
+        const ctrl = document.createElement('div');
+        ctrl.className = 'weight-controls';
+
+        const dirBtn = document.createElement('button');
+        dirBtn.className = 'weight-btn dir-toggle';
+        dirBtn.type = "button";
+        let inv = type === 'perf' ? perfInverted[i] : costInverted[i];
+        dirBtn.textContent = inv ? 'MIN' : 'MAX';
+        dirBtn.style.color = inv ? 'var(--danger)' : 'var(--accent)';
+        
+        dirBtn.onclick = () => {
+          if (type === 'perf') {
+            perfInverted[i] = !perfInverted[i];
+            dirBtn.textContent = perfInverted[i] ? 'MIN' : 'MAX';
+            dirBtn.style.color = perfInverted[i] ? 'var(--danger)' : 'var(--accent)';
+          } else {
+            costInverted[i] = !costInverted[i];
+            dirBtn.textContent = costInverted[i] ? 'MIN' : 'MAX';
+            dirBtn.style.color = costInverted[i] ? 'var(--danger)' : 'var(--accent)';
+          }
+          updateWeightChips(type);
+        };
+
+        const dec = document.createElement('button');
+        dec.className = 'weight-btn'; dec.textContent = '−'; dec.type = "button";
+        dec.onclick = () => {
+          let val = type === 'perf' ? perfWeights[i] : costWeights[i];
+          if (val > 0) {
+            val--; if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
+            num.value = val; updateWeightChips(type);
+          }
+        };
+
+        const num = document.createElement('input');
+        num.type = 'number'; num.value = type === 'perf' ? perfWeights[i] : costWeights[i]; num.readOnly = true;
+
+        const inc = document.createElement('button');
+        inc.className = 'weight-btn'; inc.textContent = '+'; inc.type = "button";
+        inc.onclick = () => {
+          let val = type === 'perf' ? perfWeights[i] : costWeights[i];
+          val++; if (type === 'perf') perfWeights[i] = val; else costWeights[i] = val;
+          num.value = val; updateWeightChips(type);
+        };
+
+        ctrl.appendChild(dirBtn); ctrl.appendChild(dec); ctrl.appendChild(num); ctrl.appendChild(inc);
+        item.appendChild(left); item.appendChild(ctrl); grid.appendChild(item);
+      });
+
+      area.classList.add('revealed');
+      updateWeightChips(type);
+    } catch(e) {
+      // Fail silently on dynamic input updates
+    }
+  }
+
+  function updateWeightChips(type) {
+    const summary = document.getElementById(type === 'perf' ? 'perfWeightSummary' : 'costWeightSummary');
+    const headers = type === 'perf' ? perfHeaders : costHeaders;
+    const weights = type === 'perf' ? perfWeights : costWeights;
+    const inverted = type === 'perf' ? perfInverted : costInverted;
+
+    summary.innerHTML = '';
+    headers.forEach((h, i) => {
+      if (weights[i] > 0) {
+        const chip = document.createElement('div');
+        chip.className = 'weight-chip';
+        chip.innerHTML = `<span>${h}:</span> <strong>${weights[i]}x (${inverted[i]?'Min':'Max'})</strong>`;
+        summary.appendChild(chip);
       }
-    : {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        scales: {
-          x: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: chartColors.axes } },
-          y: { stacked: true, grid: { display: false }, ticks: { color: chartColors.axes } }
-        },
-        plugins: { legend: { display: false } }
-      };
-
-  const html = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Performance Report</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"><\/script>
-<style>
-  body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0a; color: #f0f0f0; padding: 40px 20px; max-width: 900px; margin: 0 auto; }
-  h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
-  p { color: #909090; margin-bottom: 30px; font-size: 14px; }
-  .card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-  .card-title { font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #909090; margin-bottom: 16px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-  th { background: #161616; padding: 10px 14px; color: #909090; font-weight: 600; border-bottom: 1px solid #222; }
-  td { padding: 12px 14px; border-bottom: 1px solid #222; }
-  .bold { font-weight: 600; }
-  .color { color: #b8f53a; }
-  .legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 16px; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #909090; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
-</style>
-</head>
-<body>
-  <h1>Performance Ranking Executive Summary</h1>
-  <p>Generated Report Hierarchy — Bounded Indexation Profile Output</p>
-  
-  <div class="card">
-    <div class="card-title">Leaderboard Matrix</div>
-    <table>
-      <thead>
-        <tr><th>Rank</th><th>Entity</th><th>Performance (Z)</th><th>Cost (Z)</th><th>Composite (Z)</th><th>Index Score (0-100)</th></tr>
-      </thead>
-      <tbody>${tableRows}</tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Visual Layout Model Matrix</div>
-    <canvas id="chart" style="height:${canvasH}px"></canvas>
-    <div class="legend" style="${viewMode === 'points' ? 'display:none;' : ''}">
-      ${allMetrics.map(m=>`<div class="legend-item"><div class="legend-dot" style="background:${metricColors[m]||'#b8f53a'}"></div>${m}</div>`).join('')}
-    </div>
-  </div>
-
-  <script>
-    const ctx = document.getElementById('chart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      // 5D) Injected view-aware data matrices and metrics mapping parameters
-      data: ${exportedChartData},
-      options: ${JSON.stringify(exportedOptions)},
-      // 5E) Embedded contextual background filler and grid baseline components
-      plugins: [{
-        id: 'bg',
-        beforeDraw(c) {
-          const {ctx, chartArea: {top, left, width, height}} = c;
-          ctx.fillStyle = '${chartColors.bg}';
-          ctx.fillRect(left, top, width, height);
-        }
-      },{
-        id: 'avgLine50',
-        afterDraw(c) {
-          const viewMode = ${JSON.stringify(viewMode)};
-          if (viewMode !== 'points') return;
-          const xScale = c.scales.x;
-          const x50 = xScale.getPixelForValue(50);
-          const ctx = c.ctx;
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.setLineDash([6,4]);
-          ctx.strokeStyle = 'rgba(255,255,255,.25)';
-          ctx.lineWidth = 1;
-          ctx.moveTo(x50, c.chartArea.top);
-          ctx.lineTo(x50, c.chartArea.bottom);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.fillStyle = 'rgba(255,255,255,.35)';
-          ctx.font = "500 10px 'DM Mono', monospace";
-          ctx.textAlign = 'center';
-          ctx.fillText('AVG', x50, c.chartArea.top - 6);
-          ctx.restore();
-        }
-      }]
     });
-  <\/script>
-</body>
-</html>`;
+  }
 
-  const blob = new Blob([html], {type:'text/html'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'performance_report.html';
-  a.click();
-}
+  function parseInputMatrix(id) {
+    const txt = document.getElementById(id).value.trim();
+    const matrix = parseDelimitedString(txt);
+    if (matrix.length < 2) throw new Error("Data rows must contain a header and evaluation row targets.");
 
-function downloadPNG() {
-  if (!chartInst) { alert('Generate the ranking first.'); return; }
-  const a = document.createElement('a');
-  a.href = chartInst.toBase64Image('image/png', 1);
-  a.download = 'ranking_chart.png';
-  a.click();
-}
+    const headers = matrix[0];
+    const subHeaders = headers.slice(1);
 
-function exportCSV() {
-  if (!overallScores.length) { alert('Generate the ranking first.'); return; }
-  const allMetrics = [];
-  overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
-  
-  const headers = ['Entry','Performance score (Z)','Cost score (Z)','Composite Z-Score','Index Score (0-100)',...allMetrics.map(m=>m+' Contribution Z')];
-  const rows = overallScores.map(s => [
-    s.entity, s.performanceZ.toFixed(3), s.costZ.toFixed(3), s.reStandardizedZ.toFixed(3), s.pointsScale.toFixed(1),
-    ...allMetrics.map(m => { const c = (s.contributions||{})[m]; return c ? c.contribution.toFixed(3) : '0'; })
-  ]);
-  
-  const csv = [headers, ...rows].map(r => r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'performance_rankings.csv';
-  a.click();
-}
+    let rows = [];
+    for (let i = 1; i < matrix.length; i++) {
+      const parts = matrix[i];
+      if (parts.length !== headers.length) throw new Error(`Row entry mismatch at row pointer line: ${i + 1}`);
+      const item = { entity: parts[0], values: {}, rawNormalizedKey: parts[0].trim().toLowerCase() };
+      subHeaders.forEach((sh, idx) => {
+        // Strip out string notation formatting symbols (like currency commas) natively
+        let cleanVal = parts[idx + 1].replace(/[\$,]/g, '');
+        const val = parseFloat(cleanVal);
+        if (isNaN(val)) throw new Error(`Invalid non-numeric value "${parts[idx+1]}" found at row index line: ${i + 1}`);
+        item.values[sh] = val;
+      });
+      rows.push(item);
+    }
+    return { subHeaders, rows };
+  }
+
+  function computeStandardZMatrix(data, weights, inverted) {
+    const metrics = data.subHeaders;
+    const elements = data.rows;
+    let meta = {};
+
+    metrics.forEach(m => {
+      const vals = elements.map(e => e.values[m]);
+      const avg = vals.reduce((s, v) => s + v, 0) / vals.length;
+      const dev = Math.sqrt(vals.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / vals.length);
+      meta[m] = { avg, dev: dev || 1 };
+    });
+
+    return elements.map(e => {
+      let sumZ = 0, weightSum = 0;
+      let contributions = {};
+      
+      metrics.forEach((m, idx) => {
+        const w = weights[idx]; if (w <= 0) return;
+        let z = (e.values[m] - meta[m].avg) / meta[m].dev;
+        if (inverted[idx]) z = -z;
+        
+        let weightedCont = z * w;
+        sumZ += weightedCont; weightSum += w;
+        
+        contributions[m] = {
+          raw: e.values[m],
+          zScore: z,
+          weightedContribution: weightedCont
+        };
+      });
+      
+      return { 
+        entity: e.entity, 
+        rawNormalizedKey: e.rawNormalizedKey,
+        scoreZ: weightSum > 0 ? (sumZ / weightSum) : 0,
+        contributions: contributions
+      };
+    });
+  }
+
+  function processPerformanceStep() {
+    try {
+      const data = parseInputMatrix('perfData');
+      perfScores = computeStandardZMatrix(data, perfWeights, perfInverted);
+      if (unlockedStep < 2) unlockedStep = 2;
+      switchView(2);
+    } catch (err) { showToast(err.message, "error"); }
+  }
+
+  function processCostStep() {
+    try {
+      const data = parseInputMatrix('costData');
+      costScores = computeStandardZMatrix(data, costWeights, costInverted);
+      executeUnifiedCalculation();
+    } catch (err) { showToast(err.message, "error"); }
+  }
+
+  function executeUnifiedCalculation() {
+    const btn = document.getElementById('calcCostBtn');
+    btn.classList.add('loading');
+
+    setTimeout(() => {
+      try {
+        // Build a robust lowercased exact identity map to ensure flawless cross-joining mapping properties
+        let costLookupMap = {}; 
+        costScores.forEach(c => costLookupMap[c.rawNormalizedKey] = c);
+        
+        let integrated = [];
+        perfScores.forEach(p => {
+          const costMatch = costLookupMap[p.rawNormalizedKey];
+          const cZ = costMatch !== undefined ? costMatch.scoreZ : 0;
+          
+          // Deep-merge the metric tracking analytical payload breakdown charts
+          let mergedContributions = Object.assign({}, p.contributions, costMatch ? costMatch.contributions : {});
+          
+          integrated.push({ 
+            entity: p.entity, 
+            perfZ: p.scoreZ, 
+            costZ: cZ, 
+            combZ: (p.scoreZ + cZ) / 2,
+            contributions: mergedContributions
+          });
+        });
+
+        const combZVals = integrated.map(i => i.combZ);
+        const mean = combZVals.reduce((s, v) => s + v, 0) / combZVals.length;
+        const dev = Math.sqrt(combZVals.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / combZVals.length) || 1;
+
+        overallScores = integrated.map(i => {
+          const normZ = (i.combZ - mean) / dev;
+          const points = 100 / (1 + Math.exp(-0.7 * normZ));
+          return { 
+            entity: i.entity, 
+            performanceZ: i.perfZ, 
+            costZ: i.costZ, 
+            reStandardizedZ: normZ, 
+            pointsScale: points,
+            contributions: i.contributions
+          };
+        });
+
+        overallScores.sort((a, b) => b.pointsScale - a.pointsScale);
+        renderFinalOutputs();
+        unlockedStep = 3; switchView(3);
+      } catch (err) { showToast(err.message, "error"); }
+      finally { btn.classList.remove('loading'); }
+    }, 250);
+  }
+
+  function renderFinalOutputs() {
+    const headers = document.getElementById('tableHeaders');
+    const body = document.getElementById('overallTableBody');
+
+    headers.innerHTML = `
+      <th style="width: 50px;">Rank</th>
+      <th>Entry Name</th>
+      <th style="text-align:right;">Performance Quality</th>
+      <th style="text-align:right;">Cost Efficiency</th>
+      <th style="text-align:center; min-width:180px;">Unified Score Index</th>
+    `;
+
+    body.innerHTML = '';
+    overallScores.forEach((row, idx) => {
+      const pos = idx + 1;
+      let badge = "rank-other";
+      if (pos === 1) badge = "rank-1"; if (pos === 2) badge = "rank-2"; if (pos === 3) badge = "rank-3";
+
+      let valStr = '', barMarkup = '';
+      if (currentViewMode === 'points') {
+        valStr = row.pointsScale.toFixed(1);
+        barMarkup = `<div class="score-bar" style="width: ${row.pointsScale}%"></div>`;
+      } else {
+        valStr = row.reStandardizedZ.toFixed(2);
+        const w = Math.min(Math.abs(row.reStandardizedZ) * 25, 100);
+        barMarkup = `<div class="score-bar ${row.reStandardizedZ < 0 ? 'score-bar-neg' : ''}" style="width: ${w}%"></div>`;
+      }
+
+      const pTag = row.performanceZ > 0.25 ? 'tag-top' : (row.performanceZ >= -0.25 ? 'tag-avg' : 'tag-down');
+      const pLbl = row.performanceZ > 0.25 ? 'Strong' : (row.performanceZ >= -0.25 ? 'Average' : 'Weak');
+      const cTag = row.costZ > 0.25 ? 'tag-top' : (row.costZ >= -0.25 ? 'tag-avg' : 'tag-down');
+      const cLbl = row.costZ > 0.25 ? 'Efficient' : (row.costZ >= -0.25 ? 'Moderate' : 'High');
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="rank-badge ${badge}">${pos}</span></td>
+        <td><strong>${row.entity}</strong></td>
+        <td style="text-align:right;"><span class="tag ${pTag}">${pLbl}</span></td>
+        <td style="text-align:right;"><span class="tag ${cTag}">${cLbl}</span></td>
+        <td>
+          <div class="score-bar-wrap">
+            ${barMarkup}
+            <span class="score-val">${valStr}</span>
+          </div>
+        </td>
+      `;
+      body.appendChild(tr);
+    });
+
+    const stats = document.getElementById('overallStats');
+    stats.innerHTML = `
+      <div class="stat-row">
+        <div class="stat-chip">Total Profiles: <strong>${overallScores.length}</strong></div>
+        <div class="stat-chip stat-chip-info">Top Leader: <strong>${overallScores[0].entity}</strong></div>
+      </div>
+    `;
+    updateChartPresentation();
+  }
+
+  function updateChartPresentation() {
+    const ctx = document.getElementById('overallChart');
+    if (!ctx) return;
+
+    const labels = overallScores.map(s => s.entity);
+    const dataVals = currentViewMode === 'points' ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
+    
+    const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
+    const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
+    
+    // Dynamic array mapping providing semantic polarity indicators across negative/positive standard deviations
+    const barColors = dataVals.map(val => {
+      if (currentViewMode === 'points') {
+        return val >= 50 ? positiveAccentColor : '#ff5353';
+      } else {
+        return val >= 0 ? positiveAccentColor : '#ff5353';
+      }
+    });
+
+    const baselineValue = currentViewMode === 'points' ? 50 : 0;
+
+    // Optimized chart refresh layer: Check instance validity to update configuration options or recreate gracefully
+    if (chartInst) {
+      chartInst.data.labels = labels;
+      chartInst.data.datasets[0].data = dataVals;
+      chartInst.data.datasets[0].backgroundColor = barColors;
+      chartInst.options.scales.x.ticks.color = axisColor;
+      chartInst.options.scales.y.ticks.color = axisColor;
+      chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
+      chartInst.options.plugins.annotation.annotations.line1.label.content = currentViewMode === 'points' ? 'Average Baseline (50)' : 'Average Deviation (0.0)';
+      chartInst.update();
+    } else {
+      chartInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: dataVals,
+            backgroundColor: barColors,
+            borderRadius: 4,
+            maxBarThickness: 28
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            annotation: {
+              annotations: {
+                line1: {
+                  type: 'line',
+                  yMin: baselineValue,
+                  yMax: baselineValue,
+                  borderColor: 'rgba(255, 255, 255, 0.15)',
+                  borderWidth: 1.5,
+                  borderDash: [5, 5],
+                  label: {
+                    display: true,
+                    content: currentViewMode === 'points' ? 'Average Baseline (50)' : 'Average Deviation (0.0)',
+                    position: 'end',
+                    backgroundColor: 'rgba(17,18,20,0.8)',
+                    color: '#9ea3ae',
+                    font: { family: 'DM Sans', size: 10, weight: '500' }
+                  }
+                }
+              }
+            },
+            tooltip: {
+              enabled: true,
+              backgroundColor: 'rgba(17, 18, 20, 0.95)',
+              titleColor: '#f5f5f7',
+              bodyColor: '#9ea3ae',
+              bodyFont: { family: 'DM Mono', size: 11 },
+              titleFont: { family: 'DM Sans', size: 13, weight: '600' },
+              borderColor: 'rgba(255,255,255,0.06)',
+              borderWidth: 1,
+              padding: 12,
+              cornerRadius: 8,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  const itemIndex = context.dataIndex;
+                  const scoreObj = overallScores[itemIndex];
+                  const outputLines = [];
+                  
+                  if (currentViewMode === 'points') {
+                    outputLines.push(`Overall Index Score: ${scoreObj.pointsScale.toFixed(1)} pts`);
+                  } else {
+                    outputLines.push(`Composite Z-Score: ${scoreObj.reStandardizedZ.toFixed(2)} σ`);
+                  }
+                  outputLines.push('------------------------------------');
+                  outputLines.push('Weighted Analytical Breakdown:');
+
+                  if (scoreObj.contributions) {
+                    Object.keys(scoreObj.contributions).forEach(mName => {
+                      const c = scoreObj.contributions[mName];
+                      outputLines.push(` • ${mName}: ${c.raw} (Z: ${c.zScore >= 0 ? '+' : ''}${c.zScore.toFixed(2)})`);
+                    });
+                  }
+                  return outputLines;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: axisColor, font: { family: 'DM Sans', size: 12 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.02)' }, ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } } }
+          }
+        }
+      });
+    }
+  }
+
+  function syncColor(sId, tId) { document.getElementById(tId).value = document.getElementById(sId).value.toUpperCase(); }
+  function syncSwatch(tId, sId) {
+    const val = document.getElementById(tId).value;
+    if (/^#[0-9A-F]{6}$/i.test(val)) document.getElementById(sId).value = val;
+  }
+
+  function downloadPNG() {
+    if (!chartInst) { showToast("Generate rankings before downloading charts."); return; }
+    const a = document.createElement('a'); a.href = chartInst.toBase64Image('image/png', 1);
+    a.download = 'performance_rankings_chart.png'; a.click();
+  }
+
+  function exportCSV() {
+    if (!overallScores.length) { showToast("Generate rankings before exporting."); return; }
+    
+    // Dynamically tracks headers and labels depending on your active user metrics mode selection state
+    const metricScoreLabel = currentViewMode === 'points' ? 'Unified Index Score (0-100)' : 'Composite Z-Score (Deviation)';
+    let lines = [`"Entry Name","Performance Quality Z","Cost Efficiency Z","${metricScoreLabel}"`];
+    
+    overallScores.forEach(r => {
+      const activeValueExport = currentViewMode === 'points' ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
+      lines.push(`"${r.entity.replace(/"/g, '""')}",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
+    });
+    
+    const b = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'rankings_export.csv'; a.click();
+  }
 </script>
 </body>
 </html>
