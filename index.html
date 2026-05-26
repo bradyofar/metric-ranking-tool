@@ -17,6 +17,7 @@
     --text-secondary: #9ea3ae;
     --text-muted: #626771;
     --border: #1a1a1a;
+    --border-subtle: rgba(255,255,255,0.04);
     --bg: #060606;
     --bg-card: #111214;
     --bg-input: #17181c;
@@ -246,19 +247,120 @@
   .toast.show { transform: translateY(0) scale(1); opacity: 1; }
   .toast-icon-wrapper { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-  /* LEADERBOARD TABLE */
+  /* LEADERBOARD TABLE - SAAS EVOLUTION */
   .result-section { margin-top: 12px; }
-  .table-wrap { overflow-x: auto; border-radius: var(--radius-md); background: var(--bg-input); }
-  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  thead th {
-    background: rgba(0,0,0,0.15); padding: 12px 16px; text-align: left;
-    font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
-    color: var(--text-muted); white-space: nowrap;
+  .table-wrap { 
+    overflow-x: auto; 
+    border-radius: var(--radius-md); 
+    background: var(--bg-input); 
+    max-height: 480px; 
+    position: relative;
+    box-shadow: inset 0 0 0 1px var(--border-subtle);
   }
-  tbody td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.01); color: var(--text-primary); }
-  tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover td { background: var(--bg-hover); }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
   
+  thead th {
+    background: #17181c; 
+    padding: 14px 16px; 
+    text-align: left;
+    font-size: 11px; 
+    font-weight: 600; 
+    letter-spacing: .05em; 
+    text-transform: uppercase;
+    color: var(--text-muted); 
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    user-select: none;
+  }
+  
+  thead th.sortable {
+    cursor: pointer;
+    transition: color var(--transition), background var(--transition);
+  }
+  thead th.sortable:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+  }
+  .sort-icon {
+    display: inline-flex;
+    margin-left: 4px;
+    font-size: 10px;
+    vertical-align: middle;
+    color: var(--text-muted);
+    opacity: 0.5;
+    transition: opacity var(--transition), color var(--transition);
+  }
+  thead th.sortable:hover .sort-icon { opacity: 1; }
+  thead th.active-sort { color: var(--accent); }
+  thead th.active-sort .sort-icon { opacity: 1; color: var(--accent); }
+
+  tbody tr.master-row {
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+  tbody tr.master-row td { 
+    padding: 14px 16px; 
+    border-bottom: 1px solid var(--border-subtle); 
+    color: var(--text-primary); 
+    position: relative;
+  }
+  tbody tr.master-row:last-child:not(.expanded) td { border-bottom: none; }
+  
+  /* Focus States & Row Anchors */
+  tbody tr.master-row:hover td { background: var(--bg-hover); }
+  tbody tr.master-row.expanded td { background: rgba(184,245,58,0.02); border-bottom-color: transparent; }
+  
+  /* Chevron indicator */
+  .row-toggle-cell { width: 30px; text-align: center; color: var(--text-muted); }
+  .chevron-icon {
+    display: inline-block;
+    transition: transform var(--transition);
+    font-family: monospace;
+    font-size: 11px;
+    font-style: normal;
+  }
+  tr.expanded .chevron-icon { transform: rotate(90deg); color: var(--accent); }
+
+  /* Expanded Analytical Breakdown Details View */
+  tbody tr.detail-row { display: none; }
+  tbody tr.detail-row.open { display: table-row; }
+  tbody tr.detail-row td {
+    padding: 0 24px 20px 46px;
+    background: rgba(184,245,58,0.01);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  tbody tr.detail-row:last-child td { border-bottom: none; }
+  
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+  .breakdown-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .breakdown-card {
+    background: rgba(0,0,0,0.15);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255,255,255,0.01);
+  }
+  .breakdown-lbl { font-size: 12px; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+  .breakdown-val { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 2px 0; }
+  .breakdown-z { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+  .breakdown-z.pos { color: #8cc22a; }
+  .breakdown-z.neg { color: #ff7c7c; }
+
   .rank-badge {
     display: inline-flex; align-items: center; justify-content: center;
     width: 22px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 700; font-family: var(--mono);
@@ -324,7 +426,7 @@
   <div class="hero">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      Mutli Metric Ranking Tool
+      Multi Metric Ranking Tool
     </div>
     <h1>Find your <span>best performers</span> at a glance</h1>
     <p class="hero-sub">Upload performance data, adjust metric importance, and generate standardised rankings instantly.</p>
@@ -350,9 +452,9 @@
     <button class="step-node" id="tabNode3" role="tab" aria-selected="false" onclick="switchView(3)">
       <div class="step-dot">
         <span>3</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
-      <div class="step-lbl">Final Leaderboard</div>
+      <div class="step-lbl">Leaderboard</div>
     </button>
   </nav>
 
@@ -486,8 +588,8 @@ Spain	1.10	0.45</textarea>
         </div>
         <div>
           <div class="card-step">Step 3</div>
-          <div class="card-title">Final Leaderboard</div>
-          <div class="card-desc">Weighted rankings across combined performance and cost datasets.</div>
+          <div class="card-title">Combined Rankings</div>
+          <div class="card-desc">Click headers to sort table rows. Expand entries to view individual contribution breakdowns.</div>
         </div>
       </div>
 
@@ -583,6 +685,10 @@ Spain	1.10	0.45</textarea>
   let chartInst = null;
   let unlockedStep = 1;
 
+  // Table Sorting State Tracking
+  let activeSortColumn = 'score'; // 'rank', 'name', 'perf', 'cost', 'score'
+  let activeSortDirection = 'desc'; // 'asc', 'desc'
+
   document.addEventListener('DOMContentLoaded', () => {
     setupWeights('perf'); setupWeights('cost');
     document.getElementById('perfData').addEventListener('input', () => setupWeights('perf'));
@@ -597,7 +703,7 @@ Spain	1.10	0.45</textarea>
     let delimiter = '';
     if (lines[0].includes('\t')) delimiter = '\t';
     else if (lines[0].includes(',')) delimiter = ',';
-    else throw new Error("Data parsing failure. The application requires clean tab or comma separated tables.");
+    else throw new Error("Data parsing failure. Clean tab or comma separated tables are required.");
 
     const parseLine = (line) => {
       const tokens = [];
@@ -652,6 +758,7 @@ Spain	1.10	0.45</textarea>
     document.getElementById('modePoints').classList.toggle('active', mode === 'points');
     document.getElementById('modeZScore').classList.toggle('active', mode === 'zscore');
     if (overallScores.length > 0) {
+      sortDataMatrix();
       renderFinalOutputs();
     }
   }
@@ -670,7 +777,7 @@ Spain	1.10	0.45</textarea>
     reader.onload = e => {
       document.getElementById(targetId).value = e.target.result.trim();
       setupWeights(targetId === 'perfData' ? 'perf' : 'cost');
-      showToast("File uploaded and read successfully.", "info");
+      showToast("File uploaded successfully.", "info");
     };
     reader.readAsText(file);
   }
@@ -784,7 +891,7 @@ Spain	1.10	0.45</textarea>
   function parseInputMatrix(id) {
     const txt = document.getElementById(id).value.trim();
     const matrix = parseDelimitedString(txt);
-    if (matrix.length < 2) throw new Error("Data rows must contain a header and evaluation row targets.");
+    if (matrix.length < 2) throw new Error("Data rows must contain a header and assessment evaluations.");
 
     const headers = matrix[0];
     const subHeaders = headers.slice(1);
@@ -890,7 +997,7 @@ Spain	1.10	0.45</textarea>
         const mean = combZVals.reduce((s, v) => s + v, 0) / combZVals.length;
         const dev = Math.sqrt(combZVals.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / combZVals.length) || 1;
 
-        overallScores = integrated.map(i => {
+        overallScores = integrated.map((i, defaultIdx) => {
           const normZ = (i.combZ - mean) / dev;
           const points = 100 / (1 + Math.exp(-0.7 * normZ));
           return { 
@@ -899,11 +1006,20 @@ Spain	1.10	0.45</textarea>
             costZ: i.costZ, 
             reStandardizedZ: normZ, 
             pointsScale: points,
-            contributions: i.contributions
+            contributions: i.contributions,
+            defaultRank: 0, // Injected downstream post-sort
+            expanded: false  // Track layout state
           };
         });
 
+        // Set baseline absolute calculated rank positioning mapping
         overallScores.sort((a, b) => b.pointsScale - a.pointsScale);
+        overallScores.forEach((row, idx) => row.defaultRank = idx + 1);
+
+        activeSortColumn = 'score';
+        activeSortDirection = 'desc';
+        sortDataMatrix();
+
         renderFinalOutputs();
         unlockedStep = 3; switchView(3);
       } catch (err) { showToast(err.message, "error"); }
@@ -911,21 +1027,85 @@ Spain	1.10	0.45</textarea>
     }, 250);
   }
 
+  // Multi-Column SaaS Sort Engine
+  function sortDataMatrix() {
+    overallScores.sort((a, b) => {
+      let valA, valB;
+      
+      if (activeSortColumn === 'rank') {
+        valA = a.defaultRank; valB = b.defaultRank;
+      } else if (activeSortColumn === 'name') {
+        valA = a.entity.toLowerCase(); valB = b.entity.toLowerCase();
+      } else if (activeSortColumn === 'perf') {
+        valA = a.performanceZ; valB = b.performanceZ;
+      } else if (activeSortColumn === 'cost') {
+        valA = a.costZ; valB = b.costZ;
+      } else { // default tracking column 'score'
+        valA = currentViewMode === 'points' ? a.pointsScale : a.reStandardizedZ;
+        valB = currentViewMode === 'points' ? b.pointsScale : b.reStandardizedZ;
+      }
+
+      if (valA < valB) return activeSortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return activeSortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  function toggleColumnSort(colKey) {
+    if (activeSortColumn === colKey) {
+      activeSortDirection = activeSortDirection === 'desc' ? 'asc' : 'desc';
+    } else {
+      activeSortColumn = colKey;
+      activeSortDirection = 'desc'; // Default to highest performance first
+    }
+    sortDataMatrix();
+    renderFinalOutputs();
+  }
+
+  function getSortIndicatorMarkup(colKey) {
+    if (activeSortColumn !== colKey) return `<span class="sort-icon">↕</span>`;
+    return activeSortDirection === 'desc' ? `<span class="sort-icon">↓</span>` : `<span class="sort-icon">↑</span>`;
+  }
+
+  function toggleRowExpansion(index) {
+    overallScores[index].expanded = !overallScores[index].expanded;
+    
+    const mRow = document.getElementById(`master-row-${index}`);
+    const dRow = document.getElementById(`detail-row-${index}`);
+    
+    if(overallScores[index].expanded) {
+      mRow.classList.add('expanded');
+      dRow.classList.add('open');
+    } else {
+      mRow.classList.remove('expanded');
+      dRow.classList.remove('open');
+    }
+  }
+
   function renderFinalOutputs() {
     const headers = document.getElementById('tableHeaders');
     const body = document.getElementById('overallTableBody');
 
+    const scoreTitleLabel = currentViewMode === 'points' ? 'Points Index' : 'Z-Score Index';
+
     headers.innerHTML = `
-      <th style="width: 50px;">Rank</th>
-      <th>Entry Name</th>
-      <th style="text-align:right;">Performance Quality</th>
-      <th style="text-align:right;">Cost Efficiency</th>
-      <th style="text-align:center; min-width:180px;">Unified Score Index</th>
+      <th style="width: 30px;"></th>
+      <th class="sortable ${activeSortColumn === 'rank' ? 'active-sort' : ''}" style="width: 60px;" onclick="toggleColumnSort('rank')">Rank ${getSortIndicatorMarkup('rank')}</th>
+      <th class="sortable ${activeSortColumn === 'name' ? 'active-sort' : ''}" onclick="toggleColumnSort('name')">Entry Name ${getSortIndicatorMarkup('name')}</th>
+      <th class="sortable ${activeSortColumn === 'perf' ? 'active-sort' : ''}" style="text-align:right;" onclick="toggleColumnSort('perf')">Performance Quality ${getSortIndicatorMarkup('perf')}</th>
+      <th class="sortable ${activeSortColumn === 'cost' ? 'active-sort' : ''}" style="text-align:right;" onclick="toggleColumnSort('cost')">Cost Efficiency ${getSortIndicatorMarkup('cost')}</th>
+      <th class="sortable ${activeSortColumn === 'score' ? 'active-sort' : ''}" style="text-align:center; min-width:180px;" onclick="toggleColumnSort('score')">${scoreTitleLabel} ${getSortIndicatorMarkup('score')}</th>
     `;
 
     body.innerHTML = '';
+    
+    if (overallScores.length === 0) {
+      body.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: var(--text-muted);">No metrics computed.</td></tr>`;
+      return;
+    }
+
     overallScores.forEach((row, idx) => {
-      const pos = idx + 1;
+      const pos = row.defaultRank;
       let badge = "rank-other";
       if (pos === 1) badge = "rank-1"; if (pos === 2) badge = "rank-2"; if (pos === 3) badge = "rank-3";
 
@@ -944,8 +1124,14 @@ Spain	1.10	0.45</textarea>
       const cTag = row.costZ > 0.25 ? 'tag-top' : (row.costZ >= -0.25 ? 'tag-avg' : 'tag-down');
       const cLbl = row.costZ > 0.25 ? 'Efficient' : (row.costZ >= -0.25 ? 'Moderate' : 'High');
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
+      // Create main entry view layout
+      const trMaster = document.createElement('tr');
+      trMaster.className = `master-row ${row.expanded ? 'expanded' : ''}`;
+      trMaster.id = `master-row-${idx}`;
+      trMaster.setAttribute('onclick', `toggleRowExpansion(${idx})`);
+      
+      trMaster.innerHTML = `
+        <td class="row-toggle-cell"><i class="chevron-icon">▶</i></td>
         <td><span class="rank-badge ${badge}">${pos}</span></td>
         <td><strong>${row.entity}</strong></td>
         <td style="text-align:right;"><span class="tag ${pTag}">${pLbl}</span></td>
@@ -957,14 +1143,46 @@ Spain	1.10	0.45</textarea>
           </div>
         </td>
       `;
-      body.appendChild(tr);
+      body.appendChild(trMaster);
+
+      // Create details breakdown dropdown panel view layout
+      const trDetail = document.createElement('tr');
+      trDetail.className = `detail-row ${row.expanded ? 'open' : ''}`;
+      trDetail.id = `detail-row-${idx}`;
+      
+      let contributionCardsMarkup = '';
+      if (row.contributions) {
+        Object.keys(row.contributions).forEach(mName => {
+          const c = row.contributions[mName];
+          const isPositive = c.zScore >= 0;
+          contributionCardsMarkup += `
+            <div class="breakdown-card">
+              <div class="breakdown-lbl" title="${mName}">${mName}</div>
+              <div class="breakdown-val">${c.raw}</div>
+              <div class="breakdown-z ${isPositive ? 'pos' : 'neg'}">${isPositive ? '+' : ''}${c.zScore.toFixed(2)} σ</div>
+            </div>
+          `;
+        });
+      }
+
+      trDetail.innerHTML = `
+        <td colspan="6">
+          <div class="breakdown-title">Analytical Breakdown Metrics Deviation Map</div>
+          <div class="breakdown-grid">${contributionCardsMarkup}</div>
+        </td>
+      `;
+      body.appendChild(trDetail);
     });
 
     const stats = document.getElementById('overallStats');
+    
+    // Find the current layout absolute leader
+    const activeLeaderRow = overallScores.reduce((prev, current) => (prev.pointsScale > current.pointsScale) ? prev : current, overallScores[0]);
+
     stats.innerHTML = `
       <div class="stat-row">
         <div class="stat-chip">Total Profiles: <strong>${overallScores.length}</strong></div>
-        <div class="stat-chip stat-chip-info">Top Leader: <strong>${overallScores[0].entity}</strong></div>
+        <div class="stat-chip stat-chip-info">Top Leader: <strong>${activeLeaderRow.entity}</strong></div>
       </div>
     `;
     updateChartPresentation();
@@ -995,6 +1213,7 @@ Spain	1.10	0.45</textarea>
     const ctx = document.getElementById('overallChart');
     if (!ctx) return;
 
+    // Use sorted configurations context map to sync charts data arrays elements directly
     const labels = overallScores.map(s => s.entity);
     const isPoints = currentViewMode === 'points';
     const dataVals = isPoints ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
@@ -1092,7 +1311,7 @@ Spain	1.10	0.45</textarea>
                     outputLines.push(`Composite Z-Score: ${scoreObj.reStandardizedZ.toFixed(2)} σ`);
                   }
                   outputLines.push('------------------------------------');
-                  outputLines.push('Weighted Analytical Breakdown:');
+                  outputLines.push('Analytical Deviation Split:');
 
                   if (scoreObj.contributions) {
                     Object.keys(scoreObj.contributions).forEach(mName => {
@@ -1137,11 +1356,12 @@ Spain	1.10	0.45</textarea>
     if (!overallScores.length) { showToast("Generate rankings before exporting."); return; }
     
     const metricScoreLabel = currentViewMode === 'points' ? 'Unified Index Score (0-100)' : 'Composite Z-Score (Deviation)';
-    let lines = [`"Entry Name","Performance Quality Z","Cost Efficiency Z","${metricScoreLabel}"`];
+    let lines = [`"Calculated Rank","Entry Name","Performance Quality Z","Cost Efficiency Z","${metricScoreLabel}"`];
     
+    // Exports clean data in chronological order corresponding to visual table layout state
     overallScores.forEach(r => {
       const activeValueExport = currentViewMode === 'points' ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
-      lines.push(`"${r.entity.replace(/"/g, '""')}",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
+      lines.push(`${r.defaultRank},"${r.entity.replace(/"/g, '""')}",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
     });
     
     const b = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
