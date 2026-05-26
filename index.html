@@ -719,6 +719,11 @@ Segment D	0.73	0.45</textarea>
               <input type="color" id="colorBgCard" class="color-swatch" value="#111214" oninput="syncColor('colorBgCard','hexBgCard'); updateLayoutBackgrounds();">
               <input type="text" id="hexBgCard" class="color-hex" value="#111214" onchange="syncSwatch('hexBgCard','colorBgCard'); updateLayoutBackgrounds();">
             </div>
+            <div class="color-item">
+              <label for="colorBaseline">Average Line</label>
+              <input type="color" id="colorBaseline" class="color-swatch" value="#ffffff" oninput="syncColor('colorBaseline','hexBaseline'); renderOverallChart();">
+              <input type="text" id="hexBaseline" class="color-hex" value="#FFFFFF" onchange="syncSwatch('hexBaseline','colorBaseline'); renderOverallChart();">
+            </div>
           </div>
         </div>
       </div>
@@ -1330,6 +1335,7 @@ Segment D	0.73	0.45</textarea>
     const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
     const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
     const titleColor = document.getElementById('hexTitle').value || '#F5F5F7';
+    const baselineColor = document.getElementById('hexBaseline').value || '#FFFFFF';
     
     const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
     const baselineValue = isPoints ? 50 : 0;
@@ -1352,6 +1358,7 @@ Segment D	0.73	0.45</textarea>
       chartInst.options.scales.y.min = minScaleValue;
       chartInst.options.scales.y.max = maxScaleValue;
       chartInst.options.plugins.title.color = titleColor;
+      chartInst.options.plugins.annotation.annotations.line1.borderColor = baselineColor;
       chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMin = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMax = baselineValue;
@@ -1390,7 +1397,7 @@ Segment D	0.73	0.45</textarea>
                   type: 'line',
                   yMin: baselineValue,
                   yMax: baselineValue,
-                  borderColor: 'rgba(255,255,255,0.15)',
+                  borderColor: baselineColor,
                   borderWidth: 1.5,
                   borderDash: [5, 5],
                   label: {
