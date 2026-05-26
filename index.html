@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -327,7 +327,7 @@
       Data Intelligence Engine
     </div>
     <h1>Find your <span>best performers</span> at a glance</h1>
-    <p class="hero-sub">Upload performance data, adjust metric importance, and generate standardized rankings instantly.</p>
+    <p class="hero-sub">Upload performance data, adjust metric importance, and generate standardised rankings instantly.</p>
   </div>
 
   <nav class="step-track" id="stepTrack" role="tablist">
@@ -365,14 +365,14 @@
 
   <div class="explainer">
     <h3>Mathematical Scoring System</h3>
-    <p>This system standardizes uneven metrics using normalized relative distance calculation models, neutralizing structural skewing trends across wide group variations.</p>
+    <p>This system standardises uneven metrics using normalised relative distance calculation models, neutralising structural skewing trends across wide group variations.</p>
     <button class="explainer-toggle" onclick="toggleExplainer()">Show math details</button>
     <div class="explainer-more" id="explainerMore">
       <p>Standard deviations isolate tracking records against group variations:</p>
       <ul>
         <li><strong>Index Baseline:</strong> Reflects the precise cohort geometric average (0 for Z-Scores, 50 for Points).</li>
-        <li><strong>Higher Values Preferred:</strong> Optimizes metrics where bigger scales signify success.</li>
-        <li><strong>Minimized Costs:</strong> Low cost data points are safely converted into positive performance attributes.</li>
+        <li><strong>Higher Values Preferred:</strong> Optimises metrics where bigger scales signify success.</li>
+        <li><strong>Minimised Costs:</strong> Low cost data points are safely converted into positive performance attributes.</li>
       </ul>
     </div>
   </div>
@@ -505,7 +505,7 @@ Spain	1.10	0.45</textarea>
         </div>
 
         <div class="colors-section">
-          <span class="colors-label">Customize Presentation Palettes</span>
+          <span class="colors-label">Customise Presentation Palettes</span>
           <div class="color-controls">
             <div class="color-item">
               <label for="colorBg">Chart Positive Accent</label>
@@ -979,7 +979,7 @@ Spain	1.10	0.45</textarea>
     const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
     const baselineValue = isPoints ? 50 : 0;
 
-    // FIX: Calculate clean, balanced symmetric min/max padding frames for the standard deviations view mode
+    // Calculate clean, balanced symmetric min/max padding frames for standard deviations view mode
     let minScaleValue = 0;
     let maxScaleValue = 100;
     
@@ -997,7 +997,6 @@ Spain	1.10	0.45</textarea>
       chartInst.options.scales.x.ticks.color = axisColor;
       chartInst.options.scales.y.ticks.color = axisColor;
       
-      // FIX: Dynamically apply sanitized min/max scale caps to avoid chart alignment distortions
       chartInst.options.scales.y.min = minScaleValue;
       chartInst.options.scales.y.max = maxScaleValue;
       
