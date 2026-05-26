@@ -44,9 +44,99 @@
     font-size: 15px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  .page-shell { max-width: 840px; margin: 0 auto; padding: 0 20px 80px; }
+  /* AUTH SCREEN OVERLAY (DARK GLASS / VERCEL AESTHETIC) */
+  #authOverlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99999;
+    padding: 24px;
+    transition: opacity 400ms cubic-bezier(0.25, 1, 0.5, 1), visibility 400ms;
+  }
+  
+  .auth-card {
+    background: linear-gradient(180deg, rgba(17,18,20,0.8) 0%, rgba(10,10,11,0.9) 100%);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.03);
+    border-radius: var(--radius-xl);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    transform: translateY(0);
+    transition: transform 400ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .auth-logo-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: var(--radius-md);
+    background: var(--bg-input); border: 1px solid rgba(255,255,255,0.02);
+    margin-bottom: 24px; color: var(--accent);
+  }
+  .auth-logo-badge svg { width: 20px; height: 20px; filter: drop-shadow(0 0 6px rgba(184,245,58,0.4)); }
+
+  .auth-card h2 {
+    font-size: 20px; font-weight: 600; letter-spacing: -.02em; color: var(--text-primary); margin-bottom: 6px;
+  }
+  .auth-card p {
+    font-size: 13px; color: var(--text-secondary); margin-bottom: 28px;
+  }
+
+  .auth-form-group {
+    position: relative; text-align: left; margin-bottom: 16px;
+  }
+  .auth-form-group label {
+    display: block; font-size: 10px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .auth-input-wrapper { position: relative; }
+  .auth-input-wrapper svg {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; color: var(--text-muted); pointer-events: none;
+    transition: color var(--transition);
+  }
+  .auth-input {
+    width: 100%; border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius-md);
+    padding: 12px 14px 12px 38px; font-family: var(--font); font-size: 14px;
+    background: rgba(0,0,0,0.2); color: var(--text-primary); outline: none;
+    transition: all var(--transition);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .auth-input:focus {
+    border-color: rgba(184, 245, 58, 0.3);
+    background: rgba(0,0,0,0.4);
+    box-shadow: 0 0 0 3px rgba(184, 245, 58, 0.06), inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .auth-input:focus + svg { color: var(--accent); }
+
+  .btn-auth {
+    width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 24px; border-radius: var(--radius-md); font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all var(--transition);
+    background: var(--text-primary); color: var(--bg);
+  }
+  .btn-auth:hover { background: #ffffff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,255,255,0.1); }
+  .btn-auth:active { transform: translateY(0); }
+  .btn-auth:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Auth Failure Shake Animation */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+  .shake { animation: shake 350ms cubic-bezier(.36,.07,.19,.97) both; }
+
+  /* MAIN ENVIRONMENT INTERFACES */
+  .page-shell { max-width: 840px; margin: 0 auto; padding: 0 20px 80px; filter: blur(16px); opacity: 0; transition: filter 600ms ease, opacity 600ms ease; }
+  body.authenticated .page-shell { filter: blur(0); opacity: 1; }
+  body.authenticated #authOverlay { opacity: 0; visibility: hidden; pointer-events: none; }
+  body.authenticated #authOverlay .auth-card { transform: translateY(-16px); }
 
   /* HERO */
   .hero { padding: 56px 0 36px; text-align: center; }
@@ -226,7 +316,6 @@
   .btn .spinner-ring { display: none; }
   .btn.loading .btn-text { display: none; }
   .btn.loading .spinner-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,.15); border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* NOTIFICATIONS & TOASTS */
   .notice { border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; }
@@ -234,7 +323,7 @@
   .notice-accent { background: var(--accent-dim2); color: var(--text-secondary); }
 
   #toast-container {
-    position: fixed; top: 24px; right: 24px; z-index: 9999;
+    position: fixed; top: 24px; right: 24px; z-index: 999999;
     display: flex; flex-direction: column; gap: 10px; pointer-events: none;
   }
   .toast {
@@ -407,6 +496,8 @@
   input[type=file] { display: none; }
   .export-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; width: 100%; justify-content: flex-start; }
 
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   @media (max-width: 640px) {
     .card, .chart-card { padding: 22px; border-radius: var(--radius-lg); }
     .hero { padding: 36px 0 24px; }
@@ -414,12 +505,34 @@
     .btn { width: 100%; }
     .export-btns .btn { flex: 1; min-width: 140px; }
     .step-lbl { font-size: 11px; }
+    .auth-card { padding: 32px 24px; }
   }
 </style>
 </head>
 <body>
 
 <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<div id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="auth-card" id="authCard">
+    <div class="auth-logo-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h2 id="authTitle">Performance Ranking Tool</h2>
+    <p>Authorized Access Required</p>
+    
+    <form onsubmit="handleAuthSubmit(event)">
+      <div class="auth-form-group">
+        <label for="appPassword">Security Password</label>
+        <div class="auth-input-wrapper">
+          <input type="password" id="appPassword" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+      </div>
+      <button type="submit" class="btn-auth">Confirm Access</button>
+    </form>
+  </div>
+</div>
 
 <div class="page-shell">
 
@@ -652,6 +765,38 @@ Spain	1.10	0.45</textarea>
 </div>
 
 <script>
+  // --- Security Parameter (Lightweight Front-End Gating Gate) ---
+  const APP_PASSWORD = "unicorn"; // Modify as required for lightweight environment previews
+
+  function checkSessionAuth() {
+    if (sessionStorage.getItem('ranking_tool_auth') === 'true') {
+      document.body.classList.add('authenticated');
+    } else {
+      document.getElementById('appPassword').focus();
+    }
+  }
+
+  function handleAuthSubmit(e) {
+    e.preventDefault();
+    const inputEl = document.getElementById('appPassword');
+    const cardEl = document.getElementById('authCard');
+
+    if (inputEl.value === APP_PASSWORD) {
+      sessionStorage.setItem('ranking_tool_auth', 'true');
+      document.body.classList.add('authenticated');
+      showToast("Access granted successfully.", "info");
+    } else {
+      // Input validation feedback sequences
+      cardEl.classList.remove('shake');
+      void cardEl.offsetWidth; // Force element context layout reflow
+      cardEl.classList.add('shake');
+      
+      inputEl.value = '';
+      inputEl.focus();
+      showToast("Invalid password credential entered.", "error");
+    }
+  }
+
   // --- UI Toast Engine ---
   function showToast(message, type = 'warning') {
     const container = document.getElementById('toast-container');
@@ -690,6 +835,7 @@ Spain	1.10	0.45</textarea>
   let activeSortDirection = 'desc'; // 'asc', 'desc'
 
   document.addEventListener('DOMContentLoaded', () => {
+    checkSessionAuth();
     setupWeights('perf'); setupWeights('cost');
     document.getElementById('perfData').addEventListener('input', () => setupWeights('perf'));
     document.getElementById('costData').addEventListener('input', () => setupWeights('cost'));
@@ -1007,12 +1153,11 @@ Spain	1.10	0.45</textarea>
             reStandardizedZ: normZ, 
             pointsScale: points,
             contributions: i.contributions,
-            defaultRank: 0, // Injected downstream post-sort
-            expanded: false  // Track layout state
+            defaultRank: 0, 
+            expanded: false  
           };
         });
 
-        // Set baseline absolute calculated rank positioning mapping
         overallScores.sort((a, b) => b.pointsScale - a.pointsScale);
         overallScores.forEach((row, idx) => row.defaultRank = idx + 1);
 
@@ -1027,7 +1172,6 @@ Spain	1.10	0.45</textarea>
     }, 250);
   }
 
-  // Multi-Column SaaS Sort Engine
   function sortDataMatrix() {
     overallScores.sort((a, b) => {
       let valA, valB;
@@ -1040,7 +1184,7 @@ Spain	1.10	0.45</textarea>
         valA = a.performanceZ; valB = b.performanceZ;
       } else if (activeSortColumn === 'cost') {
         valA = a.costZ; valB = b.costZ;
-      } else { // default tracking column 'score'
+      } else { 
         valA = currentViewMode === 'points' ? a.pointsScale : a.reStandardizedZ;
         valB = currentViewMode === 'points' ? b.pointsScale : b.reStandardizedZ;
       }
@@ -1056,7 +1200,7 @@ Spain	1.10	0.45</textarea>
       activeSortDirection = activeSortDirection === 'desc' ? 'asc' : 'desc';
     } else {
       activeSortColumn = colKey;
-      activeSortDirection = 'desc'; // Default to highest performance first
+      activeSortDirection = 'desc'; 
     }
     sortDataMatrix();
     renderFinalOutputs();
@@ -1085,7 +1229,6 @@ Spain	1.10	0.45</textarea>
   function renderFinalOutputs() {
     const headers = document.getElementById('tableHeaders');
     const body = document.getElementById('overallTableBody');
-
     const scoreTitleLabel = currentViewMode === 'points' ? 'Points Index' : 'Z-Score Index';
 
     headers.innerHTML = `
@@ -1124,7 +1267,6 @@ Spain	1.10	0.45</textarea>
       const cTag = row.costZ > 0.25 ? 'tag-top' : (row.costZ >= -0.25 ? 'tag-avg' : 'tag-down');
       const cLbl = row.costZ > 0.25 ? 'Efficient' : (row.costZ >= -0.25 ? 'Moderate' : 'High');
 
-      // Create main entry view layout
       const trMaster = document.createElement('tr');
       trMaster.className = `master-row ${row.expanded ? 'expanded' : ''}`;
       trMaster.id = `master-row-${idx}`;
@@ -1145,7 +1287,6 @@ Spain	1.10	0.45</textarea>
       `;
       body.appendChild(trMaster);
 
-      // Create details breakdown dropdown panel view layout
       const trDetail = document.createElement('tr');
       trDetail.className = `detail-row ${row.expanded ? 'open' : ''}`;
       trDetail.id = `detail-row-${idx}`;
@@ -1175,8 +1316,6 @@ Spain	1.10	0.45</textarea>
     });
 
     const stats = document.getElementById('overallStats');
-    
-    // Find the current layout absolute leader
     const activeLeaderRow = overallScores.reduce((prev, current) => (prev.pointsScale > current.pointsScale) ? prev : current, overallScores[0]);
 
     stats.innerHTML = `
@@ -1197,7 +1336,6 @@ Spain	1.10	0.45</textarea>
     }
   }
 
-  // --- Custom Background Rendering Plugin for Chart.js ---
   const customCanvasBgPlugin = {
     id: 'customCanvasBgPlugin',
     beforeDraw: (chart) => {
@@ -1213,14 +1351,12 @@ Spain	1.10	0.45</textarea>
     const ctx = document.getElementById('overallChart');
     if (!ctx) return;
 
-    // Use sorted configurations context map to sync charts data arrays elements directly
     const labels = overallScores.map(s => s.entity);
     const isPoints = currentViewMode === 'points';
     const dataVals = isPoints ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
     
     const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
     const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
-    
     const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
     const baselineValue = isPoints ? 50 : 0;
 
@@ -1240,10 +1376,8 @@ Spain	1.10	0.45</textarea>
       chartInst.data.datasets[0].backgroundColor = barColors;
       chartInst.options.scales.x.ticks.color = axisColor;
       chartInst.options.scales.y.ticks.color = axisColor;
-      
       chartInst.options.scales.y.min = minScaleValue;
       chartInst.options.scales.y.max = maxScaleValue;
-      
       chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMin = baselineValue;
       chartInst.options.plugins.annotation.annotations.line1.yMax = baselineValue;
@@ -1358,7 +1492,6 @@ Spain	1.10	0.45</textarea>
     const metricScoreLabel = currentViewMode === 'points' ? 'Unified Index Score (0-100)' : 'Composite Z-Score (Deviation)';
     let lines = [`"Calculated Rank","Entry Name","Performance Quality Z","Cost Efficiency Z","${metricScoreLabel}"`];
     
-    // Exports clean data in chronological order corresponding to visual table layout state
     overallScores.forEach(r => {
       const activeValueExport = currentViewMode === 'points' ? r.pointsScale.toFixed(1) : r.reStandardizedZ.toFixed(3);
       lines.push(`${r.defaultRank},"${r.entity.replace(/"/g, '""')}",${r.performanceZ.toFixed(3)},${r.costZ.toFixed(3)},${activeValueExport}`);
