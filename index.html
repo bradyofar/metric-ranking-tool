@@ -93,6 +93,23 @@
   .step-node.done .step-lbl { color: var(--text-secondary); }
   .step-line.done { background: var(--accent); }
 
+  /* VIEW CONTROLLER TOGGLE */
+  .view-toggle-wrap {
+    display: flex; justify-content: center; margin-bottom: 24px;
+  }
+  .toggle-container {
+    display: inline-flex; align-items: center; background: var(--bg-card);
+    border: 1px solid var(--border-strong); padding: 4px; border-radius: 100px; gap: 4px;
+  }
+  .toggle-btn {
+    background: transparent; border: none; color: var(--text-secondary);
+    padding: 6px 16px; border-radius: 100px; font-family: var(--font);
+    font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--transition);
+  }
+  .toggle-btn.active {
+    background: var(--accent); color: #000; font-weight: 600;
+  }
+
   /* CARDS */
   .card {
     background: var(--bg-card); border: 1px solid var(--border);
@@ -160,22 +177,31 @@
   .btn-upload:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim2); }
   .or-divider { font-size: 12px; color: var(--text-muted); }
 
-  /* WEIGHTS */
-  .weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-top: 14px; }
+  /* WEIGHTS STEPPER UX */
+  .weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 14px; }
   .weight-item {
     background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-md); padding: 11px 14px;
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border-radius: var(--radius-md); padding: 10px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
-  .weight-item label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+  .weight-item-left { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+  .weight-item label { font-size: 12px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .weight-controls { display: flex; align-items: center; gap: 6px; }
+  .weight-btn {
+    width: 22px; height: 22px; border-radius: 4px; background: var(--border-strong);
+    border: none; color: var(--text-primary); cursor: pointer; display: flex;
+    align-items: center; justify-content: center; font-size: 13px; font-weight: 600;
+    transition: background var(--transition);
+  }
+  .weight-btn:hover { background: var(--border); }
+  .weight-btn.dir-toggle { width: auto; padding: 0 6px; font-size: 11px; }
   .weight-item input[type=number] {
-    width: 66px; padding: 5px 9px;
-    border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
-    font-family: var(--mono); font-size: 12px;
-    background: var(--bg); color: var(--text-primary);
-    outline: none; text-align: right; transition: border-color var(--transition);
+    width: 44px; padding: 4px 0; border: none; font-family: var(--mono);
+    font-size: 12px; font-weight: 500; background: transparent; color: var(--accent);
+    outline: none; text-align: center; -moz-appearance: textfield;
   }
-  .weight-item input[type=number]:focus { border-color: rgba(184,245,58,.4); }
+  .weight-item input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  
   .weight-summary { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
   .weight-chip {
     font-size: 11px; background: var(--bg-input); border: 1px solid var(--border-strong);
@@ -206,7 +232,7 @@
   .btn-ghost.loading .spinner-ring { border-color: rgba(184,245,58,.2); border-top-color: var(--accent); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* NOTICES */
+  /* NOTICES / ERRORS */
   .notice {
     border-radius: var(--radius-sm); padding: 10px 14px;
     font-size: 12.5px; display: flex; gap: 9px; align-items: flex-start;
@@ -271,10 +297,6 @@
   .color-hex:focus { border-color: rgba(184,245,58,.4); }
   .metric-colors { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 
-  /* CHECKBOX */
-  .check-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
-  .check-label input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); }
-
   /* STAT CHIPS */
   .stat-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
   .stat-chip {
@@ -286,14 +308,9 @@
   .stat-chip-warn { background: rgba(255,180,50,.06); border-color: rgba(255,180,50,.2); color: #e0a832; }
   .stat-chip-info { background: var(--info-bg); border-color: rgba(91,156,246,.2); color: var(--info); }
 
-  /* DIVIDER */
-  .rule { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
-
-  /* HIDDEN */
+  /* UTILS */
   .hidden { display: none !important; }
   input[type=file] { display: none; }
-
-  /* EXPORT ROW */
   .export-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
   @media (max-width: 640px) {
@@ -322,7 +339,7 @@
       Performance Ranking Tool
     </div>
     <h1>Find your <span>best performers</span> at a glance</h1>
-    <p class="hero-sub">Paste your data, set what matters most, and get a clear ranking that combines performance and cost.</p>
+    <p class="hero-sub">Paste your data, set what matters most, and get a clear ranking that combines performance and cost structures.</p>
   </div>
 
   <div class="step-track" id="stepTrack">
@@ -348,6 +365,13 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div class="step-lbl">Final Ranking</div>
+    </div>
+  </div>
+
+  <div class="view-toggle-wrap">
+    <div class="toggle-container">
+      <button class="toggle-btn active" id="modePoints" onclick="setGlobalViewMode('points')">Points (0–100)</button>
+      <button class="toggle-btn" id="modeZScore" onclick="setGlobalViewMode('zscore')">Z-Score View</button>
     </div>
   </div>
 
@@ -391,15 +415,15 @@
 
     <label class="data-label" for="perfData">Data</label>
     <textarea id="perfData">Country	CTR	Engagement Rate
-France	2.5%	45.2%
-Germany	1.8%	52.1%
-Italy	3.1%	38.9%
-Spain	2.2%	41.5%</textarea>
+France	2.5	45.2
+Germany	1.8	52.1
+Italy	3.1	38.9
+Spain	2.2	41.5</textarea>
 
     <div id="perfWeightsArea" class="hidden">
       <div class="notice notice-accent" style="margin-top:14px;">
         <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Set the relative importance of each metric. Equal weights are a reasonable default.</span>
+        <span>Set the relative importance and directional polarity of each performance metric.</span>
       </div>
       <div class="weights-grid" id="perfWeightsGrid"></div>
       <div class="weight-summary" id="perfWeightSummary"></div>
@@ -408,7 +432,7 @@ Spain	2.2%	41.5%</textarea>
     <div class="btn-row">
       <button class="btn btn-ghost no-print" onclick="setupWeights('perf')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-        Set weights
+        Configure Metrics
       </button>
       <button class="btn btn-primary" id="calcPerfBtn" onclick="calcPerf()">
         <span class="btn-text">Calculate performance scores</span>
@@ -451,7 +475,7 @@ Spain	1.10	0.45</textarea>
     <div id="costWeightsArea" class="hidden">
       <div class="notice notice-accent" style="margin-top:14px;">
         <svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Set the relative importance of each cost metric.</span>
+        <span>Set the relative importance and directional polarity of each cost metric.</span>
       </div>
       <div class="weights-grid" id="costWeightsGrid"></div>
       <div class="weight-summary" id="costWeightSummary"></div>
@@ -460,7 +484,7 @@ Spain	1.10	0.45</textarea>
     <div class="btn-row">
       <button class="btn btn-ghost no-print" onclick="setupWeights('cost')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-        Set weights
+        Configure Metrics
       </button>
       <button class="btn btn-primary" id="calcCostBtn" onclick="calcCost()">
         <span class="btn-text">Calculate cost scores</span>
@@ -480,72 +504,115 @@ Spain	1.10	0.45</textarea>
       <div>
         <div class="card-step">Step 3</div>
         <div class="card-title">Final ranking</div>
-        <div class="card-desc">Combines performance and cost inputs, processes intermediate metrics through standardizations, and runs logistic sigmoids into a normalized 0–100 index.</div>
+        <div class="card-desc">The unified index combining performance and cost configurations fairly.</div>
       </div>
     </div>
 
-    <div class="btn-row">
-      <button class="btn btn-primary btn-full" id="calcOverallBtn" onclick="calcOverall()">
-        <span class="btn-text">Generate final ranking</span>
-        <span class="spinner-ring"></span>
-      </button>
-    </div>
+    <button class="btn btn-primary btn-full" id="calcOverallBtn" onclick="calcOverall()">
+      <span class="btn-text">Generate final ranking & index</span>
+      <span class="spinner-ring"></span>
+    </button>
 
     <div id="overallError"></div>
-    <div id="overallResults"></div>
-  </div>
 
-  <div class="chart-card" id="chartCard" style="display:none">
-    <div class="chart-header">
-      <div>
-        <div class="chart-title">Score breakdown by metric</div>
-        <div class="chart-sub">Each segment shows how a metric contributed to the final normalized score</div>
-      </div>
-      <div class="export-btns no-print">
-        <button class="btn btn-ghost" onclick="downloadPNG()" style="padding:8px 14px; font-size:12px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          PNG
-        </button>
-        <button class="btn btn-ghost" onclick="exportCSV()" style="padding:8px 14px; font-size:12px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          CSV
-        </button>
-        <button class="btn btn-primary" onclick="exportHTML()" style="padding:8px 14px; font-size:12px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          Share as HTML
-        </button>
-      </div>
-    </div>
-
-    <div><canvas id="overallChart"></canvas></div>
-
-    <div class="colors-section no-print">
-      <span class="colors-label">Chart appearance</span>
-      <div class="color-controls">
-        <div class="color-item">
-          <label>Background</label>
-          <input type="color" class="color-swatch" id="bgPicker" value="#111111" oninput="syncColor('bgPicker','bgHex'); refreshChart();">
-          <input type="text" class="color-hex" id="bgHex" value="#111111" oninput="syncSwatch('bgHex','bgPicker'); refreshChart();">
+    <div id="overallResults" class="hidden">
+      <div class="result-section">
+        <h3 id="tableTitle">Unified Cohort Leaderboard</h3>
+        <div class="table-wrap">
+          <table id="resultsTable">
+            <thead>
+              <tr id="tableHeaders"></tr>
+            </thead>
+            <tbody id="overallTableBody"></tbody>
+          </table>
         </div>
-        <div class="color-item">
-          <label>Labels</label>
-          <input type="color" class="color-swatch" id="axesPicker" value="#909090" oninput="syncColor('axesPicker','axesHex'); refreshChart();">
-          <input type="text" class="color-hex" id="axesHex" value="#909090" oninput="syncSwatch('axesHex','axesPicker'); refreshChart();">
+        <div id="overallStats"></div>
+      </div>
+
+      <div class="colors-section no-print">
+        <span class="colors-label">Customize chart visualization palettes</span>
+        <div class="color-controls">
+          <div class="color-item">
+            <label for="colorBg">Chart Fill</label>
+            <input type="color" id="colorBg" class="color-swatch" value="#111111" onchange="syncColor('colorBg','hexBg'); refreshChart()">
+            <input type="text" id="hexBg" class="color-hex" value="#111111" oninput="syncSwatch('hexBg','colorBg'); refreshChart()">
+          </div>
+          <div class="color-item">
+            <label for="colorAxes">Text/Axes</label>
+            <input type="color" id="colorAxes" class="color-swatch" value="#909090" onchange="syncColor('colorAxes','hexAxes'); refreshChart()">
+            <input type="text" id="hexAxes" class="color-hex" value="#909090" oninput="syncSwatch('hexAxes','colorAxes'); refreshChart()">
+          </div>
+        </div>
+        <div class="metric-colors" id="metricColorsContainer"></div>
+      </div>
+
+      <div class="chart-card" style="margin-top:24px;">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title" id="chartLabelHeader">Performance Index Breakdown</div>
+            <div class="chart-sub" id="chartLabelSub">Comparative index scores</div>
+          </div>
+        </div>
+        <div style="position:relative; width:100%;">
+          <canvas id="overallChart"></canvas>
         </div>
       </div>
-      <div id="metricColorControls" class="metric-colors"></div>
+
+      <div class="btn-row no-print">
+        <div class="export-btns">
+          <button class="btn btn-ghost" onclick="downloadPNG()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export PNG Chart
+          </button>
+          <button class="btn btn-ghost" onclick="exportCSV()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Export CSV Dataset
+          </button>
+          <button class="btn btn-ghost" onclick="exportHTML()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Export Web Report (HTML)
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
 </div>
 
 <script>
-let perfScores = [], costScores = [], overallScores = [];
-let perfWeights = [], costWeights = [];
+// --- Global State Management ---
+let perfScores = [];
+let costScores = [];
+let overallScores = [];
+let perfWeights = [];
+let costWeights = [];
+let perfInverted = []; 
+let costInverted = []; 
 let perfHeaders = [], costHeaders = [];
+let currentViewMode = 'points'; 
+
 const PALETTE = ['#b8f53a','#5b9cf6','#ff8c5a','#c77dff','#ffca3a','#06d6a0','#ff6b9d','#a8dadc','#f4a261','#8ecae6'];
 let metricColors = {};
 let chartInst = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('perfData').addEventListener('input', () => { if(!document.getElementById('perfWeightsArea').classList.contains('hidden')) setupWeights('perf'); });
+  document.getElementById('costData').addEventListener('input', () => { if(!document.getElementById('costWeightsArea').classList.contains('hidden')) setupWeights('cost'); });
+});
+
+function setGlobalViewMode(mode) {
+  if (currentViewMode === mode) return;
+  currentViewMode = mode;
+  
+  document.getElementById('modePoints').classList.toggle('active', mode === 'points');
+  document.getElementById('modeZScore').classList.toggle('active', mode === 'zscore');
+  
+  if (overallScores.length > 0) {
+    renderFinalOutputs();
+    setStep(4);
+  }
+}
 
 function toggleExplainer() {
   const el = document.getElementById('explainerMore');
@@ -572,133 +639,273 @@ function handleUpload(e, textareaId) {
   if (!file) return;
   if (file.size > 5*1024*1024) { alert('File too large (max 5 MB)'); return; }
   const reader = new FileReader();
-  reader.onload = ev => { document.getElementById(textareaId).value = ev.target.result.trim(); };
+  reader.onload = ev => {
+    document.getElementById(textareaId).value = ev.target.result.trim();
+    const type = textareaId === 'perfData' ? 'perf' : 'cost';
+    setupWeights(type);
+  };
   reader.readAsText(file);
   e.target.value = '';
 }
 
+// 1) REPLACED: parseData() implementation
 function parseData(textareaId, errorId) {
   clearErr(errorId);
+
   const raw = (document.getElementById(textareaId).value || '').trim();
-  if (!raw) { showErr(errorId, 'Please add some data first.'); return null; }
-  const rows = raw.split(/\r?\n/).map(r => r.trim()).filter(Boolean);
-  if (rows.length < 2) { showErr(errorId, 'Need at least one header row and one data row.'); return null; }
-  const headers = rows[0].split(/\t|,| {2,}/).map(h => h.trim()).filter(Boolean);
-  if (headers.length < 2) { showErr(errorId, 'Need at least two columns: one for names, one for a metric.'); return null; }
-  const dataRows = rows.slice(1).map(row => {
-    const cells = row.split(/\t|,| {2,}/).map(c => c.trim());
-    while (cells.length < headers.length) cells.push('');
-    return cells;
-  });
-  const entities = dataRows.map(r => r[0]);
-  const metrics = dataRows.map(r =>
-    r.slice(1).map(v => {
-      const clean = v.replace('%','').replace(',','.').replace(/[^\d.-]/g,'');
-      return clean === '' ? NaN : parseFloat(clean);
-    })
-  );
-  const bad = [];
-  metrics.forEach((row, ri) => row.forEach((v, ci) => {
-    if (!isFinite(v)) bad.push(`Row ${ri+2}, "${headers[ci+1]}"`);
-  }));
-  if (bad.length) { showErr(errorId, 'Non-numeric values found: ' + bad.slice(0,3).join('; ') + (bad.length>3?' (and more)':'')); return null; }
+  if (!raw) {
+    showErr(errorId, 'Please paste some data first.');
+    return null;
+  }
+
+  const delimiter = raw.includes('\t') ? '\t' : (raw.includes(',') ? ',' : null);
+  if (!delimiter) {
+    showErr(errorId, 'Couldn’t detect columns. Make sure your data uses tabs or commas.');
+    return null;
+  }
+
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (lines.length < 2) {
+    showErr(errorId, 'Need at least one header row and one data row.');
+    return null;
+  }
+
+  const headers = lines[0]
+    .split(delimiter)
+    .map(h => h.replace(/^["']|["']$/g, '').trim())
+    .filter(Boolean);
+
+  if (headers.length < 2) {
+    showErr(errorId, 'Need at least two columns: one for names and at least one metric.');
+    return null;
+  }
+
+  const entities = [];
+  const metrics = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i]
+      .split(delimiter)
+      .map(p => p.replace(/^["']|["']$/g, '').trim());
+
+    if (parts.length !== headers.length) continue;
+
+    const ent = parts[0];
+    const rowVals = [];
+    let valid = true;
+
+    for (let j = 1; j < parts.length; j++) {
+      const original = parts[j];
+      let cleaned = String(original).trim();
+
+      if (cleaned.includes(',') && !cleaned.includes('.')) cleaned = cleaned.replace(',', '.');
+      cleaned = cleaned.replace('%', '').replace(/[^\d.-]/g, '');
+
+      const parsed = cleaned === '' ? NaN : parseFloat(cleaned);
+      if (Number.isNaN(parsed)) { valid = false; break; }
+
+      rowVals.push(parsed);
+    }
+
+    if (valid && ent) {
+      entities.push(ent);
+      metrics.push(rowVals);
+    }
+  }
+
+  if (!entities.length) {
+    showErr(errorId, 'No valid numeric rows found. Check your metric columns contain numbers.');
+    return null;
+  }
+
   return { headers, entities, metrics };
 }
 
+// 2) REPLACED: showErr() and clearErr() logic
 function showErr(id, msg) {
-  document.getElementById(id).innerHTML = `<div class="notice notice-error" style="margin-top:12px;"><svg class="notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span>${msg}</span></div>`;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'notice notice-error';
+  el.innerHTML = `<span>${msg}</span>`;
 }
-function clearErr(id) { const el = document.getElementById(id); if (el) el.innerHTML = ''; }
+
+function clearErr(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = '';
+  el.innerHTML = '';
+}
 
 function setupWeights(type) {
   const id = type === 'perf' ? 'perfData' : 'costData';
   const errId = type === 'perf' ? 'perfError' : 'costError';
   const parsed = parseData(id, errId);
   if (!parsed) return;
+  
   const hdrs = parsed.headers;
   const weightsArr = type === 'perf' ? perfWeights : costWeights;
-  const gridId = type + 'WeightsGrid';
+  const invertArr = type === 'perf' ? perfInverted : costInverted;
   const areaId = type + 'WeightsArea';
+  
   if (type === 'perf') perfHeaders = hdrs; else costHeaders = hdrs;
+  
   weightsArr.length = 0;
+  invertArr.length = 0;
+  
   const metrics = hdrs.slice(1);
-  metrics.forEach((_,i) => weightsArr[i] = 1);
-  const grid = document.getElementById(gridId);
-  grid.innerHTML = '';
-  metrics.forEach((m, i) => {
-    const item = document.createElement('div');
-    item.className = 'weight-item';
-    item.innerHTML = `<label>${m}</label><input type="number" value="1" min="0" step="0.1" oninput="updateWeight('${type}',${i},this.value)">`;
-    grid.appendChild(item);
+  metrics.forEach((m) => {
+    weightsArr.push(1);
+    const lm = m.toLowerCase();
+    const invertedDefault = lm.includes('churn') || lm.includes('error') || lm.includes('cost') || lm.includes('loss') || lm.includes('fail') || lm.includes('cpm') || lm.includes('cpc') || lm.includes('cpa') || lm.includes('spend');
+    invertArr.push(invertedDefault);
   });
+  
+  renderWeightsGridUI(type, metrics);
   document.getElementById(areaId).classList.remove('hidden');
   renderWeightSummary(type);
 }
 
-function updateWeight(type, idx, val) {
-  const arr = type === 'perf' ? perfWeights : costWeights;
-  arr[idx] = Math.max(0, parseFloat(val) || 0);
-  renderWeightSummary(type);
+function renderWeightsGridUI(type, metrics) {
+  const grid = document.getElementById(type + 'WeightsGrid');
+  grid.innerHTML = '';
+  
+  const weightsArr = type === 'perf' ? perfWeights : costWeights;
+  const invertArr = type === 'perf' ? perfInverted : costInverted;
+
+  metrics.forEach((m, i) => {
+    const item = document.createElement('div');
+    item.className = 'weight-item';
+    
+    const leftPart = document.createElement('div');
+    leftPart.className = 'weight-item-left';
+    const lbl = document.createElement('label');
+    lbl.innerText = m;
+    lbl.title = m;
+    leftPart.appendChild(lbl);
+    item.appendChild(leftPart);
+
+    const controls = document.createElement('div');
+    controls.className = 'weight-controls';
+
+    const dirBtn = document.createElement('button');
+    dirBtn.className = 'weight-btn dir-toggle';
+    dirBtn.style.color = invertArr[i] ? 'var(--danger)' : 'var(--accent)';
+    dirBtn.innerText = invertArr[i] ? 'High (−)' : 'High (+)';
+    dirBtn.onclick = () => {
+      invertArr[i] = !invertArr[i];
+      dirBtn.innerText = invertArr[i] ? 'High (−)' : 'High (+)';
+      dirBtn.style.color = invertArr[i] ? 'var(--danger)' : 'var(--accent)';
+      renderWeightSummary(type);
+    };
+
+    const decBtn = document.createElement('button');
+    decBtn.className = 'weight-btn';
+    decBtn.innerText = '−';
+    decBtn.onclick = () => {
+      let numInput = item.querySelector('input[type=number]');
+      let currentVal = parseFloat(numInput.value) || 0;
+      if (currentVal > 0) {
+        let newVal = Math.max(0, currentVal - 1);
+        numInput.value = newVal;
+        weightsArr[i] = newVal;
+        renderWeightSummary(type);
+      }
+    };
+
+    const inp = document.createElement('input');
+    inp.type = 'number';
+    inp.value = weightsArr[i];
+    inp.min = '0';
+    inp.step = '0.5';
+    inp.oninput = (e) => {
+      weightsArr[i] = Math.max(0, parseFloat(e.target.value) || 0);
+      renderWeightSummary(type);
+    };
+
+    const incBtn = document.createElement('button');
+    incBtn.className = 'weight-btn';
+    incBtn.innerText = '+';
+    incBtn.onclick = () => {
+      let numInput = item.querySelector('input[type=number]');
+      let currentVal = parseFloat(numInput.value) || 0;
+      let newVal = currentVal + 1;
+      numInput.value = newVal;
+      weightsArr[i] = newVal;
+      renderWeightSummary(type);
+    };
+
+    controls.appendChild(dirBtn);
+    controls.appendChild(decBtn);
+    controls.appendChild(inp);
+    controls.appendChild(incBtn);
+    item.appendChild(controls);
+    grid.appendChild(item);
+  });
 }
 
 function renderWeightSummary(type) {
   const arr = type === 'perf' ? perfWeights : costWeights;
+  const invertArr = type === 'perf' ? perfInverted : costInverted;
   const hdrs = type === 'perf' ? perfHeaders : costHeaders;
+  if (!hdrs.length) return;
   const metrics = hdrs.slice(1);
   const total = arr.reduce((s,w)=>s+w,0);
   const norm = total > 0 ? arr.map(w => w/total) : arr.map(()=> 1/arr.length);
   const el = document.getElementById(type + 'WeightSummary');
-  el.innerHTML = metrics.map((m,i) =>
-    `<div class="weight-chip">${m}&nbsp;<strong>${(norm[i]*100).toFixed(0)}%</strong></div>`
-  ).join('');
+  el.innerHTML = metrics.map((m,i) => `<div class="weight-chip">${m}&nbsp;(${invertArr[i] ? '−' : '+'}) <strong>${(norm[i]*100).toFixed(0)}%</strong></div>`).join('');
 }
 
-function normalizeWeights(arr) {
-  const total = arr.reduce((s,w)=>s+w,0);
-  if (total <= 0) return arr.map(()=>1/arr.length);
-  return arr.map(w=>w/total);
+function normalizeWeights(w) {
+  const s = w.reduce((a,b)=>a+b,0);
+  return s > 0 ? w.map(v => v/s) : w.map(()=>1/w.length);
 }
 
 function meanStd(arr) {
-  const n = arr.length;
-  if (n === 0) return {mean:0, std:1};
-  const mean = arr.reduce((s,v)=>s+v,0) / n;
-  if (n === 1) return {mean, std:1};
-  const variance = arr.reduce((s,v)=>s + Math.pow(v-mean,2),0) / (n-1);
-  return {mean, std: variance === 0 ? 1 : Math.sqrt(variance)};
+  if (!arr.length) return { mean: 0, std: 1 };
+  const mean = arr.reduce((s,v)=>s+v,0)/arr.length;
+  if (arr.length < 2) return { mean, std: 0 };
+  const sumSq = arr.reduce((s,v)=>s+Math.pow(v-mean,2),0);
+  const std = Math.sqrt(sumSq / (arr.length - 1));
+  return { mean, std };
 }
 
-function calcZScores(metrics, weights, invert=false) {
-  const normW = normalizeWeights(weights);
-  return Array.from({length: metrics[0].length}, (_,ci) => {
-    const col = metrics.map(r => r[ci]);
-    const {mean, std} = meanStd(col);
-    const weight = normW[ci] ?? 0;
-    return col.map(v => ((v - mean)/std) * weight * (invert ? -1 : 1));
-  });
-}
-
-function setLoading(id, on) {
-  const btn = document.getElementById(id);
-  if (!btn) return;
-  btn.classList.toggle('loading', on);
-  btn.disabled = on;
+function calcZScores(matrix, weights, isInvertedArray) {
+  const cols = matrix[0].length;
+  const rows = matrix.length;
+  const zByMetric = [];
+  
+  for (let c = 0; c < cols; c++) {
+    const colVals = [];
+    for (let r = 0; r < rows; r++) colVals.push(matrix[r][c]);
+    const { mean, std } = meanStd(colVals);
+    const normW = normalizeWeights(weights)[c];
+    const metricZ = [];
+    
+    for (let r = 0; r < rows; r++) {
+      let z = std === 0 ? 0 : (colVals[r] - mean) / std;
+      if (isInvertedArray[c]) z = -z; 
+      metricZ.push(z * normW);
+    }
+    zByMetric.push(metricZ);
+  }
+  return zByMetric;
 }
 
 function calcPerf() {
   setLoading('calcPerfBtn', true);
   setTimeout(() => { _calcPerf(); setLoading('calcPerfBtn', false); }, 50);
 }
+
 function _calcPerf() {
   const parsed = parseData('perfData','perfError');
   if (!parsed) return;
   const {headers, entities, metrics} = parsed;
   perfHeaders = headers;
-  let weights = perfWeights.length === headers.slice(1).length ? perfWeights : headers.slice(1).map(()=>1);
-  perfWeights = [...weights];
+  if (perfWeights.length !== headers.slice(1).length) setupWeights('perf');
   const metHdrs = headers.slice(1);
-  const normW = normalizeWeights(weights);
-  const zByMetric = calcZScores(metrics, weights, false);
+  const normW = normalizeWeights(perfWeights);
+  const zByMetric = calcZScores(metrics, perfWeights, perfInverted);
+  
   perfScores = entities.map((entity, ri) => {
     const contrib = {};
     metHdrs.forEach((m, ci) => {
@@ -706,7 +913,8 @@ function _calcPerf() {
     });
     return { entity, totalZ: metHdrs.reduce((s,m)=>s+contrib[m].contribution,0), contributions: contrib };
   }).sort((a,b)=>b.totalZ - a.totalZ);
-  renderScoreTable('perfResults', headers[0], perfScores, 'Performance score');
+  
+  renderIntermediateTable('perfResults', headers[0], perfScores, 'Performance score (Z)');
   setStep(2);
   clearErr('perfError');
 }
@@ -715,16 +923,17 @@ function calcCost() {
   setLoading('calcCostBtn', true);
   setTimeout(() => { _calcCost(); setLoading('calcCostBtn', false); }, 50);
 }
+
 function _calcCost() {
   const parsed = parseData('costData','costError');
   if (!parsed) return;
   const {headers, entities, metrics} = parsed;
   costHeaders = headers;
-  let weights = costWeights.length === headers.slice(1).length ? costWeights : headers.slice(1).map(()=>1);
-  costWeights = [...weights];
+  if (costWeights.length !== headers.slice(1).length) setupWeights('cost');
   const metHdrs = headers.slice(1);
-  const normW = normalizeWeights(weights);
-  const zByMetric = calcZScores(metrics, weights, true);
+  const normW = normalizeWeights(costWeights);
+  const zByMetric = calcZScores(metrics, costWeights, costInverted);
+  
   costScores = entities.map((entity, ri) => {
     const contrib = {};
     metHdrs.forEach((m, ci) => {
@@ -732,64 +941,29 @@ function _calcCost() {
     });
     return { entity, totalZ: metHdrs.reduce((s,m)=>s+contrib[m].contribution,0), contributions: contrib };
   }).sort((a,b)=>b.totalZ - a.totalZ);
-  renderScoreTable('costResults', headers[0], costScores, 'Cost score');
+  
+  renderIntermediateTable('costResults', headers[0], costScores, 'Cost score (Z)');
   setStep(3);
   clearErr('costError');
 }
 
-function renderScoreTable(containerId, entityLabel, scores, scoreLabel) {
+function renderIntermediateTable(containerId, entityLabel, scores, scoreLabel) {
   const container = document.getElementById(containerId);
   if (!scores.length) { container.innerHTML = ''; return; }
-  const vals = scores.map(s=>s.totalZ);
-  const maxAbs = Math.max(...vals.map(Math.abs), 0.01);
+  
   let rows = scores.map((s, i) => {
-    const pct = Math.abs(s.totalZ) / maxAbs * 100;
-    const neg = s.totalZ < 0;
-    const tag = tagForRawZ(s.totalZ, i, scores.length);
-    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+    const cls = i===0?'rank-1':(i===1?'rank-2':(i===2?'rank-3':'rank-other'));
+    const sign = s.totalZ >= 0 ? '+' : '';
+    const barCls = s.totalZ < 0 ? 'score-bar score-bar-neg' : 'score-bar';
+    const w = Math.min(100, Math.abs(s.totalZ) * 35);
     return `<tr>
-      <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
-      <td style="font-weight:500">${s.entity}</td>
-      <td><div class="score-bar-wrap"><div class="score-bar ${neg?'score-bar-neg':''}" style="width:${pct.toFixed(1)}%"></div><span class="score-val">${s.totalZ>0?'+':''}${s.totalZ.toFixed(2)}</span></div></td>
-      <td>${tag}</td>
+      <td style="width:50px;"><span class="rank-badge ${cls}">${i+1}</span></td>
+      <td><strong>${s.entity}</strong></td>
+      <td style="width:60%;"><div class="score-bar-wrap"><div class="${barCls}" style="width:${w}%"></div><span class="score-val">${sign}${s.totalZ.toFixed(3)}</span></div></td>
     </tr>`;
   }).join('');
-  container.innerHTML = `
-    <div class="result-section">
-      <h3>${scoreLabel}</h3>
-      <div class="table-wrap"><table>
-        <thead><tr><th>#</th><th>${entityLabel}</th><th>Score (Z)</th><th>vs group</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>
-      ${statsChips(vals)}
-    </div>`;
-}
-
-function tagForRawZ(z, idx, total) {
-  if (idx === 0) return `<span class="tag tag-top">Top performer</span>`;
-  if (idx === total-1) return `<span class="tag tag-down">Lowest</span>`;
-  if (z >= 0.5) return `<span class="tag tag-up">Above average</span>`;
-  if (z > -0.5) return `<span class="tag tag-avg">Average</span>`;
-  return `<span class="tag tag-down">Below average</span>`;
-}
-
-function tagForSigmoidScore(score, idx, total) {
-  if (idx === 0) return `<span class="tag tag-top">Top performer</span>`;
-  if (idx === total-1) return `<span class="tag tag-down">Lowest</span>`;
-  if (score >= 62.2) return `<span class="tag tag-up">Above average</span>`;
-  if (score > 37.8) return `<span class="tag tag-avg">Average</span>`;
-  return `<span class="tag tag-down">Below average</span>`;
-}
-
-function statsChips(vals) {
-  const spread = Math.max(...vals) - Math.min(...vals);
-  const n = vals.length;
-  return `<div class="stat-row">
-    <div class="stat-chip">n = <strong>${n}</strong></div>
-    <div class="stat-chip">spread <strong>${spread.toFixed(2)}</strong></div>
-    ${n < 10 ? `<div class="stat-chip stat-chip-warn">Small sample — results are indicative</div>` : ''}
-    ${spread < 1 ? `<div class="stat-chip stat-chip-info">Tight clustering — differences are modest</div>` : ''}
-  </div>`;
+  
+  container.innerHTML = `<div class="result-section"><h3>Calculated Components</h3><div class="table-wrap"><table><thead><tr><th>Rank</th><th>${entityLabel}</th><th>${scoreLabel}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 
 function calcOverall() {
@@ -803,7 +977,6 @@ function _calcOverall() {
   
   const entities = [...new Set([...perfScores.map(s=>s.entity), ...costScores.map(s=>s.entity)])];
   
-  // 1 & 2. Aggregate raw composite Z-scores from available sub-structures
   let combined = entities.map(entity => {
     const p = perfScores.find(s=>s.entity===entity);
     const c = costScores.find(s=>s.entity===entity);
@@ -811,147 +984,277 @@ function _calcOverall() {
     const rawCompositeZ = (p?.totalZ||0) + (c?.totalZ||0);
     return { entity, performanceZ: p?.totalZ||0, costZ: c?.totalZ||0, rawCompositeZ, contributions: contrib };
   });
-
-  // 3. Re-standardize the composite across the cohort (forces mean = 0, std = 1)
+  
   const compositeVals = combined.map(s => s.rawCompositeZ);
   const { mean: compMean, std: compStd } = meanStd(compositeVals);
   
   combined = combined.map(s => {
     const reStandardizedZ = compStd === 0 ? 0 : (s.rawCompositeZ - compMean) / compStd;
-    
-    // 4. Map through logistic sigmoid: 100 / (1 + e^-z)
-    const sigmoidIndexScore = 100 / (1 + Math.exp(-reStandardizedZ));
-    
-    return { 
-      ...s, 
-      reStandardizedZ, 
-      displayZ: sigmoidIndexScore
-    };
-  }).sort((a,b) => b.displayZ - a.displayZ);
-
+    const pointsScale = 100 / (1 + Math.exp(-reStandardizedZ));
+    return { ...s, reStandardizedZ, pointsScale };
+  });
+  
   overallScores = combined;
-  renderOverallTable(combined);
-  document.getElementById('chartCard').style.display = '';
-  renderChart(combined);
-  setStep(4);
+  renderFinalOutputs();
+  document.getElementById('overallResults').classList.remove('hidden');
 }
 
-function renderOverallTable(scores) {
-  let rows = scores.map((s,i) => {
-    const pct = s.displayZ;
-    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
-    const scoreColor = s.displayZ >= 50 ? 'var(--accent)' : 'var(--danger)';
-    return `<tr>
-      <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
-      <td style="font-weight:600">${s.entity}</td>
-      <td><span class="score-val">${s.performanceZ>=0?'+':''}${s.performanceZ.toFixed(2)}</span></td>
-      <td><span class="score-val">${s.costZ>=0?'+':''}${s.costZ.toFixed(2)}</span></td>
-      <td>
-        <div class="score-bar-wrap">
-          <div class="score-bar" style="width:${Math.max(pct,2).toFixed(1)}%; background-color:${scoreColor}"></div>
-          <span class="score-val" style="font-weight:600;color:${scoreColor}">${s.displayZ.toFixed(1)}</span>
-        </div>
-      </td>
-      <td>${tagForSigmoidScore(s.displayZ, i, scores.length)}</td>
-    </tr>`;
-  }).join('');
+function renderFinalOutputs() {
+  if (currentViewMode === 'points') {
+    overallScores.sort((a,b) => b.pointsScale - a.pointsScale);
+  } else {
+    overallScores.sort((a,b) => b.reStandardizedZ - a.reStandardizedZ);
+  }
   
-  document.getElementById('overallResults').innerHTML = `
-    <div class="result-section">
-      <h3>Combined 0–100 index ranking</h3>
-      <div class="table-wrap"><table>
-        <thead><tr><th>#</th><th>Entry</th><th>Performance (Z)</th><th>Cost (Z)</th><th>Index Score (0-100)</th><th>Result</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>
-      ${statsChips(scores.map(s=>s.reStandardizedZ))}
-    </div>`;
+  renderTableHeaders();
+  renderLeaderboardTable();
+  renderCohortStatChips();
+  refreshChart();
 }
 
-function getChartColors() {
-  return {
-    bg: document.getElementById('bgHex').value || '#111111',
-    axes: document.getElementById('axesHex').value || '#909090'
-  };
+function renderTableHeaders() {
+  const tr = document.getElementById('tableHeaders');
+  const primaryHeader = currentViewMode === 'points' ? 'Overall Score' : 'Composite Z-Score';
+  const secondaryHeader = currentViewMode === 'points' ? 'Composite (Z)' : 'Index Points';
+  
+  tr.innerHTML = `
+    <th style="width:50px;">Rank</th>
+    <th>Entity Name</th>
+    <th style="width:130px; text-align:right;">${primaryHeader}</th>
+    <th style="width:120px; text-align:right;">${secondaryHeader}</th>
+    <th style="width:110px; text-align:center;">Cohort Status</th>
+  `;
 }
 
-function renderChart(scores) {
-  if (!scores.length) return;
-  const canvas = document.getElementById('overallChart');
-  if (chartInst) { chartInst.destroy(); chartInst = null; }
+function renderLeaderboardTable() {
+  const tbody = document.getElementById('overallTableBody');
+  tbody.innerHTML = '';
   
-  const allMetrics = [];
-  scores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
-  allMetrics.forEach((m,i) => { if (!metricColors[m]) metricColors[m] = PALETTE[i % PALETTE.length]; });
-  renderMetricColorPickers(allMetrics);
-  
-  const h = Math.max(300, scores.length * 52 + 140);
-  canvas.height = h;
-  canvas.style.height = h + 'px';
-  const colors = getChartColors();
-  
-  const datasets = allMetrics.map(m => ({
-    label: m,
-    data: scores.map(s => { const c = (s.contributions||{})[m]; return c ? c.contribution : 0; }),
-    backgroundColor: metricColors[m], borderColor: metricColors[m],
-    borderWidth: 0, stack: 'combined', borderRadius: 2, _metric: m
-  }));
-  
-  chartInst = new Chart(canvas.getContext('2d'), {
-    type: 'bar',
-    data: { labels: scores.map(s=>s.entity), datasets },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: colors.axes, font: { family: "'DM Mono'" } }, border: { display: false } },
-        y: { stacked: true, grid: { display: false }, ticks: { color: colors.axes, font: { family: "'DM Sans'", weight: '500' }, padding: 8 }, border: { display: false } }
-      },
-      plugins: {
-        legend: { display: true, position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 16, color: colors.axes, font: { family: "'DM Sans'" } } },
-        tooltip: {
-          mode: 'nearest', intersect: true,
-          backgroundColor: 'rgba(10,10,10,.96)', padding: 14, cornerRadius: 8,
-          borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
-          titleFont: { size: 13, weight: '600', family: "'DM Sans'" },
-          bodyFont: { size: 12, family: "'DM Mono'" },
-          callbacks: {
-            title: items => items.length ? scores[items[0].dataIndex].entity : '',
-            label: item => {
-              const m = item.dataset._metric;
-              const s = scores[item.dataIndex];
-              const c = (s.contributions||{})[m];
-              if (!c || Math.abs(c.contribution) < 0.0005) return null;
-              const sign = c.contribution >= 0 ? '+' : '';
-              return [`${m}: ${sign}${c.contribution.toFixed(3)}`, `  raw: ${c.rawValue}  weight: ${c.weight.toFixed(1)}%`];
-            },
-            footer: items => items.length ? 'Index Score: ' + scores[items[0].dataIndex].displayZ.toFixed(1) + ' / 100' : ''
-          }
-        }
-      },
-      layout: { padding: { top: 16, right: 24, bottom: 8, left: 8 } }
-    },
-    plugins: [{
-      id: 'bg',
-      beforeDraw(chart) {
-        const ctx = chart.canvas.getContext('2d');
-        ctx.save(); ctx.globalCompositeOperation = 'destination-over';
-        ctx.fillStyle = getChartColors().bg;
-        ctx.fillRect(0,0,chart.width,chart.height);
-        ctx.restore();
-      }
-    }]
+  overallScores.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    const badgeCls = i===0?'rank-1':(i===1?'rank-2':(i===2?'rank-3':'rank-other'));
+    
+    let tag = '<span class="tag tag-avg">Average</span>';
+    if (s.reStandardizedZ > 1.2) tag = '<span class="tag tag-top">Top Tier</span>';
+    else if (s.reStandardizedZ > 0.3) tag = '<span class="tag tag-up">Above Avg</span>';
+    else if (s.reStandardizedZ < -0.3) tag = '<span class="tag tag-down">Below Avg</span>';
+    
+    const primaryText = currentViewMode === 'points' 
+      ? s.pointsScale.toFixed(1) + ' pts' 
+      : (s.reStandardizedZ >= 0 ? '+' : '') + s.reStandardizedZ.toFixed(3);
+      
+    const secondaryText = currentViewMode === 'points'
+      ? (s.reStandardizedZ >= 0 ? '+' : '') + s.reStandardizedZ.toFixed(3)
+      : s.pointsScale.toFixed(1) + ' pts';
+
+    tr.innerHTML = `
+      <td><span class="rank-badge ${badgeCls}">${i+1}</span></td>
+      <td><strong>${s.entity}</strong></td>
+      <td style="text-align:right; font-family:var(--mono); font-weight:600; color:var(--accent);">${primaryText}</td>
+      <td style="text-align:right; font-family:var(--mono); color:var(--text-secondary);">${secondaryText}</td>
+      <td style="text-align:center;">${tag}</td>
+    `;
+    tbody.appendChild(tr);
   });
 }
 
-function refreshChart() { if (overallScores.length) renderChart(overallScores); }
+// 3) REPLACED: renderCohortStatChips() math and tokens
+function renderCohortStatChips() {
+  const el = document.getElementById('overallStats');
+  const n = overallScores.length;
+
+  const vals = overallScores.map(s => s.rawCompositeZ);
+  const minV = Math.min(...vals);
+  const maxV = Math.max(...vals);
+  const range = maxV - minV;
+
+  const { std } = meanStd(vals);
+
+  el.innerHTML = `
+    <div class="stat-row">
+      <div class="stat-chip">n = <strong>${n}</strong></div>
+      <div class="stat-chip">range <strong>${range.toFixed(2)}</strong></div>
+      <div class="stat-chip">std dev <strong>${std.toFixed(2)}</strong></div>
+      ${n < 10 ? `<div class="stat-chip stat-chip-warn">Small sample — results are indicative</div>` : ''}
+      ${range < 1 ? `<div class="stat-chip stat-chip-info">Tight clustering — differences are modest</div>` : ''}
+    </div>
+  `;
+}
+
+// 4) REPLACED: Core refreshChart Engine & Visual Sub-layers
+function refreshChart() {
+  const canvas = document.getElementById('overallChart');
+  if (!canvas) return;
+  
+  const allMetrics = [];
+  overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
+  
+  allMetrics.forEach((m, i) => { if (!metricColors[m]) metricColors[m] = PALETTE[i % PALETTE.length]; });
+  renderMetricColorPickers(allMetrics);
+  
+  const h = Math.max(300, overallScores.length * 52 + 100);
+  canvas.height = h;
+  canvas.style.height = h + 'px';
+  
+  const colors = getChartColors();
+  let datasets = [];
+  
+  if (currentViewMode === 'zscore') {
+    document.getElementById('chartLabelHeader').innerText = "Composite Structural Breakdown";
+    document.getElementById('chartLabelSub').innerText = "Additive dimensional contributions stacked by component standard deviations (Z)";
+    
+    datasets = allMetrics.map(m => ({
+      label: m,
+      data: overallScores.map(s => { const c = (s.contributions||{})[m]; return c ? c.contribution : 0; }),
+      backgroundColor: metricColors[m],
+      borderColor: metricColors[m],
+      borderWidth: 0,
+      stack: 'combined',
+      borderRadius: 2,
+      _metric: m
+    }));
+  } else {
+    // 4A) REPLACED: Points datasets branch with condition-based custom coloring pairs
+    document.getElementById('chartLabelHeader').innerText = "Performance Index Leaderboard";
+    document.getElementById('chartLabelSub').innerText = "0–100 index score (higher is better). Hover for metric breakdown.";
+
+    const barColors = overallScores.map(s => s.pointsScale >= 50 ? 'rgba(184,245,58,0.75)' : 'rgba(255,94,94,0.65)');
+    const borderColors = overallScores.map(s => s.pointsScale >= 50 ? '#b8f53a' : '#ff5e5e');
+
+    datasets = [{
+      label: 'Index Score (0–100)',
+      data: overallScores.map(s => s.pointsScale),
+      backgroundColor: barColors,
+      borderColor: borderColors,
+      borderWidth: 1,
+      borderRadius: 4,
+      barThickness: 24
+    }];
+  }
+  
+  if (chartInst) { chartInst.destroy(); }
+  
+  chartInst = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: { labels: overallScores.map(s=>s.entity), datasets },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: currentViewMode === 'zscore',
+          min: currentViewMode === 'points' ? 0 : undefined,
+          max: currentViewMode === 'points' ? 100 : undefined,
+          grid: { color: 'rgba(255,255,255,.05)' },
+          ticks: { color: colors.axes, font: { family: "'DM Mono'" } },
+          border: { display: false }
+        },
+        y: {
+          stacked: currentViewMode === 'zscore',
+          grid: { display: false },
+          ticks: { color: colors.axes, font: { family: "'DM Sans'", weight: '500' }, padding: 8 },
+          border: { display: false }
+        }
+      },
+      plugins: {
+        legend: {
+          display: currentViewMode === 'zscore',
+          position: 'bottom',
+          labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 16, color: colors.axes, font: { family: "'DM Sans'" } }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(10,10,10,.96)',
+          padding: 14,
+          cornerRadius: 8,
+          borderColor: 'rgba(255,255,255,.1)',
+          borderWidth: 1,
+          titleFont: { size: 13, weight: '600', family: "'DM Sans'" },
+          bodyFont: { size: 12, family: "'DM Mono'" },
+          // 4B) REPLACED: Tooltip callbacks context dispatcher
+          callbacks: {
+            title: items => items.length ? overallScores[items[0].dataIndex].entity : '',
+            label: item => {
+              const s = overallScores[item.dataIndex];
+
+              if (currentViewMode === 'points') {
+                const lines = [];
+                lines.push(`Index Score: ${s.pointsScale.toFixed(1)} / 100`);
+                lines.push(`Composite Z: ${(s.reStandardizedZ >= 0 ? '+' : '')}${s.reStandardizedZ.toFixed(3)}`);
+                lines.push(`Performance Z: ${(s.performanceZ >= 0 ? '+' : '')}${s.performanceZ.toFixed(3)}`);
+                lines.push(`Cost Z: ${(s.costZ >= 0 ? '+' : '')}${s.costZ.toFixed(3)}`);
+                lines.push(''); 
+
+                Object.keys(s.contributions || {}).forEach(m => {
+                  const c = s.contributions[m];
+                  if (!c) return;
+                  const sign = c.contribution >= 0 ? '+' : '';
+                  lines.push(`${m}: ${sign}${c.contribution.toFixed(3)} (raw: ${c.rawValue}, wt: ${c.weight.toFixed(0)}%)`);
+                });
+
+                return lines;
+              }
+
+              const m = item.dataset._metric;
+              const c = (s.contributions || {})[m];
+              if (!c || Math.abs(c.contribution) < 0.001) return null;
+              return `${m}: ${(c.contribution >= 0 ? '+' : '')}${c.contribution.toFixed(3)} (Raw: ${c.rawValue})`;
+            }
+          }
+        }
+      },
+      layout: { padding: { top: 8, right: 16, bottom: 8, left: 0 } }
+    },
+    // 4C) REPLACED: Canvas internal extensions (Background + Dashed AVG Baseline)
+    plugins: [
+      {
+        id: 'custom_bg',
+        beforeDraw(chart) {
+          const {ctx, chartArea: {top, left, width, height}} = chart;
+          ctx.fillStyle = colors.bg;
+          ctx.fillRect(left, top, width, height);
+        }
+      },
+      {
+        id: 'avgLine50',
+        afterDraw(chart) {
+          if (currentViewMode !== 'points') return;
+          const xScale = chart.scales.x;
+          const x50 = xScale.getPixelForValue(50);
+          const ctx = chart.ctx;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.setLineDash([6, 4]);
+          ctx.strokeStyle = 'rgba(255,255,255,.25)';
+          ctx.lineWidth = 1;
+          ctx.moveTo(x50, chart.chartArea.top);
+          ctx.lineTo(x50, chart.chartArea.bottom);
+          ctx.stroke();
+
+          ctx.setLineDash([]);
+          ctx.fillStyle = 'rgba(255,255,255,.35)';
+          ctx.font = "500 10px 'DM Mono', monospace";
+          ctx.textAlign = 'center';
+          ctx.fillText('AVG', x50, chart.chartArea.top - 6);
+          ctx.restore();
+        }
+      }
+    ]
+  });
+}
 
 function renderMetricColorPickers(metrics) {
-  const container = document.getElementById('metricColorControls');
-  if (!metrics || !metrics.length) { container.innerHTML = ''; return; }
-  container.innerHTML = metrics.map(m => {
-    return `<div class="color-item">
-      <label>${m}</label>
-      <input type="color" class="color-swatch" value="${metricColors[m]||'#b8f53a'}" oninput="updateMetricColor('${m.replace(/'/g,"\\'")}',this.value)">
-      <input type="text" class="color-hex" value="${metricColors[m]||'#b8f53a'}" oninput="updateMetricColor('${m.replace(/'/g,"\\'")}',this.value)">
+  const container = document.getElementById('metricColorsContainer');
+  if (currentViewMode === 'points') { container.innerHTML = ''; return; }
+  
+  container.innerHTML = metrics.map((m, i) => {
+    const id = `cp_${i}`;
+    const hexId = `ch_${i}`;
+    return `<div class="color-item" style="margin-bottom:6px;">
+      <label style="font-size:11px; width:110px; overflow:hidden; text-overflow:ellipsis;">${m}</label>
+      <input type="color" id="${id}" class="color-swatch" value="${metricColors[m]}" onchange="syncColor('${id}','${hexId}'); updateMetricColor('${m}', this.value)">
+      <input type="text" id="${hexId}" class="color-hex" style="width:70px; padding:2px 6px; font-size:10px;" value="${metricColors[m]}" oninput="syncSwatch('${hexId}','${id}'); updateMetricColor('${m}', this.value)">
     </div>`;
   }).join('');
 }
@@ -968,8 +1271,182 @@ function syncSwatch(hexId, pickerId) {
   if (/^#[0-9a-f]{3,6}$/i.test(v)) document.getElementById(pickerId).value = v;
 }
 
+function getChartColors() {
+  return { bg: document.getElementById('colorBg').value, axes: document.getElementById('colorAxes').value };
+}
+
+function setLoading(id, show) {
+  const btn = document.getElementById(id);
+  if (show) { btn.classList.add('loading'); btn.disabled = true; }
+  else { btn.classList.remove('loading'); btn.disabled = false; }
+}
+
+// 5) REPLACED: exportHTML() full implementation
+function exportHTML() {
+  if (!overallScores.length) { alert('Generate the ranking first.'); return; }
+  const allMetrics = [];
+  overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
+  
+  // 5A) Snapshot active display layout style
+  const viewMode = currentViewMode; 
+  
+  const tableRows = overallScores.map((s, i) => {
+    return `<tr>
+      <td>${i+1}</td>
+      <td class="bold">${s.entity}</td>
+      <td>${s.performanceZ.toFixed(3)}</td>
+      <td>${s.costZ.toFixed(3)}</td>
+      <td>${s.reStandardizedZ.toFixed(3)}</td>
+      <td class="bold color">${s.pointsScale.toFixed(1)}</td>
+    </tr>`;
+  }).join('');
+  
+  const canvasH = Math.max(300, overallScores.length * 40 + 100);
+  const chartColors = getChartColors();
+  
+  // 5B) Conditional Data Serialization
+  const exportedChartData = (viewMode === 'points')
+    ? JSON.stringify({
+        labels: overallScores.map(s => s.entity),
+        datasets: [{
+          label: 'Index Score (0–100)',
+          data: overallScores.map(s => s.pointsScale),
+          backgroundColor: overallScores.map(s => s.pointsScale >= 50 ? 'rgba(184,245,58,0.75)' : 'rgba(255,94,94,0.65)'),
+          borderColor: overallScores.map(s => s.pointsScale >= 50 ? '#b8f53a' : '#ff5e5e'),
+          borderWidth: 1,
+          borderRadius: 4
+        }]
+      })
+    : JSON.stringify({
+        labels: overallScores.map(s => s.entity),
+        datasets: allMetrics.map(m => ({
+          label: m,
+          data: overallScores.map(s => { const c = (s.contributions||{})[m]; return c ? c.contribution : 0; }),
+          backgroundColor: metricColors[m],
+          borderColor: metricColors[m],
+          borderWidth: 0,
+          stack: 'combined',
+          borderRadius: 2
+        }))
+      });
+
+  // 5C) Conditional Scale Mapping Options Definition
+  const exportedOptions = (viewMode === 'points')
+    ? {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: chartColors.axes } },
+          y: { grid: { display: false }, ticks: { color: chartColors.axes } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    : {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: chartColors.axes } },
+          y: { stacked: true, grid: { display: false }, ticks: { color: chartColors.axes } }
+        },
+        plugins: { legend: { display: false } }
+      };
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Performance Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"><\/script>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0a; color: #f0f0f0; padding: 40px 20px; max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
+  p { color: #909090; margin-bottom: 30px; font-size: 14px; }
+  .card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .card-title { font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #909090; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+  th { background: #161616; padding: 10px 14px; color: #909090; font-weight: 600; border-bottom: 1px solid #222; }
+  td { padding: 12px 14px; border-bottom: 1px solid #222; }
+  .bold { font-weight: 600; }
+  .color { color: #b8f53a; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #909090; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <h1>Performance Ranking Executive Summary</h1>
+  <p>Generated Report Hierarchy — Bounded Indexation Profile Output</p>
+  
+  <div class="card">
+    <div class="card-title">Leaderboard Matrix</div>
+    <table>
+      <thead>
+        <tr><th>Rank</th><th>Entity</th><th>Performance (Z)</th><th>Cost (Z)</th><th>Composite (Z)</th><th>Index Score (0-100)</th></tr>
+      </thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Visual Layout Model Matrix</div>
+    <canvas id="chart" style="height:${canvasH}px"></canvas>
+    <div class="legend" style="${viewMode === 'points' ? 'display:none;' : ''}">
+      ${allMetrics.map(m=>`<div class="legend-item"><div class="legend-dot" style="background:${metricColors[m]||'#b8f53a'}"></div>${m}</div>`).join('')}
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      // 5D) Injected view-aware data matrices and metrics mapping parameters
+      data: ${exportedChartData},
+      options: ${JSON.stringify(exportedOptions)},
+      // 5E) Embedded contextual background filler and grid baseline components
+      plugins: [{
+        id: 'bg',
+        beforeDraw(c) {
+          const {ctx, chartArea: {top, left, width, height}} = c;
+          ctx.fillStyle = '${chartColors.bg}';
+          ctx.fillRect(left, top, width, height);
+        }
+      },{
+        id: 'avgLine50',
+        afterDraw(c) {
+          const viewMode = ${JSON.stringify(viewMode)};
+          if (viewMode !== 'points') return;
+          const xScale = c.scales.x;
+          const x50 = xScale.getPixelForValue(50);
+          const ctx = c.ctx;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.setLineDash([6,4]);
+          ctx.strokeStyle = 'rgba(255,255,255,.25)';
+          ctx.lineWidth = 1;
+          ctx.moveTo(x50, c.chartArea.top);
+          ctx.lineTo(x50, c.chartArea.bottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = 'rgba(255,255,255,.35)';
+          ctx.font = "500 10px 'DM Mono', monospace";
+          ctx.textAlign = 'center';
+          ctx.fillText('AVG', x50, c.chartArea.top - 6);
+          ctx.restore();
+        }
+      }]
+    });
+  <\/script>
+</body>
+</html>`;
+
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'performance_report.html';
+  a.click();
+}
+
 function downloadPNG() {
-  if (!chartInst) { alert('Generate the chart first.'); return; }
+  if (!chartInst) { alert('Generate the ranking first.'); return; }
   const a = document.createElement('a');
   a.href = chartInst.toBase64Image('image/png', 1);
   a.download = 'ranking_chart.png';
@@ -980,131 +1457,19 @@ function exportCSV() {
   if (!overallScores.length) { alert('Generate the ranking first.'); return; }
   const allMetrics = [];
   overallScores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
-  const headers = ['Entry','Performance Score (Z)','Cost Score (Z)','Index Score (0-100)',...allMetrics.map(m=>m+' Contribution')];
+  
+  const headers = ['Entry','Performance score (Z)','Cost score (Z)','Composite Z-Score','Index Score (0-100)',...allMetrics.map(m=>m+' Contribution Z')];
   const rows = overallScores.map(s => [
-    s.entity, s.performanceZ.toFixed(3), s.costZ.toFixed(3), s.displayZ.toFixed(1),
+    s.entity, s.performanceZ.toFixed(3), s.costZ.toFixed(3), s.reStandardizedZ.toFixed(3), s.pointsScale.toFixed(1),
     ...allMetrics.map(m => { const c = (s.contributions||{})[m]; return c ? c.contribution.toFixed(3) : '0'; })
   ]);
+  
   const csv = [headers, ...rows].map(r => r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'ranking_results.csv';
+  a.download = 'performance_rankings.csv';
   a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-function exportHTML() {
-  if (!overallScores.length) { alert('Generate the ranking first.'); return; }
-  const scores = overallScores;
-  const allMetrics = [];
-  scores.forEach(s => Object.keys(s.contributions||{}).forEach(k => { if (!allMetrics.includes(k)) allMetrics.push(k); }));
-  const chartData = JSON.stringify({
-    labels: scores.map(s=>s.entity),
-    datasets: allMetrics.map(m => ({
-      label: m,
-      data: scores.map(s => { const c=(s.contributions||{})[m]; return c ? c.contribution : 0; }),
-      backgroundColor: metricColors[m] || '#b8f53a',
-      borderColor: metricColors[m] || '#b8f53a',
-      borderWidth: 0, stack: 'combined', borderRadius: 2
-    }))
-  });
-  const tableRows = scores.map((s,i) => `
-    <tr>
-      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-weight:700;color:${i===0?'#b8f53a':i===1?'#666':i===2?'#555':'#444'};font-size:12px">${i+1}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #222;font-weight:600">${s.entity}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:12px;color:#909090">${s.performanceZ>=0?'+':''}${s.performanceZ.toFixed(2)}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:12px;color:#909090">${s.costZ>=0?'+':''}${s.costZ.toFixed(2)}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-weight:700;font-size:13px;color:${s.displayZ>=50?'#b8f53a':'#ff5e5e'}">${s.displayZ.toFixed(1)}</td>
-    </tr>`).join('');
-  const canvasH = Math.max(300, scores.length * 52 + 140);
-  const bgColor = document.getElementById('bgHex').value || '#111111';
-  const axesColor = document.getElementById('axesHex').value || '#909090';
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Performance Ranking — ${new Date().toLocaleDateString('en-GB')}</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"><\/script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#0a0a0a;color:#f0f0f0;padding:40px 20px 60px;font-size:15px}
-.shell{max-width:800px;margin:0 auto}
-.header{margin-bottom:32px}
-h1{font-size:26px;font-weight:600;letter-spacing:-.02em;color:#f0f0f0;margin-bottom:4px}
-.meta{font-size:12px;color:#555;font-family:'DM Mono',monospace}
-.card{background:#111;border:1px solid #1e1e1e;border-radius:16px;padding:24px 28px;margin-bottom:14px}
-.card-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#555;margin-bottom:14px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#0e0e0e;padding:8px 14px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#444;border-bottom:1px solid #1e1e1e}
-td{padding:10px 14px;border-bottom:1px solid #1a1a1a;color:#f0f0f0}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#161616}
-canvas{width:100%!important;display:block}
-.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #1e1e1e}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#666}
-.legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
-.footer{text-align:center;color:#333;font-size:11px;margin-top:28px;font-family:'DM Mono',monospace}
-</style>
-</head>
-<body>
-<div class="shell">
-  <div class="header">
-    <h1>Performance Ranking</h1>
-    <div class="meta">Generated ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
-  </div>
-  <div class="card">
-    <div class="card-title">Final ranking index</div>
-    <table>
-      <thead><tr><th>#</th><th>Entry</th><th>Performance (Z)</th><th>Cost (Z)</th><th>Index Score (0-100)</th></tr></thead>
-      <tbody>${tableRows}</tbody>
-    </table>
-  </div>
-  <div class="card">
-    <div class="card-title">Score breakdown</div>
-    <canvas id="chart" style="height:${canvasH}px"></canvas>
-    <div class="legend">
-      ${allMetrics.map(m=>`<div class="legend-item"><div class="legend-dot" style="background:${metricColors[m]||'#b8f53a'}"></div>${m}</div>`).join('')}
-    </div>
-  </div>
-  <div class="footer">Performance Ranking Tool</div>
-</div>
-<script>
-const canvas = document.getElementById('chart');
-canvas.height = ${canvasH};
-new Chart(canvas.getContext('2d'), {
-  type: 'bar',
-  data: ${chartData},
-  options: {
-    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-    scales: {
-      x: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '${axesColor}', font: { family: "'DM Mono'" } }, border: { display: false } },
-      y: { stacked: true, grid: { display: false }, ticks: { color: '${axesColor}', font: { family: "'DM Sans'", weight: '500' }, padding: 8 }, border: { display: false } }
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(10,10,10,.96)', padding: 12, cornerRadius: 8,
-        borderColor: 'rgba(255,255,255,.08)', borderWidth: 1,
-        titleFont: { size: 13, weight: '600' }, bodyFont: { size: 12, family: "'DM Mono'" },
-        callbacks: { label: item => { const v = item.raw; if (Math.abs(v) < 0.0005) return null; return item.dataset.label + ': ' + (v>=0?'+':'') + v.toFixed(3); } }
-      }
-    },
-    layout: { padding: { top: 16, right: 24, bottom: 8, left: 8 } }
-  },
-  plugins: [{ id:'bg', beforeDraw(chart) { const ctx=chart.canvas.getContext('2d'); ctx.save(); ctx.globalCompositeOperation='destination-over'; ctx.fillStyle='${bgColor}'; ctx.fillRect(0,0,chart.width,chart.height); ctx.restore(); } }]
-});
-<\/script>
-</body>
-</html>`;
-  const blob = new Blob([html], {type:'text/html'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'ranking_interactive.html';
-  a.click();
-  URL.revokeObjectURL(a.href);
 }
 </script>
 </body>
