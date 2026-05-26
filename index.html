@@ -1369,7 +1369,7 @@ Segment D	0.73	2.45</textarea>
     if (!canvas) return;
 
     // Synchronize global chart visual context headers dynamically
-    const titleLabelText = currentViewMode === 'points' ? 'Final Calculated Points Index Matrix Distribution' : 'Cohort Group Composite Z-Score Deviation Matrix';
+    const titleLabelText = currentViewMode === 'points' ? 'Calculated Points Index' : 'Composite Z-Score Ranking';
     document.getElementById('dynChartTitle').textContent = titleLabelText;
 
     const labels = overallScores.map(s => s.entity);
