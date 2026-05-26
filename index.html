@@ -589,7 +589,6 @@ Spain	1.10	0.45</textarea>
     const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     if (!lines.length) return [];
 
-    // Explicitly check for valid tabs or commas; fallback if missing to enforce validation safety
     let delimiter = '';
     if (lines[0].includes('\t')) delimiter = '\t';
     else if (lines[0].includes(',')) delimiter = ',';
@@ -659,16 +658,16 @@ Spain	1.10	0.45</textarea>
     btn.textContent = open ? 'Hide math details' : 'Show math details';
   }
 
-  function handleUpload(e, id) {
-    const file = e.target.files[0];
+  function handleUpload(event, targetId) {
+    const file = event.target.files[0];
     if (!file) return;
-    const r = new FileReader();
-    r.onload = ev => {
-      document.getElementById(id).value = ev.target.result.trim();
-      setupWeights(id === 'perfData' ? 'perf' : 'cost');
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById(targetId).value = e.target.result.trim();
+      setupWeights(targetId === 'perfData' ? 'perf' : 'cost');
       showToast("File uploaded and read successfully.", "info");
     };
-    r.readAsText(file);
+    reader.readAsText(file);
   }
 
   function setupWeights(type) {
@@ -757,9 +756,7 @@ Spain	1.10	0.45</textarea>
 
       area.classList.add('revealed');
       updateWeightChips(type);
-    } catch(e) {
-      // Fail silently on dynamic input updates
-    }
+    } catch(e) {}
   }
 
   function updateWeightChips(type) {
@@ -790,10 +787,9 @@ Spain	1.10	0.45</textarea>
     let rows = [];
     for (let i = 1; i < matrix.length; i++) {
       const parts = matrix[i];
-      if (parts.length !== headers.length) throw new Error(`Row entry mismatch at row pointer line: ${i + 1}`);
+      if (parts.length !== headers.length) throw new Error(`Row entry mismatch at row index line: ${i + 1}`);
       const item = { entity: parts[0], values: {}, rawNormalizedKey: parts[0].trim().toLowerCase() };
       subHeaders.forEach((sh, idx) => {
-        // Strip out string notation formatting symbols (like currency commas) natively
         let cleanVal = parts[idx + 1].replace(/[\$,]/g, '');
         const val = parseFloat(cleanVal);
         if (isNaN(val)) throw new Error(`Invalid non-numeric value "${parts[idx+1]}" found at row index line: ${i + 1}`);
@@ -867,7 +863,6 @@ Spain	1.10	0.45</textarea>
 
     setTimeout(() => {
       try {
-        // Build a robust lowercased exact identity map to ensure flawless cross-joining mapping properties
         let costLookupMap = {}; 
         costScores.forEach(c => costLookupMap[c.rawNormalizedKey] = c);
         
@@ -875,8 +870,6 @@ Spain	1.10	0.45</textarea>
         perfScores.forEach(p => {
           const costMatch = costLookupMap[p.rawNormalizedKey];
           const cZ = costMatch !== undefined ? costMatch.scoreZ : 0;
-          
-          // Deep-merge the metric tracking analytical payload breakdown charts
           let mergedContributions = Object.assign({}, p.contributions, costMatch ? costMatch.contributions : {});
           
           integrated.push({ 
@@ -977,31 +970,41 @@ Spain	1.10	0.45</textarea>
     if (!ctx) return;
 
     const labels = overallScores.map(s => s.entity);
-    const dataVals = currentViewMode === 'points' ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
+    const isPoints = currentViewMode === 'points';
+    const dataVals = isPoints ? overallScores.map(s => s.pointsScale) : overallScores.map(s => s.reStandardizedZ);
     
     const positiveAccentColor = document.getElementById('hexBg').value || '#b8f53a';
     const axisColor = document.getElementById('hexAxes').value || '#9EA3AE';
     
-    // Dynamic array mapping providing semantic polarity indicators across negative/positive standard deviations
-    const barColors = dataVals.map(val => {
-      if (currentViewMode === 'points') {
-        return val >= 50 ? positiveAccentColor : '#ff5353';
-      } else {
-        return val >= 0 ? positiveAccentColor : '#ff5353';
-      }
-    });
+    const barColors = dataVals.map(val => isPoints ? (val >= 50 ? positiveAccentColor : '#ff5353') : (val >= 0 ? positiveAccentColor : '#ff5353'));
+    const baselineValue = isPoints ? 50 : 0;
 
-    const baselineValue = currentViewMode === 'points' ? 50 : 0;
+    // FIX: Calculate clean, balanced symmetric min/max padding frames for the standard deviations view mode
+    let minScaleValue = 0;
+    let maxScaleValue = 100;
+    
+    if (!isPoints) {
+      const maxAbsDeviation = Math.max(...dataVals.map(v => Math.abs(v)), 1.0);
+      const balancedBoundary = Math.ceil(maxAbsDeviation * 1.2 * 10) / 10; 
+      minScaleValue = -balancedBoundary;
+      maxScaleValue = balancedBoundary;
+    }
 
-    // Optimized chart refresh layer: Check instance validity to update configuration options or recreate gracefully
     if (chartInst) {
       chartInst.data.labels = labels;
       chartInst.data.datasets[0].data = dataVals;
       chartInst.data.datasets[0].backgroundColor = barColors;
       chartInst.options.scales.x.ticks.color = axisColor;
       chartInst.options.scales.y.ticks.color = axisColor;
+      
+      // FIX: Dynamically apply sanitized min/max scale caps to avoid chart alignment distortions
+      chartInst.options.scales.y.min = minScaleValue;
+      chartInst.options.scales.y.max = maxScaleValue;
+      
       chartInst.options.plugins.annotation.annotations.line1.value = baselineValue;
-      chartInst.options.plugins.annotation.annotations.line1.label.content = currentViewMode === 'points' ? 'Average Baseline (50)' : 'Average Deviation (0.0)';
+      chartInst.options.plugins.annotation.annotations.line1.yMin = baselineValue;
+      chartInst.options.plugins.annotation.annotations.line1.yMax = baselineValue;
+      chartInst.options.plugins.annotation.annotations.line1.label.content = isPoints ? 'Average Baseline (50)' : 'Average Deviation (0.0)';
       chartInst.update();
     } else {
       chartInst = new Chart(ctx, {
@@ -1026,14 +1029,14 @@ Spain	1.10	0.45</textarea>
                   type: 'line',
                   yMin: baselineValue,
                   yMax: baselineValue,
-                  borderColor: 'rgba(255, 255, 255, 0.15)',
+                  borderColor: 'rgba(255, 255, 255, 0.25)',
                   borderWidth: 1.5,
                   borderDash: [5, 5],
                   label: {
                     display: true,
-                    content: currentViewMode === 'points' ? 'Average Baseline (50)' : 'Average Deviation (0.0)',
+                    content: isPoints ? 'Average Baseline (50)' : 'Average Deviation (0.0)',
                     position: 'end',
-                    backgroundColor: 'rgba(17,18,20,0.8)',
+                    backgroundColor: 'rgba(17,18,20,0.9)',
                     color: '#9ea3ae',
                     font: { family: 'DM Sans', size: 10, weight: '500' }
                   }
@@ -1079,7 +1082,12 @@ Spain	1.10	0.45</textarea>
           },
           scales: {
             x: { grid: { display: false }, ticks: { color: axisColor, font: { family: 'DM Sans', size: 12 } } },
-            y: { grid: { color: 'rgba(255,255,255,0.02)' }, ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } } }
+            y: { 
+              min: minScaleValue, 
+              max: maxScaleValue, 
+              grid: { color: 'rgba(255,255,255,0.02)' }, 
+              ticks: { color: axisColor, font: { family: 'DM Mono', size: 11 } } 
+            }
           }
         }
       });
@@ -1101,7 +1109,6 @@ Spain	1.10	0.45</textarea>
   function exportCSV() {
     if (!overallScores.length) { showToast("Generate rankings before exporting."); return; }
     
-    // Dynamically tracks headers and labels depending on your active user metrics mode selection state
     const metricScoreLabel = currentViewMode === 'points' ? 'Unified Index Score (0-100)' : 'Composite Z-Score (Deviation)';
     let lines = [`"Entry Name","Performance Quality Z","Cost Efficiency Z","${metricScoreLabel}"`];
     
