@@ -42,9 +42,9 @@ body.on #auth{opacity:0;visibility:hidden;pointer-events:none}
 body.on .shell{opacity:1}
 
 /* HERO */
-.hero{padding:44px 0 32px;text-align:center}
-.hero h1{font-size:clamp(22px,3.5vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:10px}
-.hero h1 em{font-style:normal;color:var(--accent)}
+.hero{padding:28px 0 24px;text-align:center}
+.hero h1{font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:6px}
+.hero h1 em{font-style:normal}
 .hero p{font-size:13px;color:var(--text-2);max-width:400px;margin:0 auto}
 
 /* STEP TRACK */
@@ -295,8 +295,8 @@ tbody tr.dr td{padding:0 16px 14px 34px;background:rgba(185,243,51,.004);border-
 
 <div class="shell">
   <div class="hero">
-    <h1>Paste data.<br><em>Get trusted rankings.</em></h1>
-    <p>Metrics are classified automatically. Each ranking comes with a plain-English explanation and reliability score.</p>
+    <h1>Performance Ranking Tool</h1>
+    <p>Paste tab or comma-separated data. Metrics are classified automatically.</p>
   </div>
 
   <nav class="step-track" id="stepTrack" role="tablist">
@@ -331,8 +331,8 @@ tbody tr.dr td{padding:0 16px 14px 34px;background:rgba(185,243,51,.004);border-
         <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
         <div>
           <div class="card-step">Step 1</div>
-          <div class="card-title">Paste your data</div>
-          <div class="card-sub">First column = entry names. Remaining = metrics. Tab or comma separated.</div>
+          <div class="card-title">Data input</div>
+          <div class="card-sub">First column = entry names. Remaining columns = metrics.</div>
         </div>
       </div>
 
@@ -364,7 +364,7 @@ Segment D	1.98	41.5	0.88	2.4	0.12</textarea>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-pri" onclick="stepToWeights()">Set importance →</button>
+        <button class="btn btn-pri" onclick="stepToWeights()">Continue →</button>
       </div>
     </div>
   </div>
@@ -376,8 +376,8 @@ Segment D	1.98	41.5	0.88	2.4	0.12</textarea>
         <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
         <div>
           <div class="card-step">Step 2</div>
-          <div class="card-title">How important is each metric?</div>
-          <div class="card-sub">Performance metrics score higher when values are high. Efficiency metrics score higher when values are low.</div>
+          <div class="card-title">Metric weighting</div>
+          <div class="card-sub">Set the relative importance of each metric. Performance metrics reward higher values; efficiency metrics reward lower values.</div>
         </div>
       </div>
       <div class="wt-grid" id="wtGrid"></div>
@@ -406,14 +406,14 @@ Segment D	1.98	41.5	0.88	2.4	0.12</textarea>
         <div>
           <div class="card-step">Step 3</div>
           <div class="card-title">Rankings</div>
-          <div class="card-sub">Expand any row for a plain-English explanation.</div>
+          <div class="card-sub">Expand a row to see score breakdown, metric influence, and ranking reliability.</div>
         </div>
       </div>
 
       <div id="emptyState" class="empty">
-        <h3>No rankings yet</h3>
-        <p>Paste your data and work through steps 1 and 2.</p>
-        <button class="btn btn-ghost" onclick="goStep(1)">Start →</button>
+        <h3>No data calculated</h3>
+        
+        <button class="btn btn-ghost" onclick="goStep(1)">Go to Step 1</button>
       </div>
 
       <div id="resultsArea" class="hidden">
