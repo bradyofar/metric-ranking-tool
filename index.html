@@ -422,12 +422,10 @@ Segment D	1.98	41.5	0.88	2.4	0.12</textarea>
         </div>
         <div id="statsRow"></div>
         <div class="col-sec">
-          <span class="col-lbl">Chart colours</span>
-          <div class="col-row">
-            <div class="col-item"><label>Positive</label><input type="color" id="cA" class="c-sw" value="#b9f333" oninput="syncC('cA','hA');applyAcc();renderChart()"><input type="text" id="hA" class="c-hx" value="#B9F333" onchange="syncS('hA','cA');applyAcc();renderChart()"></div>
-            <div class="col-item"><label>Axes</label><input type="color" id="cX" class="c-sw" value="#7c818c" oninput="syncC('cX','hX');renderChart()"><input type="text" id="hX" class="c-hx" value="#7C818C" onchange="syncS('hX','cX');renderChart()"></div>
-            <div class="col-item"><label>Card bg</label><input type="color" id="cB" class="c-sw" value="#0c0c10" oninput="syncC('cB','hB');updateBg()"><input type="text" id="hB" class="c-hx" value="#0C0C10" onchange="syncS('hB','cB');updateBg()"></div>
-          </div>
+          <span class="col-lbl">Chart & interface colours</span>
+          <div class="col-row" id="colRow"></div>
+          <span class="col-lbl" id="metricColLbl" style="margin-top:14px">Metric colours <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-3)">— used for stacked segments</span></span>
+          <div class="col-row" id="metricColRow"></div>
         </div>
       </div>
     </div>
@@ -507,8 +505,23 @@ const S = {
   unlocked: 1,
   zeroWarn: [],
   clsOpen: false,
+  col: { pos:'#B9F333', neg:'#FF4848', title:'#B9F333', axis:'#7C818C', grid:'#2A2C33', avg:'#4A4C52', warn:'#F0A032', cardBg:'#0C0C10', pageBg:'#07070A' },
+  metricColors: {},
 };
 const IMP = { Low:1, Medium:2, High:3, Critical:4 };
+// Definitions driving the interface colour pickers (order = display order)
+const COLDEFS = [
+  {k:'pos',    label:'Positive / bars'},
+  {k:'neg',    label:'Negative'},
+  {k:'warn',   label:'Warning'},
+  {k:'title',  label:'Chart title'},
+  {k:'axis',   label:'Axis & text'},
+  {k:'grid',   label:'Grid lines'},
+  {k:'avg',    label:'Average line'},
+  {k:'cardBg', label:'Card bg'},
+  {k:'pageBg', label:'Page bg'},
+];
+const METRIC_PAL = ['#B9F333','#4AAEFF','#F0A032','#FF4848','#A78BFA','#34D399','#FBBF24','#F472B6','#22D3EE','#E879F9','#FB923C','#818CF8'];
 
 // ─── AUTH ─────────────────────────────────────────────
 const CODE = 'unicorn';
@@ -917,6 +930,7 @@ function calculate() {
     S.insights=buildInsights(data);
 
     S.sortCol='score'; S.sortDir='desc';
+    buildMetricColorControls();
     sortData(); renderInsights(); renderTable(); renderChart();
     S.unlocked=3; goStep(3);
     if (S.zeroWarn.length) toast(`${S.zeroWarn.join(', ')}: excluded (no variation).`,'warn');
@@ -1071,26 +1085,36 @@ function setCV(v) {
 function renderChart() {
   if (!S.results.length) return;
   const canvas=document.getElementById('mainChart'); if(!canvas) return;
-  const acc=document.getElementById('hA')?.value||'#b9f333';
-  const ax=document.getElementById('hX')?.value||'#7c818c';
+  const acc=S.col.pos, neg=S.col.neg, ax=S.col.axis, gridC=S.col.grid, avgC=S.col.avg, titleC=S.col.title;
   let labels=[],datasets=[],title='',stacked=false,yRev=false;
 
   if (S.chartView==='score') {
+    // Scores are broken down (stacked) by each metric's influence on the score.
     labels=S.results.map(r=>r.entity);
     const isP=S.mode==='points';
-    const d=isP?S.results.map(r=>r.pointsScale):S.results.map(r=>+r.reZ.toFixed(2));
-    const cols=d.map(v=>(isP?v>=50:v>=0)?acc:'#ff4848');
-    title=isP?'Score (0–100)':'Deviation from average';
-    datasets=[{data:d,backgroundColor:cols,borderRadius:4,borderSkipped:false,barPercentage:.55,categoryPercentage:.8}];
+    title=isP?'Score (0–100) by metric':'Deviation from average by metric';
+    stacked=true;
+    const all=[...new Set(S.results.flatMap(r=>r.influence.map(i=>i.metric)))];
+    datasets=all.map(m=>({
+      label:m,
+      data:S.results.map(r=>{
+        const inf=r.influence.find(x=>x.metric===m);
+        if (!inf) return 0;
+        const scoreVal=isP?r.pointsScale:+r.reZ.toFixed(2);
+        return +(inf.share*scoreVal).toFixed(2);
+      }),
+      backgroundColor:getMetricColor(m),
+      borderRadius:2,borderSkipped:false,
+      barPercentage:.6,categoryPercentage:.8,
+    }));
   } else if (S.chartView==='influence') {
     labels=S.results.map(r=>r.entity);
-    title='Metric influence by entry'; stacked=true;
+    title='Metric influence by entry (%)'; stacked=true;
     const all=[...new Set(S.results.flatMap(r=>r.influence.map(i=>i.metric)))];
-    const pal=['#b9f333','#4aaeff','#f0a032','#ff4848','#a78bfa','#34d399','#fbbf24'];
-    datasets=all.map((m,i)=>({
+    datasets=all.map(m=>({
       label:m,
       data:S.results.map(r=>{ const inf=r.influence.find(x=>x.metric===m); return inf?Math.round(inf.share*100):0; }),
-      backgroundColor:pal[i%pal.length]+'99',
+      backgroundColor:getMetricColor(m),
       borderRadius:0,borderSkipped:false,
     }));
   } else {
@@ -1099,18 +1123,19 @@ function renderChart() {
     const mins=S.results.map(r=>(S.stabData[r.entity]||{min:r.defaultRank}).min);
     const maxs=S.results.map(r=>(S.stabData[r.entity]||{max:r.defaultRank}).max);
     const ranges=maxs.map((mx,i)=>mx-mins[i]);
-    const cols=ranges.map(r=>r===0?acc:r<=1?acc+'99':r<=2?'#f0a032':'#ff4848');
+    const cols=ranges.map(r=>r===0?acc:r<=1?acc+'99':r<=2?S.col.warn:neg);
     datasets=[
-      {label:'Base',data:mins,backgroundColor:'rgba(255,255,255,.03)',borderRadius:0,borderSkipped:false,barPercentage:.5},
+      {label:'Base',data:mins,backgroundColor:hexToRgba(gridC,.5),borderRadius:0,borderSkipped:false,barPercentage:.5},
       {label:'Range',data:ranges,backgroundColor:cols,borderRadius:4,borderSkipped:'bottom',barPercentage:.5},
     ];
   }
 
   const anns={};
   if (S.chartView==='score'&&S.mode==='points') {
-    anns.l1={type:'line',yMin:50,yMax:50,borderColor:'rgba(255,255,255,.1)',borderWidth:1,borderDash:[4,4],label:{display:true,content:'average',position:'end',backgroundColor:'rgba(0,0,0,.7)',color:ax,font:{family:'DM Mono',size:9},padding:3}};
+    anns.l1={type:'line',yMin:50,yMax:50,borderColor:avgC,borderWidth:1,borderDash:[4,4],label:{display:true,content:'average',position:'end',backgroundColor:hexToRgba(S.col.pageBg,.85),color:ax,font:{family:'DM Mono',size:9},padding:3}};
   }
 
+  const showLegend=S.chartView==='score'||S.chartView==='influence';
   if (chartInst) { chartInst.destroy(); chartInst=null; }
   chartInst=new Chart(document.getElementById('mainChart').getContext('2d'),{
     type:'bar',
@@ -1118,23 +1143,81 @@ function renderChart() {
     options:{
       responsive:true,maintainAspectRatio:false,
       plugins:{
-        legend:{display:S.chartView==='influence',position:'bottom',labels:{color:ax,font:{family:'Syne',size:10},boxWidth:8,padding:10}},
-        title:{display:true,text:title,color:acc,font:{family:'Syne',size:11,weight:'700'},padding:{bottom:8}},
+        legend:{display:showLegend,position:'bottom',labels:{color:ax,font:{family:'Syne',size:10},boxWidth:8,padding:10}},
+        title:{display:true,text:title,color:titleC,font:{family:'Syne',size:11,weight:'700'},padding:{bottom:8}},
         annotation:{annotations:anns},
       },
       scales:{
         x:{stacked,grid:{display:false},ticks:{color:ax,font:{family:'Syne',size:11}}},
-        y:{stacked,reverse:yRev,grid:{color:'rgba(255,255,255,.02)'},ticks:{color:ax,font:{family:'DM Mono',size:10}}},
+        y:{stacked,reverse:yRev,grid:{color:hexToRgba(gridC,.35)},ticks:{color:ax,font:{family:'DM Mono',size:10}}},
       },
     },
   });
 }
 
 // ─── COLOUR CONTROLS ──────────────────────────────────
-function applyAcc() { const h=document.getElementById('hA').value; if(/^#[0-9A-Fa-f]{6}$/.test(h)){ document.documentElement.style.setProperty('--accent',h); document.documentElement.style.setProperty('--accent-dim',h+'12'); } }
-function syncC(s,t) { document.getElementById(t).value=document.getElementById(s).value.toUpperCase(); }
-function syncS(t,s) { const v=document.getElementById(t).value; if(/^#[0-9A-Fa-f]{6}$/i.test(v)) document.getElementById(s).value=v; }
-function updateBg() { const h=document.getElementById('hB').value; if(/^#[0-9A-Fa-f]{6}$/i.test(h)){ document.documentElement.style.setProperty('--bg-1',h); renderChart(); } }
+function hexToRgba(hex,a){
+  const h=(hex||'#000000').replace('#','');
+  const r=parseInt(h.slice(0,2),16), g=parseInt(h.slice(2,4),16), b=parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function getMetricColor(m){
+  if (S.metricColors[m]) return S.metricColors[m];
+  // Fallback if a metric wasn't registered yet — assign deterministically by order
+  const idx=S.cls.findIndex(c=>c.name===m);
+  return METRIC_PAL[(idx<0?0:idx)%METRIC_PAL.length];
+}
+// Apply the palette to CSS custom properties so the whole interface follows.
+function applyThemeColors(){
+  const rs=document.documentElement.style, c=S.col;
+  rs.setProperty('--accent',c.pos);
+  rs.setProperty('--accent-dim',c.pos+'12');
+  rs.setProperty('--accent-mid',c.pos+'24');
+  rs.setProperty('--red',c.neg);
+  rs.setProperty('--red-dim',c.neg+'12');
+  rs.setProperty('--amber',c.warn);
+  rs.setProperty('--amber-dim',c.warn+'12');
+  rs.setProperty('--text-2',c.axis);
+  rs.setProperty('--bg-1',c.cardBg);
+  rs.setProperty('--bg',c.pageBg);
+}
+// Build the fixed interface colour pickers.
+function buildColorControls(){
+  const row=document.getElementById('colRow'); if(!row) return;
+  row.innerHTML=COLDEFS.map(d=>{
+    const v=S.col[d.k];
+    return `<div class="col-item"><label>${d.label}</label>`+
+      `<input type="color" id="c_${d.k}" class="c-sw" value="${v}" oninput="onCol('${d.k}',this.value)">`+
+      `<input type="text" id="h_${d.k}" class="c-hx" value="${v.toUpperCase()}" onchange="onCol('${d.k}',this.value)"></div>`;
+  }).join('');
+}
+function onCol(k,val){
+  if(!/^#[0-9A-Fa-f]{6}$/.test(val)) return;
+  S.col[k]=val;
+  const c=document.getElementById('c_'+k), h=document.getElementById('h_'+k);
+  if(c) c.value=val; if(h) h.value=val.toUpperCase();
+  applyThemeColors();
+  if(S.results.length){ renderTable(); renderChart(); }
+}
+// Build one colour picker per detected metric (drives stacked segments).
+function buildMetricColorControls(){
+  const row=document.getElementById('metricColRow'), lbl=document.getElementById('metricColLbl');
+  if(!row) return;
+  const metrics=S.cls.map(c=>c.name);
+  metrics.forEach((m,i)=>{ if(!S.metricColors[m]) S.metricColors[m]=METRIC_PAL[i%METRIC_PAL.length]; });
+  Object.keys(S.metricColors).forEach(m=>{ if(!metrics.includes(m)) delete S.metricColors[m]; });
+  if(lbl) lbl.style.display=metrics.length?'':'none';
+  row.innerHTML=metrics.map(m=>{
+    const id=m.replace(/[^a-zA-Z0-9]/g,'_'), safe=m.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div class="col-item"><label title="${m}" style="max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m}</label>`+
+      `<input type="color" id="mc_${id}" class="c-sw" value="${S.metricColors[m]}" oninput="onMetricCol('${safe}',this.value)"></div>`;
+  }).join('');
+}
+function onMetricCol(m,val){
+  if(!/^#[0-9A-Fa-f]{6}$/.test(val)) return;
+  S.metricColors[m]=val.toUpperCase();
+  renderChart();
+}
 
 // ─── EXPORT ───────────────────────────────────────────
 function dlPNG() { if(!chartInst){toast('Generate rankings first.');return;} const a=document.createElement('a'); a.href=chartInst.toBase64Image('image/png',1); a.download='rankings.png'; a.click(); }
@@ -1151,6 +1234,8 @@ function dlCSV() {
 // ─── INIT ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   checkAuth();
+  buildColorControls();
+  applyThemeColors();
   runClassify(); // classify the pre-filled example data immediately
   document.getElementById('mainData').addEventListener('input',()=>runClassify());
 });
